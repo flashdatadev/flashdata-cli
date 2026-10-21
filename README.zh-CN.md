@@ -8,6 +8,18 @@
 
 ## 安装 v1.0.0
 
+### Homebrew（Linux 和 macOS）
+
+安装 [Homebrew](https://brew.sh) 并配置 PATH 后执行：
+
+```bash
+brew install flashdatadev/tap/flashdata
+```
+
+[FlashData 官方软件源](https://github.com/flashdatadev/homebrew-tap)会自动选择 Linux amd64/arm64 或 macOS Intel/Apple Silicon 版本，并验证归档的 SHA-256 校验和，无需安装 Go。升级、卸载、附带示例及从手动安装迁移的方法见[安装指南](docs/installation.zh-CN.md#homebrewlinux-和-macos)。
+
+### 独立安装包
+
 下载与操作系统和 CPU 匹配的安装包，无需安装 Go。
 
 | 平台 | 下载 |

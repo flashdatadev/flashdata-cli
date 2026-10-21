@@ -4,7 +4,44 @@
 
 安装与平台匹配的独立可执行程序，无需 Go、Node.js、Python 或 Docker。下载以及离线版本/帮助检查均无需 API 密钥。
 
-## Linux 和 macOS
+## Homebrew（Linux 和 macOS）
+
+先安装 [Homebrew](https://brew.sh) 并按提示配置 PATH，然后使用 [FlashData 官方软件源](https://github.com/flashdatadev/homebrew-tap)：
+
+```bash
+brew install flashdatadev/tap/flashdata
+flashdata --version
+flashdata --help
+```
+
+Homebrew 自动选择 Linux amd64/arm64 或 macOS Intel/Apple Silicon 归档，并验证固定的 SHA-256 校验和。安装的是独立可执行文件，无需 Go、Python 或 Node.js；安装及以上离线检查无需 API 密钥。
+
+有新版本发布后，可运行以下命令升级：
+
+```bash
+brew update
+brew upgrade flashdatadev/tap/flashdata
+```
+
+软件包还包含示例、中英文版本文档及依赖许可证：
+
+```bash
+ls "$(brew --prefix flashdata)/share/flashdata/examples"
+ls "$(brew --prefix flashdata)/share/doc/flashdata"
+```
+
+卸载软件包并按需移除软件源：
+
+```bash
+brew uninstall flashdata
+brew untap flashdatadev/tap
+```
+
+卸载不撤销 API 密钥，也不删除已保存的配置和执行历史。若要移除某个配置中已保存的凭据，请在卸载前为该配置运行 `flashdata auth logout`，详见[凭据存储](security.md)。
+
+从手动安装迁移时，请先用 `command -v flashdata` 检查当前可执行文件。`~/.local/bin` 或其他 PATH 目录中的旧版本可能排在 Homebrew 前面；移走旧可执行文件或调整 PATH，再重启终端或执行 `hash -r`。请保留现有 CLI 状态目录，以继续使用配置和执行恢复。
+
+## 手动安装归档（Linux 和 macOS）
 
 以下 Bash 命令自动识别 Linux/macOS 与 amd64/arm64，从官方 HTTPS 地址下载归档和 SHA256SUMS，先验证所选归档，再解压，并仅将可执行程序安装到 `$HOME/.local/bin`。需要 curl、tar、awk、install，以及 sha256sum 或 shasum。不支持的平台或校验错误会终止安装。
 

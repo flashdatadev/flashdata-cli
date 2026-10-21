@@ -24,13 +24,15 @@ func TestDocumentationLanguagesLinksAndExamples(t *testing.T) {
 		t.Fatal("English default needs top Chinese link")
 	}
 	blocks := regexp.MustCompile("(?s)```[^\n]*\n.*?```")
-	a, b := blocks.FindAllString(en, -1), blocks.FindAllString(zh, -1)
-	if len(a) != len(b) {
-		t.Fatal("translated command block count differs")
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			t.Fatalf("translated command block %d drifted", i)
+	for _, pair := range [][2]string{{en, zh}, {read("docs/installation.md"), read("docs/installation.zh-CN.md")}} {
+		a, b := blocks.FindAllString(pair[0], -1), blocks.FindAllString(pair[1], -1)
+		if len(a) != len(b) {
+			t.Fatal("translated command block count differs")
+		}
+		for i := range a {
+			if a[i] != b[i] {
+				t.Fatalf("translated command block %d drifted", i)
+			}
 		}
 	}
 	links := regexp.MustCompile(`\[[^\]]*\]\(([^)]+)\)`)

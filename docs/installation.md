@@ -4,7 +4,44 @@
 
 Install the matching standalone executable. You do not need Go, Node.js, Python or Docker. Downloading and the offline version/help checks do not need an API key.
 
-## Linux and macOS
+## Homebrew (Linux and macOS)
+
+Install [Homebrew](https://brew.sh) and follow its PATH instructions, then use the [official FlashData tap](https://github.com/flashdatadev/homebrew-tap):
+
+```bash
+brew install flashdatadev/tap/flashdata
+flashdata --version
+flashdata --help
+```
+
+Homebrew selects the matching Linux amd64/arm64 or macOS Intel/Apple Silicon archive and verifies its pinned SHA-256 checksum. It installs the standalone executable with no Go, Python or Node.js dependency. Installation and the offline checks above need no API key.
+
+Upgrade when a newer version is published:
+
+```bash
+brew update
+brew upgrade flashdatadev/tap/flashdata
+```
+
+The package also includes examples, English/Chinese release docs and dependency licenses:
+
+```bash
+ls "$(brew --prefix flashdata)/share/flashdata/examples"
+ls "$(brew --prefix flashdata)/share/doc/flashdata"
+```
+
+To uninstall the package and optionally remove the tap:
+
+```bash
+brew uninstall flashdata
+brew untap flashdatadev/tap
+```
+
+Uninstalling does not revoke API keys or delete saved profiles and run history. Use `flashdata auth logout` for a profile before uninstalling if you want to remove its saved credential. See [credential storage](security.md).
+
+If switching from a manual installation, check `command -v flashdata`. A copy in `~/.local/bin` or another PATH directory may precede Homebrew. Move or remove that old executable, or adjust PATH; then restart the shell or run `hash -r`. Keep your existing CLI state directory so profiles and run recovery remain available.
+
+## Manual archives (Linux and macOS)
 
 The following Bash commands select Linux/macOS and amd64/arm64 automatically, download the official archive and SHA256SUMS over HTTPS, verify the selected archive before extraction, and install only the executable into `$HOME/.local/bin`. They require curl, tar, awk, install, and either sha256sum or shasum. Unsupported platforms and checksum errors stop installation.
 

@@ -8,6 +8,18 @@ A standalone `flashdata` executable for developers, coding agents and personal a
 
 ## Install v1.0.0
 
+### Homebrew (Linux and macOS)
+
+With [Homebrew](https://brew.sh) installed and on PATH:
+
+```bash
+brew install flashdatadev/tap/flashdata
+```
+
+The [official FlashData tap](https://github.com/flashdatadev/homebrew-tap) selects Linux amd64/arm64 or macOS Intel/Apple Silicon and verifies the release archive's SHA-256 checksum. No Go installation is needed. See the [installation guide](docs/installation.md#homebrew-linux-and-macos) for upgrades, uninstalling, packaged examples and switching from a manual installation.
+
+### Standalone downloads
+
 Download the archive for your operating system and CPU. No Go installation is needed.
 
 | Platform | Download |
