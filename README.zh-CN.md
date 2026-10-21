@@ -4,14 +4,14 @@
 
 面向开发者、编程代理和个人代理的独立 `flashdata` 可执行程序。[FlashData](https://flashdata.dev) 提供结构化 Google 搜索、YouTube 数据、已有转录/字幕、后台任务及客户存储媒体交付。CLI 基于 Go SDK，负责安全配置、可恢复接入、持久化执行记录和流式 Bulk 导出。
 
-**尚未正式发布的 1.0.0 候选版本。** 源码已公开在 GitHub；此次源码推送不会创建版本标签、GitHub Release 或部署后端。 支持 Linux amd64/arm64、macOS Intel/Apple Silicon、Windows amd64。安装二进制后不需要 Node.js、Python、npm、Docker 或单独的 Go 运行时；源码开发需要 Go 1.25+。
+**版本 1.0.0。** `v1.0.0` 源码标签标识此版本。GitHub Release 安装包正在以未发布草稿形式准备；本次不包含后端部署。 支持 Linux amd64/arm64、macOS Intel/Apple Silicon、Windows amd64。安装二进制后不需要 Node.js、Python、npm、Docker 或单独的 Go 运行时；源码开发需要 Go 1.25+。
 
 ## 从源码构建
 
-克隆此仓库并使用 Go 1.25+ 构建。SDK 通过 Go 伪版本锁定到不可变的公开提交，并由 `go.sum` 校验；无需相邻的 SDK 仓库或本地模块替换。
+克隆此版本并使用 Go 1.25+ 构建。依赖锁定为 SDK **v1.0.0**，并由 `go.sum` 校验；无需相邻的 SDK 仓库或本地替换。详见 [v1.0.0 版本说明](docs/release-notes-1.0.0.md)。
 
 ```bash
-git clone https://github.com/flashdatadev/flashdata-cli.git
+git clone --branch v1.0.0 --depth 1 https://github.com/flashdatadev/flashdata-cli.git
 cd flashdata-cli
 go mod download
 go build -trimpath -o dist/flashdata ./cmd/flashdata
@@ -27,7 +27,7 @@ go build -trimpath -o dist/flashdata.exe ./cmd/flashdata
 .\dist\flashdata.exe --help
 ```
 
-将匹配平台的可执行文件复制到用户自有的 PATH 目录，命名为 `flashdata`，Windows 使用 `flashdata.exe`。本地打包脚本生成归档和 SHA-256 校验文件，不上传任何内容，详见[发布准备](docs/releases.md)。
+将匹配平台的可执行文件复制到用户自有的 PATH 目录，命名为 `flashdata`，Windows 使用 `flashdata.exe`。本地打包脚本生成归档和 SHA-256 校验文件，不上传任何内容。GitHub Release 保持草稿，附件二进制暂不提供公开下载，详见[发布准备](docs/releases.md)。
 
 ## 已有账户：导入 API 密钥
 

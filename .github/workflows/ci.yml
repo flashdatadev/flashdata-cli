@@ -49,5 +49,5 @@ jobs:
           cache-dependency-path: go.sum
       - run: go mod download
       - run: python3 -m unittest discover -s scripts -p "test_*.py"
-      - run: python3 scripts/build_release.py --go go
+      - run: python3 scripts/build_release.py --go go --commit "$(git rev-parse HEAD)"
       - run: python3 scripts/generate_commands.py dist/binaries/flashdata-linux-amd64 --check

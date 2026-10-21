@@ -49,9 +49,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--go", default="go")
     parser.add_argument("--version", default="1.0.0")
+    parser.add_argument("--commit", default="local", help="full source Git commit")
     args = parser.parse_args()
     if not re.fullmatch(r"\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?", args.version):
         parser.error("version must be a semantic version")
+    if not re.fullmatch(r"local|[0-9a-fA-F]{40}", args.commit):
+        parser.error("commit must be 'local' or a full 40-character Git commit")
+    args.commit = args.commit.lower()
+    notes = ROOT / "docs" / f"release-notes-{args.version}.md"
+    if not notes.is_file():
+        parser.error(f"missing versioned release notes: {notes.name}")
     go = args.go
     if Path(go).exists():
         go = str(Path(go).resolve())
@@ -107,7 +114,7 @@ def main():
                 "-buildvcs=false",
                 "-mod=readonly",
                 "-ldflags",
-                f"-s -w -X main.version={args.version} -X main.commit=local",
+                f"-s -w -X main.version={args.version} -X main.commit={args.commit}",
                 "-o",
                 str(binary),
                 "./cmd/flashdata",
@@ -145,20 +152,18 @@ def main():
         artifacts.append(
             {
                 "platform": f"{system}/{arch}",
-                "archive": str(archive),
+                "archive": archive.name,
                 "sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
             }
         )
         print(f"Built {system}/{arch}: {archive.name}", flush=True)
-    (releases / "SHA256SUMS").write_text(
-        "".join(f"{a['sha256']}  {Path(a['archive']).name}\n" for a in artifacts),
-        encoding="utf-8",
-    )
+    (releases / "RELEASE_NOTES.md").write_bytes(notes.read_bytes())
     (releases / "build-report.json").write_text(
         json.dumps(
             {
                 "version": args.version,
-                "localOnly": True,
+                "commit": args.commit,
+                "publishes": False,
                 "cgoEnabled": False,
                 "allowlisted": True,
                 "sourceSHA256": source_hashes,
@@ -174,6 +179,17 @@ def main():
         )
         + "\n",
         encoding="utf-8",
+        newline="\n",
+    )
+    checksums = [(a["archive"], a["sha256"]) for a in artifacts]
+    for name in ["build-report.json", "RELEASE_NOTES.md"]:
+        checksums.append(
+            (name, hashlib.sha256((releases / name).read_bytes()).hexdigest())
+        )
+    (releases / "SHA256SUMS").write_text(
+        "".join(f"{digest}  {name}\n" for name, digest in sorted(checksums)),
+        encoding="utf-8",
+        newline="\n",
     )
 
 

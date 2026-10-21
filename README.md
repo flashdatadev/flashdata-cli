@@ -4,14 +4,14 @@
 
 A standalone `flashdata` executable for developers, coding agents and personal agents. [FlashData](https://flashdata.dev) provides structured Google search and YouTube data, existing transcripts/captions, background processing and customer-storage media delivery. This CLI is built on the Go SDK and adds secure profiles, recoverable onboarding, durable run IDs and streaming bulk exports.
 
-**Unreleased 1.0.0 candidate.** Source is available on GitHub; no tags, GitHub Releases or backend deployments are created by the source push. The five supported targets are Linux amd64/arm64, macOS Intel/Apple Silicon, and Windows amd64. Installed binaries require no Node.js, Python, npm, Docker or separate Go installation. Source development requires Go 1.25+.
+**Version 1.0.0.** The `v1.0.0` source tag identifies this version. GitHub Release packages are being prepared as an unpublished draft; no backend deployment is included. The five supported targets are Linux amd64/arm64, macOS Intel/Apple Silicon, and Windows amd64. Installed binaries require no Node.js, Python, npm, Docker or separate Go installation. Source development requires Go 1.25+.
 
 ## Build from source
 
-Clone this repository and build with Go 1.25+. The SDK is pinned to an immutable public commit through a Go pseudo-version and verified by `go.sum`; no sibling SDK checkout or local module replacement is required.
+Clone this version and build with Go 1.25+. The dependency is pinned to SDK **v1.0.0** and verified by `go.sum`; no sibling SDK checkout or local replacement is required. See the [v1.0.0 release notes](docs/release-notes-1.0.0.md).
 
 ```bash
-git clone https://github.com/flashdatadev/flashdata-cli.git
+git clone --branch v1.0.0 --depth 1 https://github.com/flashdatadev/flashdata-cli.git
 cd flashdata-cli
 go mod download
 go build -trimpath -o dist/flashdata ./cmd/flashdata
@@ -27,7 +27,7 @@ go build -trimpath -o dist/flashdata.exe ./cmd/flashdata
 .\dist\flashdata.exe --help
 ```
 
-Copy the matching executable from `dist/binaries` or a locally generated archive into a user-owned directory on PATH, naming it `flashdata` (`flashdata.exe` on Windows). No service or runtime installation is required. [Release preparation](docs/releases.md) describes archives, SHA-256 checksums and OS verification; these are build artifacts; no GitHub Release download is available yet.
+Copy the matching executable from `dist/binaries` or a locally generated archive into a user-owned directory on PATH, naming it `flashdata` (`flashdata.exe` on Windows). No service or runtime installation is required. [Release preparation](docs/releases.md) describes archives, SHA-256 checksums and OS verification; the GitHub Release stays a draft, so its attached binaries are not public downloads yet.
 
 ## Existing account: import a key
 
