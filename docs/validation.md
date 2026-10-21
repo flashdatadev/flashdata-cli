@@ -61,3 +61,9 @@ Imported-key recurring execution needs the accompanying API-key identity backend
 - Both repositories pass four archive-policy unit tests (including unsafe-path subcases); reviewed file manifests, deterministic ZIP metadata and copied dependency notices are included. Python lint/format and backend source/bulk/registration contract checks pass.
 - All 18 public FlashData website, docs, pricing and source-documentation links returned HTTP 200 on credential-free HEAD checks. This does not exercise paid APIs or account state.
 - Final packages are checked against their manifests and SHA-256 checksums. The SDK verifier installs a clean packaged consumer through a file-only proxy and cross-builds all five targets. CLI reports record both runtime source hashes and the build toolchain.
+
+## Public macOS CI coverage
+
+After source publication, the native Intel macOS Go 1.25 and 1.27 tests and vet checks passed. Apple Silicon jobs using `macos-latest`, `macos-26` and `macos-15` never received a hosted runner, so no native Apple Silicon test result is claimed. The workflow now uses `macos-15-intel` for full native macOS tests and cross-builds the Apple Silicon executable with CGo disabled on both supported Go versions. The archive job still builds all five distribution targets. Current results are in [GitHub Actions](https://github.com/flashdatadev/flashdata-cli/actions).
+
+This verifies compilation of the Apple Silicon binary; native Apple Silicon runtime and live Keychain integration still require separate acceptance checks. Superseded CI runs cancel automatically. No release, version tag or backend deployment is part of these checks.

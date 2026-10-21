@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-15-intel, macos-15]
+        os: [ubuntu-latest, windows-latest, macos-15-intel]
         go: ['1.25.x', '1.27.x']
     runs-on: ${{ matrix.os }}
     steps:
@@ -27,6 +27,13 @@ jobs:
       - run: go mod verify
       - run: go test ./...
       - run: go vet ./...
+      - name: Cross-build Apple Silicon
+        if: runner.os == 'macOS'
+        env:
+          CGO_ENABLED: '0'
+          GOOS: darwin
+          GOARCH: arm64
+        run: go build -trimpath -mod=readonly -o dist/flashdata-darwin-arm64 ./cmd/flashdata
       - name: Race detector
         if: runner.os == 'Linux'
         run: go test -race -short ./...
