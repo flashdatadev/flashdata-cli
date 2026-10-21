@@ -18,6 +18,17 @@ brew install flashdatadev/tap/flashdata
 
 The [official FlashData tap](https://github.com/flashdatadev/homebrew-tap) selects Linux amd64/arm64 or macOS Intel/Apple Silicon and verifies the release archive's SHA-256 checksum. No Go installation is needed. See the [installation guide](docs/installation.md#homebrew-linux-and-macos) for upgrades, uninstalling, packaged examples and switching from a manual installation.
 
+### APT (Ubuntu and Debian)
+
+Follow the [one-time signed repository setup](docs/installation.md#apt-ubuntu-and-debian), then install:
+
+```bash
+sudo apt-get update
+sudo apt-get install flashdata
+```
+
+The [official APT repository](https://github.com/flashdatadev/apt) supports Ubuntu 22.04/24.04 and Debian 12/13 on amd64/arm64. Package **1.0.0-1** contains CLI **1.0.0**. Setup verifies the dedicated signing key fingerprint and scopes trust with `Signed-By`. The [installation guide](docs/installation.md#apt-ubuntu-and-debian) also covers upgrades, uninstalling and switching from another installation method.
+
 ### Standalone downloads
 
 Download the archive for your operating system and CPU. No Go installation is needed.

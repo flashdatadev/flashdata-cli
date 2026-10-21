@@ -4,6 +4,86 @@
 
 Install the matching standalone executable. You do not need Go, Node.js, Python or Docker. Downloading and the offline version/help checks do not need an API key.
 
+## APT (Ubuntu and Debian)
+
+Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.0.0-1** contains the same CLI **1.0.0** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
+
+Run this one-time Bash setup with sudo access. It checks the public key fingerprint, uses a repository-scoped `Signed-By` keyring and permits only the `flashdata` package from this source:
+
+```bash
+(
+  set -eu
+  arch="$(dpkg --print-architecture)"
+  case "$arch" in amd64|arm64) ;; *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; esac
+  sudo apt-get update
+  sudo apt-get install -y ca-certificates curl gnupg
+  work_dir="$(mktemp -d)"
+  trap 'rm -rf -- "$work_dir"' EXIT
+  curl --fail --location https://flashdatadev.github.io/apt/flashdata.asc --output "$work_dir/flashdata.asc"
+  expected=19F337AC01C5F5B646A5583A04C7934A11D38FFA
+  actual="$(gpg --batch --show-keys --with-colons "$work_dir/flashdata.asc" 2>/dev/null | awk -F: '$1 == "fpr" { print $10; exit }')"
+  test "$actual" = "$expected"
+  sudo install -d -m 0755 /etc/apt/keyrings
+  sudo install -m 0644 "$work_dir/flashdata.asc" /etc/apt/keyrings/flashdata.asc
+  sudo tee /etc/apt/sources.list.d/flashdata.sources >/dev/null <<EOF
+Types: deb
+URIs: https://flashdatadev.github.io/apt/
+Suites: stable
+Components: main
+Architectures: $arch
+Signed-By: /etc/apt/keyrings/flashdata.asc $expected
+EOF
+  sudo tee /etc/apt/preferences.d/flashdata >/dev/null <<'EOF'
+Package: flashdata
+Pin: release o=FlashData
+Pin-Priority: 500
+
+Package: *
+Pin: release o=FlashData
+Pin-Priority: -1
+EOF
+  sudo apt-get update
+  sudo apt-get install -y flashdata
+  flashdata --version
+  flashdata --help
+)
+```
+
+The dedicated certificate fingerprint is `19F337AC01C5F5B646A5583A04C7934A11D38FFA` (`FlashData APT Signing <support@flashdata.dev>`). Verify it against the [public key record](https://github.com/flashdatadev/apt/tree/main/keys). Do not disable signature/expiration checking or add the key to APT's global trusted keyring.
+
+Upgrade after a newer CLI or packaging revision is published:
+
+```bash
+sudo apt-get update
+sudo apt-get install --only-upgrade flashdata
+flashdata --version
+```
+
+Inspect the package version and included examples/docs:
+
+```bash
+dpkg-query -W -f='${Version}\n' flashdata
+apt-cache policy flashdata
+ls /usr/share/doc/flashdata/examples
+ls /usr/share/doc/flashdata/docs
+man flashdata
+```
+
+To uninstall:
+
+```bash
+sudo apt-get remove flashdata
+```
+
+Removal or purge does not revoke keys or remove per-user profiles/run history. To remove a saved credential, run `flashdata auth logout` for that profile first. To also remove the repository configuration:
+
+```bash
+sudo rm -f /etc/apt/sources.list.d/flashdata.sources /etc/apt/preferences.d/flashdata /etc/apt/keyrings/flashdata.asc
+sudo apt-get update
+```
+
+When switching from Homebrew or a manual archive, check `command -v flashdata`; an old executable earlier in PATH may hide `/usr/bin/flashdata`. Uninstall/move that old executable or adjust PATH, then restart the shell or run `hash -r`. Preserve your CLI state directory. [APT maintenance and validation](https://github.com/flashdatadev/apt/blob/main/docs/maintaining.md) explains signature freshness and upgrade testing.
+
 ## Homebrew (Linux and macOS)
 
 Install [Homebrew](https://brew.sh) and follow its PATH instructions, then use the [official FlashData tap](https://github.com/flashdatadev/homebrew-tap):

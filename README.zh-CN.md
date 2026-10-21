@@ -18,6 +18,17 @@ brew install flashdatadev/tap/flashdata
 
 [FlashData 官方软件源](https://github.com/flashdatadev/homebrew-tap)会自动选择 Linux amd64/arm64 或 macOS Intel/Apple Silicon 版本，并验证归档的 SHA-256 校验和，无需安装 Go。升级、卸载、附带示例及从手动安装迁移的方法见[安装指南](docs/installation.zh-CN.md#homebrewlinux-和-macos)。
 
+### APT（Ubuntu 和 Debian）
+
+先完成[签名软件源的一次性配置](docs/installation.zh-CN.md#aptubuntu-和-debian)，然后安装：
+
+```bash
+sudo apt-get update
+sudo apt-get install flashdata
+```
+
+[官方 APT 软件源](https://github.com/flashdatadev/apt)支持 Ubuntu 22.04/24.04 与 Debian 12/13，架构为 amd64/arm64。软件包 **1.0.0-1** 包含 CLI **1.0.0**。配置过程会验证专用签名密钥指纹，并通过 `Signed-By` 限定信任范围。升级、卸载及从其他安装方式迁移的方法见[安装指南](docs/installation.zh-CN.md#aptubuntu-和-debian)。
+
 ### 独立安装包
 
 下载与操作系统和 CPU 匹配的安装包，无需安装 Go。

@@ -4,6 +4,86 @@
 
 安装与平台匹配的独立可执行程序，无需 Go、Node.js、Python 或 Docker。下载以及离线版本/帮助检查均无需 API 密钥。
 
+## APT（Ubuntu 和 Debian）
+
+在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.0.0-1** 包含与发布归档一致的 CLI **1.0.0** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
+
+使用 sudo 权限在 Bash 中执行一次以下配置。命令会核对公钥指纹，通过专用 `Signed-By` 密钥环限制信任范围，并只允许从该软件源选择 `flashdata` 软件包：
+
+```bash
+(
+  set -eu
+  arch="$(dpkg --print-architecture)"
+  case "$arch" in amd64|arm64) ;; *) echo "Unsupported architecture: $arch" >&2; exit 1 ;; esac
+  sudo apt-get update
+  sudo apt-get install -y ca-certificates curl gnupg
+  work_dir="$(mktemp -d)"
+  trap 'rm -rf -- "$work_dir"' EXIT
+  curl --fail --location https://flashdatadev.github.io/apt/flashdata.asc --output "$work_dir/flashdata.asc"
+  expected=19F337AC01C5F5B646A5583A04C7934A11D38FFA
+  actual="$(gpg --batch --show-keys --with-colons "$work_dir/flashdata.asc" 2>/dev/null | awk -F: '$1 == "fpr" { print $10; exit }')"
+  test "$actual" = "$expected"
+  sudo install -d -m 0755 /etc/apt/keyrings
+  sudo install -m 0644 "$work_dir/flashdata.asc" /etc/apt/keyrings/flashdata.asc
+  sudo tee /etc/apt/sources.list.d/flashdata.sources >/dev/null <<EOF
+Types: deb
+URIs: https://flashdatadev.github.io/apt/
+Suites: stable
+Components: main
+Architectures: $arch
+Signed-By: /etc/apt/keyrings/flashdata.asc $expected
+EOF
+  sudo tee /etc/apt/preferences.d/flashdata >/dev/null <<'EOF'
+Package: flashdata
+Pin: release o=FlashData
+Pin-Priority: 500
+
+Package: *
+Pin: release o=FlashData
+Pin-Priority: -1
+EOF
+  sudo apt-get update
+  sudo apt-get install -y flashdata
+  flashdata --version
+  flashdata --help
+)
+```
+
+专用证书指纹为 `19F337AC01C5F5B646A5583A04C7934A11D38FFA`，身份为 `FlashData APT Signing <support@flashdata.dev>`；可对照[公钥记录](https://github.com/flashdatadev/apt/tree/main/keys)核验。请勿禁用签名或有效期检查，也不要将此公钥添加到 APT 全局信任密钥环。
+
+新的 CLI 版本或打包修订发布后，可运行以下命令升级：
+
+```bash
+sudo apt-get update
+sudo apt-get install --only-upgrade flashdata
+flashdata --version
+```
+
+查看软件包版本及附带示例/文档：
+
+```bash
+dpkg-query -W -f='${Version}\n' flashdata
+apt-cache policy flashdata
+ls /usr/share/doc/flashdata/examples
+ls /usr/share/doc/flashdata/docs
+man flashdata
+```
+
+卸载命令：
+
+```bash
+sudo apt-get remove flashdata
+```
+
+卸载或清除软件包不会撤销密钥，也不会删除用户配置或执行历史。如需移除保存的凭据，请先为对应配置运行 `flashdata auth logout`。如需同时移除软件源配置：
+
+```bash
+sudo rm -f /etc/apt/sources.list.d/flashdata.sources /etc/apt/preferences.d/flashdata /etc/apt/keyrings/flashdata.asc
+sudo apt-get update
+```
+
+从 Homebrew 或手动归档安装迁移时，请检查 `command -v flashdata`：PATH 中靠前的旧版本可能遮蔽 `/usr/bin/flashdata`。卸载/移走旧可执行文件或调整 PATH，再重启终端或执行 `hash -r`；保留 CLI 状态目录。[APT 维护与验证说明](https://github.com/flashdatadev/apt/blob/main/docs/maintaining.md)介绍了签名有效期和升级测试。
+
 ## Homebrew（Linux 和 macOS）
 
 先安装 [Homebrew](https://brew.sh) 并按提示配置 PATH，然后使用 [FlashData 官方软件源](https://github.com/flashdatadev/homebrew-tap)：
