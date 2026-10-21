@@ -2,9 +2,9 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-## 1.0.0 — GitHub Release draft
+## 1.0.0
 
-Standalone CLI on the Go SDK; protocol-2 onboarding and fresh-process installation; native DPAPI/Keychain/Secret Service or explicit protected files; profiles and atomic/locked state; query/search/YouTube, async/batch and complete bulk workflows; durable run recovery; account/source discovery; diagnostics; legacy migration; English/简体中文 docs; offline tests and local archives/checksums. Tagged source version with an unpublished GitHub Release draft; no backend deployment.
+Standalone CLI on the Go SDK; protocol-2 onboarding and fresh-process installation; native DPAPI/Keychain/Secret Service or explicit protected files; profiles and atomic/locked state; query/search/YouTube, async/batch and complete bulk workflows; durable run recovery; account/source discovery; diagnostics; legacy migration; English/简体中文 docs; offline tests and local archives/checksums. Formal GitHub Release with five platform archives, current English/Chinese installation docs, release notes, build report and checksums; no backend deployment.
 
 Local review fixes preserve saved credentials under environment overrides and same-key imports; retain recurring policy during recovery; preserve valid public schemas; avoid per-item identity reads in batches; retain batch IDs after commit errors; protect Windows outputs from creation; enforce private credential-bearing inputs; recover large journals; refresh bulk stages and remove spent capabilities; and make migration retries safe. Added direct backend-contract checks, all-source example coverage, manual bulk JSON inputs and matching English/Chinese instructions.
 

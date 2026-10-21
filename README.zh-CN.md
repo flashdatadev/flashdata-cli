@@ -1,10 +1,31 @@
 # FlashData CLI
 
-[English](README.md) · [FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [价格](https://flashdata.dev/pricing)
+[English](README.md) · [FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [价格](https://flashdata.dev/pricing) · [v1.0.0 正式版](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0)
 
 面向开发者、编程代理和个人代理的独立 `flashdata` 可执行程序。[FlashData](https://flashdata.dev) 提供结构化 Google 搜索、YouTube 数据、已有转录/字幕、后台任务及客户存储媒体交付。CLI 基于 Go SDK，负责安全配置、可恢复接入、持久化执行记录和流式 Bulk 导出。
 
-**版本 1.0.0。** `v1.0.0` 源码标签标识此版本。GitHub Release 安装包正在以未发布草稿形式准备；本次不包含后端部署。 支持 Linux amd64/arm64、macOS Intel/Apple Silicon、Windows amd64。安装二进制后不需要 Node.js、Python、npm、Docker 或单独的 Go 运行时；源码开发需要 Go 1.25+。
+**版本 1.0.0。** 可从 [v1.0.0 正式版](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0)下载即用型可执行程序。 支持 Linux amd64/arm64、macOS Intel/Apple Silicon、Windows amd64。安装二进制后不需要 Node.js、Python、npm、Docker 或单独的 Go 运行时；源码开发需要 Go 1.25+。
+
+## 安装 v1.0.0
+
+下载与操作系统和 CPU 匹配的安装包，无需安装 Go。
+
+| 平台 | 下载 |
+| --- | --- |
+| Linux amd64 | [flashdata_1.0.0_linux_amd64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_linux_amd64.tar.gz) |
+| Linux arm64 | [flashdata_1.0.0_linux_arm64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_linux_arm64.tar.gz) |
+| macOS Intel | [flashdata_1.0.0_darwin_amd64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_darwin_amd64.tar.gz) |
+| macOS Apple Silicon | [flashdata_1.0.0_darwin_arm64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_darwin_arm64.tar.gz) |
+| Windows amd64 | [flashdata_1.0.0_windows_amd64.zip](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_windows_amd64.zip) |
+
+先对照 [SHA256SUMS](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/SHA256SUMS) 校验下载文件，再解压并将可执行程序放入 PATH 目录。[安装指南](docs/installation.zh-CN.md)提供可直接运行的 Linux/macOS 与 Windows 命令，包含校验和验证及 PATH 设置。
+
+```bash
+flashdata --version
+flashdata --help
+```
+
+正式版本还提供[版本说明](docs/release-notes-1.0.0.md)、构建记录及中英文 README。
 
 ## 从源码构建
 
@@ -27,7 +48,7 @@ go build -trimpath -o dist/flashdata.exe ./cmd/flashdata
 .\dist\flashdata.exe --help
 ```
 
-将匹配平台的可执行文件复制到用户自有的 PATH 目录，命名为 `flashdata`，Windows 使用 `flashdata.exe`。本地打包脚本生成归档和 SHA-256 校验文件，不上传任何内容。GitHub Release 保持草稿，附件二进制暂不提供公开下载，详见[发布准备](docs/releases.md)。
+将匹配平台的可执行文件复制到用户自有的 PATH 目录，命名为 `flashdata`，Windows 使用 `flashdata.exe`。本地打包脚本生成归档和 SHA-256 校验文件，不上传任何内容。GitHub Release 的正式安装包可公开下载，无需登录，详见[发布准备](docs/releases.md)。
 
 ## 已有账户：导入 API 密钥
 

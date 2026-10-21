@@ -1,10 +1,31 @@
 # FlashData CLI
 
-[简体中文](README.zh-CN.md) · [FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [Pricing](https://flashdata.dev/pricing)
+[简体中文](README.zh-CN.md) · [FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [Pricing](https://flashdata.dev/pricing) · [Release v1.0.0](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0)
 
 A standalone `flashdata` executable for developers, coding agents and personal agents. [FlashData](https://flashdata.dev) provides structured Google search and YouTube data, existing transcripts/captions, background processing and customer-storage media delivery. This CLI is built on the Go SDK and adds secure profiles, recoverable onboarding, durable run IDs and streaming bulk exports.
 
-**Version 1.0.0.** The `v1.0.0` source tag identifies this version. GitHub Release packages are being prepared as an unpublished draft; no backend deployment is included. The five supported targets are Linux amd64/arm64, macOS Intel/Apple Silicon, and Windows amd64. Installed binaries require no Node.js, Python, npm, Docker or separate Go installation. Source development requires Go 1.25+.
+**Version 1.0.0.** Download ready-to-run executables from the [official v1.0.0 release](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0). The five supported targets are Linux amd64/arm64, macOS Intel/Apple Silicon, and Windows amd64. Installed binaries require no Node.js, Python, npm, Docker or separate Go installation. Source development requires Go 1.25+.
+
+## Install v1.0.0
+
+Download the archive for your operating system and CPU. No Go installation is needed.
+
+| Platform | Download |
+| --- | --- |
+| Linux amd64 | [flashdata_1.0.0_linux_amd64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_linux_amd64.tar.gz) |
+| Linux arm64 | [flashdata_1.0.0_linux_arm64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_linux_arm64.tar.gz) |
+| macOS Intel | [flashdata_1.0.0_darwin_amd64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_darwin_amd64.tar.gz) |
+| macOS Apple Silicon | [flashdata_1.0.0_darwin_arm64.tar.gz](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_darwin_arm64.tar.gz) |
+| Windows amd64 | [flashdata_1.0.0_windows_amd64.zip](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/flashdata_1.0.0_windows_amd64.zip) |
+
+Verify the download against [SHA256SUMS](https://github.com/flashdatadev/flashdata-cli/releases/download/v1.0.0/SHA256SUMS), extract it and place the executable in a directory on PATH. The [installation guide](docs/installation.md) provides copy-and-run Linux/macOS and Windows instructions, including checksum verification and PATH setup.
+
+```bash
+flashdata --version
+flashdata --help
+```
+
+The release also includes [release notes](docs/release-notes-1.0.0.md), a build report and English/Chinese READMEs.
 
 ## Build from source
 
@@ -27,7 +48,7 @@ go build -trimpath -o dist/flashdata.exe ./cmd/flashdata
 .\dist\flashdata.exe --help
 ```
 
-Copy the matching executable from `dist/binaries` or a locally generated archive into a user-owned directory on PATH, naming it `flashdata` (`flashdata.exe` on Windows). No service or runtime installation is required. [Release preparation](docs/releases.md) describes archives, SHA-256 checksums and OS verification; the GitHub Release stays a draft, so its attached binaries are not public downloads yet.
+Copy the matching executable from `dist/binaries` or a locally generated archive into a user-owned directory on PATH, naming it `flashdata` (`flashdata.exe` on Windows). No service or runtime installation is required. [Release preparation](docs/releases.md) describes archives, SHA-256 checksums and OS verification; official release packages can be downloaded without signing in.
 
 ## Existing account: import a key
 
