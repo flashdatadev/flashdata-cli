@@ -1,0 +1,13 @@
+# Changelog
+
+[FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
+
+## 1.0.0 — unreleased candidate
+
+Standalone CLI on the Go SDK; protocol-2 onboarding and fresh-process installation; native DPAPI/Keychain/Secret Service or explicit protected files; profiles and atomic/locked state; query/search/YouTube, async/batch and complete bulk workflows; durable run recovery; account/source discovery; diagnostics; legacy migration; English/简体中文 docs; offline tests and local archives/checksums. Unpublished and undeployed.
+
+Local review fixes preserve saved credentials under environment overrides and same-key imports; retain recurring policy during recovery; preserve valid public schemas; avoid per-item identity reads in batches; retain batch IDs after commit errors; protect Windows outputs from creation; enforce private credential-bearing inputs; recover large journals; refresh bulk stages and remove spent capabilities; and make migration retries safe. Added direct backend-contract checks, all-source example coverage, manual bulk JSON inputs and matching English/Chinese instructions.
+
+Final joint check: retained candidate recovery IDs across SDK/CLI wire errors; partial-export errors; lost ACK/start recovery and spent upload cleanup; generation consistency; reviewed package manifests, deterministic archives, dependency notices and reproducible package checks. Source is hosted on GitHub; no version tag, GitHub Release or backend deployment is created by the source push.
+
+Source publication removes the sibling SDK replacement, pins a public SDK commit and checksum, and makes CI and archive builds resolve that exact module independently.

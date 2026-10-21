@@ -1,0 +1,9 @@
+/dist/
+/.cache/
+.env
+*.job.json
+*.jsonl
+coverage.out
+/storage.json
+__pycache__/
+*.pyc

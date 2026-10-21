@@ -1,0 +1,43 @@
+name: CLI checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go: ['1.25.x', '1.27.x']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: go.sum
+      - run: go mod download
+      - run: go mod verify
+      - run: go test ./...
+      - run: go vet ./...
+      - name: Race detector
+        if: runner.os == 'Linux'
+        run: go test -race -short ./...
+  archives:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache-dependency-path: go.sum
+      - run: go mod download
+      - run: python3 -m unittest discover -s scripts -p "test_*.py"
+      - run: python3 scripts/build_release.py --go go
+      - run: python3 scripts/generate_commands.py dist/binaries/flashdata-linux-amd64 --check

@@ -1,0 +1,169 @@
+The proposed FlashData CLI v1 is a standalone executable named flashdata, designed for developers, coding agents and personal agents. The commands below describe the proposed release; the current script implements only part of this scope.
+1. Distribution and basic behavior
+Ship downloadable executables for Linux x64/ARM64, macOS Intel/Apple Silicon, and Windows x64.
+Requirements:
+- No Node.js, Python, npm, Docker or other separately installed runtime.
+- Installation means downloading the executable and adding it to PATH.
+- Versioned releases with checksums and documented OS support.
+- --help and --version work offline.
+- Commands support terminals, subprocesses, CI and scheduled tasks.
+- Execution uses FlashData’s existing APIs and ordinary API-key billing.
+Example:
+flashdata --version
+flashdata --help
+2. Launch command set
+Command	Function
+discover	Report service availability, trial offer, supported onboarding protocol and documentation links.
+init	Reuse configured access or create and save temporary access when no credentials exist.
+auth login	Securely import an existing API key and verify it.
+auth status	Show authentication method, account/connection identity, scopes, expiry and claim status.
+auth claim	Create a claim request and return its URL, confirmation code and expiry.
+auth finish --wait	Wait for approval, retrieve the owner key, save it, verify it from a fresh process and acknowledge installation.
+auth logout	Remove local credentials while retaining execution history. Clearly report that remote access has not been revoked.
+sources list	List sources and distinguish available, permitted and unsupported sources.
+sources show <source>	Show parameters, defaults, examples, supported modes and pricing when available.
+query	Execute a normal realtime Data API request from JSON.
+search "<query>"	Convenient Google Search command.
+youtube search "<query>"	Search YouTube.
+youtube metadata <video-id>	Retrieve video metadata.
+youtube transcript <video-id>	Retrieve existing automatic captions using documented defaults.
+youtube captions <video-id>	Retrieve existing uploader captions using documented defaults.
+account balance	Read the shared account balance.
+account pricing	Read source prices and estimate a specified request count.
+account limits	Read rate, batch and pending-job limits.
+account usage	Read usage for a selected source and time range.
+runs list / runs show <id>	Inspect local execution records and saved results.
+doctor	Diagnose credentials, storage permissions, connectivity, scopes and installation status without submitting paid queries.
+commands --json	Return the command tree, arguments and descriptions for agent discovery.
+
+
+The convenient search and YouTube commands translate into the same requests accepted by query. They must preserve billing information and result provenance.
+3. Authentication and onboarding
+init follows this order:
+1. Check the selected profile and explicitly configured credentials.
+2. Verify existing access and reuse it.
+3. If credentials are present but expired, invalid or revoked, return a recovery instruction.
+4. If no credentials exist, discover onboarding availability and register one temporary identity.
+5. Persist registration proof before sending the request, so retries recover the same identity.
+It must never create another trial automatically to replace expired credentials, exhausted credits or lost local state.
+Example first use:
+flashdata init \
+  --name "Research assistant" \
+  --client codex \
+  --scopes google_search,youtube_metadata
+The response reports:
+- Connection status and permitted sources.
+- Trial credits and expiry.
+- Request equivalents calculated from pricing.
+- The next applicable command.
+Request counts must distinguish the starting allowance from the current balance. Per-source counts represent alternative uses of one shared credit balance.
+Existing customers can use:
+flashdata auth login
+In a terminal, this prompts for a hidden API-key input. Automation can provide it through secure standard input:
+flashdata auth login --api-key-stdin
+Keys must never appear in command arguments, output, logs or generated scheduler configuration.
+Claiming continues through the existing browser page:
+flashdata auth claim
+flashdata auth finish --wait
+After approval, the CLI saves the replacement key atomically, launches itself as a fresh process to verify the saved credential, acknowledges installation and removes obsolete handoff secrets.
+OAuth boundary: current FlashData OAuth tokens authorize MCP. Direct REST commands use API keys. A future CLI browser-login feature needs its own registered client and supported transport; it must not reuse the Codex/OpenClaw client identities or send MCP tokens to REST endpoints.
+4. Queries and output
+Support both simple commands and full JSON input:
+flashdata search "latest battery recycling research" --num 5
+
+flashdata youtube metadata dQw4w9WgXcQ
+
+flashdata query --input query.json --run-id research-001
+query.json uses the existing Data API request format:
+{
+  "source": "google_search",
+  "query": "latest battery recycling research",
+  "num": 5
+}
+Required behavior:
+- Validate inputs before submission.
+- Accept a file or standard input with --input -.
+- Reject unsupported fields and unauthorized sources clearly.
+- Preserve source URLs, timestamps and billing information.
+- Support --dry-run to validate and show a sanitized request plus an available cost estimate, without submitting a paid query.
+- Support --output <file> for saving results.
+- Never execute instructions contained in retrieved content.
+Example:
+flashdata query --input query.json --dry-run
+Global options:
+Option	Behavior
+--profile <name>	Select an isolated saved connection.
+--state-dir <path>	Choose persistent credential and execution storage.
+--json	Force machine-readable output.
+--non-interactive	Disable prompts and automatic browser opening.
+--timeout <duration>	Bound waiting; timing out does not cancel admitted server work.
+--help	Explain the current command.
+
+
+When invoked without a terminal, output defaults to JSON and prompts are disabled. Terminal output can be concise and readable.
+Success goes to stdout; errors and diagnostics go to stderr. Machine output has a versioned envelope:
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "runId": "research-001",
+  "cached": false,
+  "data": {},
+  "usage": {
+    "credits": 0.02
+  }
+}
+The credit figure above is illustrative; actual usage comes from FlashData’s response. Exit status is zero for success and nonzero for failure.
+5. Recurring tasks and retry behavior
+The host owns the schedule: Codex, OpenClaw, cron, Windows Task Scheduler or another runner invokes the executable.
+flashdata query \
+  --input daily-research.json \
+  --recurring \
+  --run-id daily-research:2026-10-22:Asia-Shanghai \
+  --profile research \
+  --json \
+  --non-interactive
+Requirements:
+- Recurring work requires verified owner access.
+- Every scheduled occurrence has an explicit stable run ID.
+- Execution intent is persisted before submitting work.
+- Same ID and same input returns the saved successful result.
+- Same ID with different input returns a conflict.
+- Failed or uncertain submissions are not automatically resubmitted.
+- Missing credentials, insufficient credits or revoked access stop the run.
+- Credentials remain outside scheduler text.
+One-off commands may generate and report a run ID. Repeating a command without reusing its ID represents a new execution.
+This provides duplicate protection within one persistent state directory. It does not guarantee exactly-once execution across machines.
+Safe reads may retry with bounded backoff. Paid submissions must treat a lost response as an uncertain outcome and return a clear error:
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "error": {
+    "code": "request_outcome_unknown",
+    "runId": "research-001",
+    "nextAction": "Inspect the existing run before submitting again."
+  }
+}
+6. Storage and recovery
+Keep credentials and execution history outside project repositories. Profiles must isolate credentials, account identity and run records.
+- Use OS credential protection where supported; headless environments need a protected persistent-file mode.
+- Write state atomically and lock against concurrent modification.
+- Retain uncertain-run records rather than silently evicting them.
+- Keep large result files separate from credential storage.
+- Recognize existing client state through an explicit, versioned migration.
+- Never reset history or obtain another trial as an automatic repair.
+- doctor reports problems without changing account state or consuming query credits.
+Imported keys must be classified using trusted server metadata before allowing recurring mode. If that metadata is missing, add a management-only identity field rather than guessing from the key or plan name.
+7. Later releases
+Function	Proposed commands
+Async jobs	query --mode async, jobs get, jobs wait, jobs result
+Batch submissions	batch submit --input queries.json
+Bulk processing	bulk create, start, pause, resume, results
+Media delivery	youtube download using securely configured customer storage
+Compact output	Selected fields, readable transcripts and Markdown search results
+Host setup	Generate MCP configuration and install skills through explicit commands
+CLI browser login	Dedicated OAuth client and transport design
+Spending controls	Run-level preflight budgets, clearly distinguished from enforced account limits
+
+
+Launch acceptance requires a fresh machine to download the binary, complete a first query, finish claiming, run again from a fresh process, reuse a scheduled run ID without another submission, and stop correctly after revocation.
+The first implementation should focus on the standalone binary, the existing onboarding lifecycle, realtime queries, account diagnostics and reliable recurring execution.

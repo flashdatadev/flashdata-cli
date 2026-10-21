@@ -1,0 +1,8 @@
+{
+  "storage_type":"s3",
+  "storage_url":"YOUR_BUCKET_NAME",
+  "region":"us-east-1",
+  "access_key":"YOUR_STORAGE_ACCESS_KEY",
+  "secret_key":"YOUR_STORAGE_SECRET_KEY",
+  "object_prefix":"flashdata/audio"
+}
