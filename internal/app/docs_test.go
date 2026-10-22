@@ -106,7 +106,13 @@ func TestReadmeWorkflows(t *testing.T) {
 		t.Fatal(err)
 	}
 	blocks := regexp.MustCompile("(?s)```([^\\n]*)\\n(.*?)```").FindAllStringSubmatch(string(raw), -1)
-	dir := filepath.Join(t.TempDir(), "work")
+	// macOS temporary directories can be reached through /var -> /private/var.
+	// The private writer requires a canonical parent, just like state.New uses.
+	base, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(base, "work")
 	for _, block := range blocks {
 		var name string
 		switch block[1] {
