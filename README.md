@@ -6,6 +6,22 @@
 
 No application code is required. Commands return JSON, bulk jobs export JSONL, and saved run IDs let scripts recover accepted work after an interruption.
 
+## Choose a workflow
+
+| What you want to build | Start here |
+| --- | --- |
+| Web context and source links for an AI assistant | [Google search](#search-the-web-for-research-or-ai-context) |
+| Industry research or news monitoring | [News search](#search-the-web-for-research-or-ai-context) |
+| Video discovery for a topic or learning resource | [YouTube search](#find-youtube-videos-and-collect-their-data) |
+| Video analytics and catalog enrichment | [Video metadata](#find-youtube-videos-and-collect-their-data) |
+| Text for video summaries, search or retrieval | [Existing transcripts](#find-youtube-videos-and-collect-their-data) |
+| A dataset from a list of video IDs | [Bulk metadata export](#build-a-video-dataset-with-one-bulk-command) |
+| Audio or video files delivered to your own cloud bucket | [Bulk media download](#complete-bulk-workflow) |
+| Continue an interrupted bulk job | [Recovery](#recover-interrupted-work) |
+
+The examples collect data; your application provides summarization, indexing, scheduling
+and AI model calls.
+
 ## Get started
 
 On macOS or Linux with [Homebrew](https://brew.sh):
@@ -70,6 +86,12 @@ flashdata youtube transcript dQw4w9WgXcQ --language en --output transcript.json
 ```
 
 Use a video ID from the search results in place of `dQw4w9WgXcQ`. Transcript availability depends on the video's existing language tracks; this does not transcribe arbitrary audio. Use `youtube captions` to request an existing manual caption track instead.
+
+**Read an existing uploaded caption track:**
+
+```bash
+flashdata youtube captions dQw4w9WgXcQ --language en --output captions.json
+```
 
 `--json` writes a machine-readable response to stdout; `--output FILE` saves the result. Choose a new output filename for each export: existing files are never overwritten.
 
@@ -137,6 +159,27 @@ The command creates, uploads, starts, waits and exports. Check `audio-receipts.j
 flashdata youtube download dQw4w9WgXcQ --storage-config storage.json --format mp3 --wait --timeout 30m --output audio-delivery.json
 ```
 
+### Deliver MP4 video to your cloud bucket
+
+Use the same `ids.txt` and private `storage.json`, and create `video-options.json`:
+
+```json
+{"download_type":"audio_video","video_quality":"<=720","output_format":"mp4"}
+```
+
+On Linux/macOS, restrict the options file first:
+
+```bash
+chmod 600 video-options.json
+```
+
+```bash
+flashdata bulk run --source youtube_download --input ids.txt --storage-config storage.json --options video-options.json --run-id video-bulk-001 --timeout 1h --output video-receipts.jsonl
+```
+
+Video files go to the bucket; per-video delivery outcomes go to `video-receipts.jsonl`.
+On Windows, apply the same private ACL requirements as for the audio options file.
+
 ### Recover interrupted work
 
 Keep the same profile and state directory. List saved runs, then recover the accepted bulk job into a fresh output file:
@@ -146,9 +189,28 @@ flashdata runs list
 flashdata runs recover audio-bulk-001 --timeout 1h --output recovered-receipts.jsonl
 ```
 
-Recovery reads the existing job; it does not submit another download. For the metadata dataset above, substitute `video-dataset-001`. If an interruption occurred before upload/start, inspect the run and follow the [bulk recovery guide](docs/bulk.md). A timeout stops local waiting; accepted server work continues.
+Recovery reads the existing job; it does not submit another download. For the metadata dataset above, substitute `video-dataset-001`; for MP4 delivery, use `video-bulk-001`. If an interruption occurred before upload/start, inspect the run and follow the [bulk recovery guide](docs/bulk.md). A timeout stops local waiting; accepted server work continues.
 
 Use a new run ID only when you intend to create a new task. See [run history and recovery](docs/runs.md) for scripts, uncertain submissions and partial exports.
+
+## Supported APIs
+
+| Capability | Commands |
+| --- | --- |
+| Google search, images, news, shopping, videos and places | `search`; `query --input FILE` for all six sources |
+| All nine YouTube sources | `youtube search/metadata/transcript/captions/download`; `query` for extended search, channel, suggestions, license labels and full download inputs |
+| Realtime, background and mixed batches | `query`, `query --mode async`, `batch submit` |
+| Standard jobs | `jobs get`, `jobs wait`, `jobs result` |
+| All five bulk sources and lifecycle/results | `bulk run`, manual `bulk` commands, `runs recover` |
+| Access, balance, prices, limits and usage | `auth status`, `account balance/pricing/limits/usage` |
+| Public source catalog and health | `sources list`, `discover` |
+| Public plan catalog and status (source build of main) | `discover plans`, `discover status` |
+
+The public plan/status commands are new on `main` and require a [source build](CONTRIBUTING.md#build-from-source) until the next binary release. Existing v1.0.0 binaries already support the search, YouTube, batch and bulk workflows above.
+
+All 15 sources support background/batch execution; 14 support realtime. Downloads run in the background and require your cloud storage. Use `sources show SOURCE` for source schemas and a runnable JSON request. The single-video `youtube download` shortcut delivers audio; `query --mode async` and bulk expose the full media source options.
+
+See the [SDK and CLI comparison](docs/sdk-parity.md) and [command reference](docs/commands.md).
 
 ## More workflows
 

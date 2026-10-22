@@ -4,6 +4,8 @@
 
 Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.
 
+This reference describes the current source. `discover plans` and `discover status` require a source build of main until the next binary release; they are not included in the published v1.0.0 binaries.
+
 ## flashdata
 
 FlashData search, YouTube and bulk data workflows
@@ -271,6 +273,18 @@ Usage: `commands`
 Read service health, onboarding capabilities and documentation
 
 Usage: `discover`
+
+## flashdata discover plans
+
+Read the public plan catalog without an API key
+
+Usage: `plans`
+
+## flashdata discover status
+
+Read public service status without an API key
+
+Usage: `status`
 
 ## flashdata doctor
 

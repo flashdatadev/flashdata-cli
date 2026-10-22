@@ -2,6 +2,10 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+## Unreleased
+
+Add English/Chinese workflow selectors, uploaded-caption and MP4 bulk recipes, explicit API coverage and an SDK/CLI comparison. Add public discover plans/status commands on main, with no API key required. These two commands require a source build until the next binary release; published v1.0.0 assets are unchanged.
+
 ## Unreleased packaging
 
 Local `flashdata-cli` 1.0.0 PyPI wheel candidates for Linux amd64/arm64, macOS 13+ Intel/Apple Silicon and Windows amd64, with a dependency-free Python launcher, pinned executable provenance, pip/uv installation checks and English/Chinese installation/build docs. No PyPI/TestPyPI publication or change to existing release binaries/tags.

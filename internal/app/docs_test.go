@@ -128,6 +128,9 @@ func TestReadmeWorkflows(t *testing.T) {
 				name = "storage.json"
 			case fields["download_type"] != nil:
 				name = "audio-options.json"
+				if fields["video_quality"] != nil {
+					name = "video-options.json"
+				}
 			default:
 				t.Fatal("README JSON needs an associated runnable workflow")
 			}
@@ -195,7 +198,7 @@ func TestReadmeWorkflows(t *testing.T) {
 		}
 	}
 	stats := mock.stats()
-	if commands == 0 || outputs == 0 || stats.CreateCount != 2 || stats.UploadCount != 2 || stats.StartCount != 2 {
-		t.Fatalf("README did not exercise both complete bulk workflows and recovery: commands=%d outputs=%d stats=%+v", commands, outputs, stats)
+	if commands == 0 || outputs == 0 || stats.CreateCount != 3 || stats.UploadCount != 3 || stats.StartCount != 3 {
+		t.Fatalf("README did not exercise metadata, MP3, MP4 and recovery: commands=%d outputs=%d stats=%+v", commands, outputs, stats)
 	}
 }

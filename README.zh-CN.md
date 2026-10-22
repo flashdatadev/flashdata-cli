@@ -6,6 +6,21 @@
 
 无需编写应用代码。命令返回 JSON，批量任务导出 JSONL；保存的运行 ID 可以帮助脚本在中断后恢复已受理的任务。
 
+## 按使用场景选择工作流
+
+| 想要构建的功能 | 从这里开始 |
+| --- | --- |
+| 为 AI 助手提供网页上下文和来源链接 | [Google 搜索](#搜索网页用于研究或-ai-上下文) |
+| 行业研究或新闻监控 | [新闻搜索](#搜索网页用于研究或-ai-上下文) |
+| 按主题发现视频或学习资源 | [YouTube 搜索](#查找-youtube-视频并获取数据) |
+| 视频分析和内容目录补全 | [视频元数据](#查找-youtube-视频并获取数据) |
+| 为视频摘要、搜索或检索获取文本 | [已有字幕文本](#查找-youtube-视频并获取数据) |
+| 根据一组视频 ID 构建数据集 | [批量元数据导出](#一条批量命令构建视频数据集) |
+| 将音频或视频交付到自己的云存储桶 | [批量媒体下载](#完整批量工作流) |
+| 继续中断的批量任务 | [恢复任务](#恢复中断的任务) |
+
+以下示例负责获取数据；摘要、检索索引、调度和 AI 模型调用由应用实现。
+
 ## 快速开始
 
 在已安装 [Homebrew](https://brew.sh) 的 macOS 或 Linux 上运行：
@@ -70,6 +85,12 @@ flashdata youtube transcript dQw4w9WgXcQ --language en --output transcript.json
 ```
 
 将 `dQw4w9WgXcQ` 替换为搜索结果中的视频 ID。字幕能否获取取决于该视频已有的语言轨道；此功能不会将任意音频转写为文字。如需已有的人工字幕轨道，使用 `youtube captions`。
+
+**读取已有的人工字幕轨道：**
+
+```bash
+flashdata youtube captions dQw4w9WgXcQ --language en --output captions.json
+```
 
 `--json` 将机器可读响应写到标准输出；`--output FILE` 将结果保存为文件。每次导出请使用新的文件名：已有文件不会被覆盖。
 
@@ -137,6 +158,27 @@ flashdata bulk run --source youtube_download --input ids.txt --storage-config st
 flashdata youtube download dQw4w9WgXcQ --storage-config storage.json --format mp3 --wait --timeout 30m --output audio-delivery.json
 ```
 
+### 将 MP4 视频交付到云存储桶
+
+使用相同的 `ids.txt` 和私有 `storage.json`，创建 `video-options.json`：
+
+```json
+{"download_type":"audio_video","video_quality":"<=720","output_format":"mp4"}
+```
+
+Linux/macOS 上先限制文件权限：
+
+```bash
+chmod 600 video-options.json
+```
+
+```bash
+flashdata bulk run --source youtube_download --input ids.txt --storage-config storage.json --options video-options.json --run-id video-bulk-001 --timeout 1h --output video-receipts.jsonl
+```
+
+视频文件写入存储桶，逐视频交付状态写入 `video-receipts.jsonl`。
+Windows 上应使用与音频选项文件相同的私有 ACL。
+
 ### 恢复中断的任务
 
 保持相同的配置和状态目录。列出保存的运行记录，然后将已受理的批量任务恢复到一个新的输出文件：
@@ -146,9 +188,29 @@ flashdata runs list
 flashdata runs recover audio-bulk-001 --timeout 1h --output recovered-receipts.jsonl
 ```
 
-恢复操作读取原有任务，不会提交另一次下载。恢复上面的元数据任务时，将运行 ID 换为 `video-dataset-001`。如果在上传或启动之前中断，请检查运行记录并遵循[批量恢复指南](docs/bulk.md)。超时只会停止本地等待，已受理的服务端任务仍会继续。
+恢复操作读取原有任务，不会提交另一次下载。恢复上面的元数据任务时，将运行 ID 换为 `video-dataset-001`；恢复 MP4 交付时使用 `video-bulk-001`。如果在上传或启动之前中断，请检查运行记录并遵循[批量恢复指南](docs/bulk.md)。超时只会停止本地等待，已受理的服务端任务仍会继续。
 
 只有打算创建新任务时才使用新的运行 ID。脚本、结果不确定的提交和部分导出的说明见[运行历史与恢复](docs/runs.md)。
+
+## 支持的 API
+
+| 能力 | 命令 |
+| --- | --- |
+| Google 搜索、图片、新闻、购物、视频和地点 | `search`；全部六个来源均可使用 `query --input FILE` |
+| 全部九个 YouTube 来源 | `youtube search/metadata/transcript/captions/download`；扩展搜索、频道、建议、许可标签和完整下载输入使用 `query` |
+| 实时、后台和混合批次 | `query`、`query --mode async`、`batch submit` |
+| 普通后台任务 | `jobs get`、`jobs wait`、`jobs result` |
+| 全部五个批量来源、任务控制和结果 | `bulk run`、手动 `bulk` 命令、`runs recover` |
+| 访问权限、余额、定价、限制和用量 | `auth status`、`account balance/pricing/limits/usage` |
+| 公共来源目录和健康状态 | `sources list`、`discover` |
+| 公共套餐目录和服务状态（main 源码构建） | `discover plans`、`discover status` |
+
+公共套餐/状态命令是 `main` 上的新功能，在下一次二进制发布前需[从源码构建](CONTRIBUTING.md#build-from-source)。现有 v1.0.0 二进制已支持上面的搜索、YouTube、批次和批量工作流。
+
+全部 15 个来源支持后台/批次执行，其中 14 个支持实时请求。下载在后台运行，需要自己的云存储。
+通过 `sources show SOURCE` 查看来源模式和可运行 JSON 请求。单视频 `youtube download` 快捷命令面向音频；`query --mode async` 和批量任务支持完整的媒体来源选项。
+
+参阅[各 SDK 与 CLI 对比（英文）](docs/sdk-parity.md)和[命令参考](docs/commands.md)。
 
 ## 更多工作流
 

@@ -109,6 +109,18 @@ func (m *mockAPI) handler(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/v2/health":
 		send(w, map[string]any{"status": "healthy", "service": "flashdata-api", "version": "test"})
+	case "/v2/plans":
+		if key != "" {
+			w.WriteHeader(400)
+			return
+		}
+		send(w, map[string]any{"currency": "USD", "data": []any{}})
+	case "/v2/status":
+		if key != "" {
+			w.WriteHeader(400)
+			return
+		}
+		send(w, map[string]any{"status": "operational"})
 	case "/v2/catalog/sources":
 		data := []any{}
 		for _, s := range sourceList {
@@ -309,6 +321,21 @@ func stateStore(t *testing.T, root string) *state.Store {
 		t.Fatal(err)
 	}
 	return s
+}
+
+func TestPublicPlansAndStatusNeedNoLogin(t *testing.T) {
+	t.Setenv("FLASHDATA_API_KEY", "fd_must_not_reach_public_routes")
+	mock, server := fixture(t)
+	root := filepath.Join(t.TempDir(), "state")
+	for _, item := range []struct{ command, expected string }{{"plans", `"currency":"USD"`}, {"status", `"status":"operational"`}} {
+		code, out, stderr := invoke(t, root, server.URL, "", "discover", item.command)
+		if code != 0 || !strings.Contains(out, item.expected) {
+			t.Fatal(item.command, out, stderr)
+		}
+	}
+	if mock.stats().AccessReads != 0 || mock.stats().IdentityReads != 0 {
+		t.Fatal("public discovery unexpectedly checked authenticated access")
+	}
 }
 
 func TestOfflineHelpVersionAndCommands(t *testing.T) {

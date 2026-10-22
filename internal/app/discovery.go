@@ -44,6 +44,29 @@ func (a *App) addDiscovery() {
 		}
 		return a.success(map[string]any{"service": health, "onboarding": capabilities, "onboardingAvailable": capErr == nil && capabilities.Available, "docs": "https://flashdata.dev/docs", "account": "https://flashdata.dev", "queryProtocol": "api_key", "oauthBoundary": "MCP OAuth tokens are not REST API keys."}, "", false, nil)
 	}
+	for _, item := range []struct {
+		name, description string
+		read              func(context.Context, *fd.Client) (any, error)
+	}{
+		{"plans", "Read the public plan catalog without an API key", func(ctx context.Context, c *fd.Client) (any, error) { return c.Public.Plans(ctx) }},
+		{"status", "Read public service status without an API key", func(ctx context.Context, c *fd.Client) (any, error) { return c.Public.Status(ctx) }},
+	} {
+		cmd := &cobra.Command{Use: item.name, Short: item.description, Args: cobra.NoArgs}
+		cmd.RunE = func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := a.context(cmd)
+			defer cancel()
+			c, err := a.discoveryClient(ctx)
+			if err != nil {
+				return err
+			}
+			value, err := item.read(ctx, c)
+			if err != nil {
+				return err
+			}
+			return a.success(value, "", false, nil)
+		}
+		discover.AddCommand(cmd)
+	}
 	a.Root.AddCommand(discover)
 	sources := &cobra.Command{Use: "sources", Short: "Discover available, permitted and CLI-supported sources"}
 	a.Root.AddCommand(sources)
