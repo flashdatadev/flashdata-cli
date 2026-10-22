@@ -2,6 +2,10 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+## Unreleased packaging
+
+Local `flashdata-cli` 1.0.0 PyPI wheel candidates for Linux amd64/arm64, macOS 13+ Intel/Apple Silicon and Windows amd64, with a dependency-free Python launcher, pinned executable provenance, pip/uv installation checks and English/Chinese installation/build docs. No PyPI/TestPyPI publication or change to existing release binaries/tags.
+
 ## 1.0.0
 
 Standalone CLI on the Go SDK; protocol-2 onboarding and fresh-process installation; native DPAPI/Keychain/Secret Service or explicit protected files; profiles and atomic/locked state; query/search/YouTube, async/batch and complete bulk workflows; durable run recovery; account/source discovery; diagnostics; legacy migration; English/简体中文 docs; offline tests and local archives/checksums. Formal GitHub Release with five platform archives, current English/Chinese installation docs, release notes, build report and checksums; no backend deployment.

@@ -8,6 +8,22 @@ A standalone `flashdata` executable for developers, coding agents and personal a
 
 ## Install v1.0.0
 
+### Python installers (local candidate)
+
+**PyPI publication is pending.** Local platform wheels support `pip`, `uv pip` and `uv tool`, using the same verified CLI executable. Python 3.10+ is required for this installation route; no Go installation is needed. Build instructions and supported platforms are in the [English guide](docs/python-packaging.md) and [简体中文](docs/python-packaging.zh-CN.md).
+
+After building `dist/wheels`, choose one method from the checkout root. Use an active virtual environment for pip/uv pip:
+
+```bash
+python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+# Or, inside a virtual environment:
+uv pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+# Or, as an isolated CLI tool:
+uv tool install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+```
+
+The installed command is `flashdata`. See [installation, reinstall and removal](docs/installation.md#python-installers-local-candidate). The distribution `flashdata-cli` is separate from the Python SDK `flashdata`; direct registry installation will be available after an authorized PyPI release.
+
 ### Homebrew (Linux and macOS)
 
 With [Homebrew](https://brew.sh) installed and on PATH:

@@ -7,3 +7,6 @@ coverage.out
 /storage.json
 __pycache__/
 *.pyc
+/.venv*/
+/packaging/pypi/.cache/
+/packaging/pypi/dist/

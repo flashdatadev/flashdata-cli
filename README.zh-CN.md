@@ -8,6 +8,22 @@
 
 ## 安装 v1.0.0
 
+### Python 安装器（本地候选包）
+
+**尚未发布到 PyPI。** 本地平台 wheel 支持 `pip`、`uv pip` 和 `uv tool`，使用同一份已核验的 CLI 二进制。这种安装方式需要 Python 3.10+，无需安装 Go。构建说明及平台范围见[英文指南](docs/python-packaging.md)和[简体中文](docs/python-packaging.zh-CN.md)。
+
+构建 `dist/wheels` 后，从仓库根目录任选一种方式。pip/uv pip 需要已激活的虚拟环境：
+
+```bash
+python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+# Or, inside a virtual environment:
+uv pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+# Or, as an isolated CLI tool:
+uv tool install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+```
+
+安装后使用 `flashdata` 命令。[安装、重装与卸载](docs/installation.zh-CN.md#python-安装器本地候选包)介绍了具体操作。发行包 `flashdata-cli` 与 Python SDK `flashdata` 相互独立；经过明确授权的 PyPI 正式发布后才能直接从注册表安装。
+
 ### Homebrew（Linux 和 macOS）
 
 安装 [Homebrew](https://brew.sh) 并配置 PATH 后执行：
