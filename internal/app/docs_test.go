@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/flashdatadev/flashdata-cli/internal/state"
 )
 
 func TestDocumentationLanguagesLinksAndExamples(t *testing.T) {
@@ -92,5 +94,102 @@ func TestDocumentationLanguagesLinksAndExamples(t *testing.T) {
 		if !json.Valid([]byte(read("examples/" + name))) {
 			t.Fatal("invalid example JSON", name)
 		}
+	}
+}
+
+// Execute the README's actual workflow commands and JSON inputs, rather than
+// maintaining a second list of examples that could drift from the public docs.
+func TestReadmeWorkflows(t *testing.T) {
+	t.Setenv("FLASHDATA_API_KEY", "")
+	raw, err := os.ReadFile(filepath.Join("..", "..", "README.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	blocks := regexp.MustCompile("(?s)```([^\\n]*)\\n(.*?)```").FindAllStringSubmatch(string(raw), -1)
+	dir := filepath.Join(t.TempDir(), "work")
+	for _, block := range blocks {
+		var name string
+		switch block[1] {
+		case "json":
+			var fields map[string]json.RawMessage
+			if err := json.Unmarshal([]byte(block[2]), &fields); err != nil {
+				t.Fatal("invalid README JSON", err)
+			}
+			switch {
+			case fields["source"] != nil:
+				name = "news-query.json"
+			case fields["storage_type"] != nil:
+				name = "storage.json"
+			case fields["download_type"] != nil:
+				name = "audio-options.json"
+			default:
+				t.Fatal("README JSON needs an associated runnable workflow")
+			}
+		case "text":
+			name = "ids.txt"
+		default:
+			continue
+		}
+		if err := state.AtomicWrite(filepath.Join(dir, name), []byte(block[2])); err != nil {
+			t.Fatal(err)
+		}
+	}
+	t.Chdir(dir)
+	mock, server := fixture(t)
+	root := filepath.Join(dir, "state")
+	// README examples use only literal words and double-quoted query strings;
+	// reject shell syntax rather than ever executing a reader-provided shell.
+	words := regexp.MustCompile(`"[^"]*"|[^\s"]+`)
+	commands, outputs := 0, 0
+	for _, block := range blocks {
+		if block[1] != "bash" {
+			continue
+		}
+		for _, line := range strings.Split(block[2], "\n") {
+			if !strings.HasPrefix(line, "flashdata ") {
+				continue
+			}
+			if strings.ContainsAny(line, "|><;$`\\") {
+				t.Fatal("README workflow needs a literal command", line)
+			}
+			args := words.FindAllString(strings.TrimPrefix(line, "flashdata "), -1)
+			for i := range args {
+				args[i] = strings.Trim(args[i], `"`)
+			}
+			input := ""
+			if line == "flashdata auth login" {
+				// The test has no terminal. Import the same dummy key through
+				// the documented stdin route instead of the hidden prompt.
+				args = append(args, "--api-key-stdin")
+				input = "fd_owner_offline\n"
+			}
+			code, _, stderr := invoke(t, root, server.URL, input, args...)
+			if code != 0 {
+				t.Fatalf("README command failed: %s\n%s", line, stderr)
+			}
+			commands++
+			for i, arg := range args {
+				if arg != "--output" || i+1 == len(args) {
+					continue
+				}
+				output, err := os.ReadFile(args[i+1])
+				if err != nil || len(output) == 0 {
+					t.Fatal("README command did not save its output", line, err)
+				}
+				for _, row := range strings.Split(strings.TrimSpace(string(output)), "\n") {
+					if strings.HasSuffix(args[i+1], ".jsonl") && !json.Valid([]byte(row)) {
+						t.Fatal("invalid README JSONL export", line)
+					}
+				}
+				if !strings.HasSuffix(args[i+1], ".jsonl") && !json.Valid(output) {
+					t.Fatal("invalid README JSON export", line)
+				}
+				outputs++
+			}
+		}
+	}
+	stats := mock.stats()
+	if commands == 0 || outputs == 0 || stats.CreateCount != 2 || stats.UploadCount != 2 || stats.StartCount != 2 {
+		t.Fatalf("README did not exercise both complete bulk workflows and recovery: commands=%d outputs=%d stats=%+v", commands, outputs, stats)
 	}
 }

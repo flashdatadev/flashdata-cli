@@ -2,6 +2,28 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+## Build from source
+
+With Go 1.25+ installed, clone the repository and build from its root. The Go SDK is resolved automatically from the version pinned in `go.mod`.
+
+```bash
+git clone https://github.com/flashdatadev/flashdata-cli.git
+cd flashdata-cli
+go build -trimpath -o dist/flashdata ./cmd/flashdata
+./dist/flashdata --help
+```
+
+On Windows PowerShell, after cloning and entering the directory:
+
+```powershell
+go build -trimpath -o dist/flashdata.exe ./cmd/flashdata
+.\dist\flashdata.exe --help
+```
+
+To build the published version instead of the latest source, add `--branch v1.0.0 --depth 1` to `git clone`. For normal installation, use the [installation guide](docs/installation.md).
+
+## Development checks
+
 Use Go 1.25+ and run `go mod download` to resolve the SDK revision pinned in `go.mod`; no separate SDK checkout is required. Run `go test ./...`, `go vet ./...`, `gofmt` on changed source, and race tests on a supported host. To develop both repositories together, use an explicit local `go.work` file; archive builds disable workspaces and reject SDK replacements. Do not introduce paid/live tests into the default suite. Preserve proof-before-registration, intent-before-submission, no automatic paid retries, account-bound caches, OS-lock crash safety and fresh-process verification before ACK.
 
 All HTTP/API contract logic belongs in flashdata-go. CLI compatibility normalization, secure storage, profiles, journaling, output and host scheduling boundaries belong here. Update English/Chinese docs and runnable examples together. Publication/deployment is a separate explicit request.
