@@ -29,6 +29,16 @@ sudo apt-get install flashdata
 
 [官方 APT 软件源](https://github.com/flashdatadev/apt)支持 Ubuntu 22.04/24.04 与 Debian 12/13，架构为 amd64/arm64。软件包 **1.0.0-1** 包含 CLI **1.0.0**。配置过程会验证专用签名密钥指纹，并通过 `Signed-By` 限定信任范围。升级、卸载及从其他安装方式迁移的方法见[安装指南](docs/installation.zh-CN.md#aptubuntu-和-debian)。
 
+### RPM（Fedora 和 RHEL）
+
+先完成[签名软件源的一次性配置](docs/installation.zh-CN.md#rpmfedora-和-rhel)，然后安装：
+
+```bash
+sudo dnf --refresh install flashdata
+```
+
+[官方 RPM 软件源](https://github.com/flashdatadev/rpm)提供 x86_64/aarch64 的 **1.0.0-1** 软件包。原生 CI 覆盖 Fedora 43/44，并通过 Red Hat UBI 容器覆盖 RHEL 8/9/10 用户空间。配置过程核对独立 RPM 签名证书的完整指纹，软件包和仓库元数据均有签名。升级、信任机制及从其他安装方式迁移的方法见[安装指南](docs/installation.zh-CN.md#rpmfedora-和-rhel)。
+
 ### 独立安装包
 
 下载与操作系统和 CPU 匹配的安装包，无需安装 Go。

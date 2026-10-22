@@ -29,6 +29,16 @@ sudo apt-get install flashdata
 
 The [official APT repository](https://github.com/flashdatadev/apt) supports Ubuntu 22.04/24.04 and Debian 12/13 on amd64/arm64. Package **1.0.0-1** contains CLI **1.0.0**. Setup verifies the dedicated signing key fingerprint and scopes trust with `Signed-By`. The [installation guide](docs/installation.md#apt-ubuntu-and-debian) also covers upgrades, uninstalling and switching from another installation method.
 
+### RPM (Fedora and RHEL)
+
+Follow the [one-time signed repository setup](docs/installation.md#rpm-fedora-and-rhel), then install:
+
+```bash
+sudo dnf --refresh install flashdata
+```
+
+The [official RPM repository](https://github.com/flashdatadev/rpm) provides **1.0.0-1** for x86_64/aarch64. Native CI covers Fedora 43/44 and RHEL 8/9/10 userspace through Red Hat UBI containers. Setup verifies the dedicated RPM signing certificate's full fingerprint; both RPM packages and repository metadata are signed. See the [installation guide](docs/installation.md#rpm-fedora-and-rhel) for upgrades, trust details and switching from another installation.
+
 ### Standalone downloads
 
 Download the archive for your operating system and CPU. No Go installation is needed.

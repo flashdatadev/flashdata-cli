@@ -84,6 +84,72 @@ sudo apt-get update
 
 When switching from Homebrew or a manual archive, check `command -v flashdata`; an old executable earlier in PATH may hide `/usr/bin/flashdata`. Uninstall/move that old executable or adjust PATH, then restart the shell or run `hash -r`. Preserve your CLI state directory. [APT maintenance and validation](https://github.com/flashdatadev/apt/blob/main/docs/maintaining.md) explains signature freshness and upgrade testing.
 
+## RPM (Fedora and RHEL)
+
+Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.0.0-1** contains the exact official CLI **1.0.0** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
+
+Run this one-time setup in Bash with sudo access. It verifies the full certificate fingerprint, imports the verified certificate and enables both metadata and package signature checks:
+
+```bash
+(
+  set -eu
+  case "$(rpm --eval '%{_arch}')" in
+    x86_64|aarch64) ;;
+    *) echo 'Supported RPM architectures: x86_64, aarch64' >&2; exit 1 ;;
+  esac
+  sudo dnf install -y ca-certificates gnupg2
+  if ! command -v curl >/dev/null 2>&1; then sudo dnf install -y curl; fi
+  work_dir="$(mktemp -d)"
+  trap 'rm -rf -- "$work_dir"' EXIT
+  curl -fsSL https://flashdatadev.github.io/rpm/flashdata.asc -o "$work_dir/flashdata.asc"
+  expected=23AB58683E85FE7236D369713D19EA52D181CC36
+  actual="$(gpg --batch --show-keys --with-colons "$work_dir/flashdata.asc" 2>/dev/null | awk -F: '$1 == "fpr" {print $10; exit}')"
+  test "$actual" = "$expected" || { echo 'FlashData RPM key fingerprint mismatch' >&2; exit 1; }
+  sudo install -d -m 0755 /etc/pki/rpm-gpg
+  sudo install -m 0644 "$work_dir/flashdata.asc" /etc/pki/rpm-gpg/RPM-GPG-KEY-flashdata
+  sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-flashdata
+  sudo tee /etc/yum.repos.d/flashdata.repo >/dev/null <<'EOF'
+[flashdata]
+name=FlashData CLI stable
+baseurl=https://flashdatadev.github.io/rpm/stable/$basearch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-flashdata
+sslverify=1
+includepkgs=flashdata
+metadata_expire=6h
+skip_if_unavailable=0
+EOF
+  sudo dnf -y --refresh install flashdata
+  flashdata --version
+  flashdata --help
+)
+```
+
+The dedicated RSA-4096 certificate fingerprint is `23AB58683E85FE7236D369713D19EA52D181CC36` (`FlashData RPM Signing <support@flashdata.dev>`), separate from APT. Compare with the [public key record](https://github.com/flashdatadev/rpm/tree/main/keys). DNF can request a second import for metadata: its per-repository metadata keyring is separate from the system-wide RPM package key database. RPM certificates are not scoped to one repository. `includepkgs=flashdata` limits packages from this source; keep `gpgcheck=1`, `repo_gpgcheck=1` and HTTPS verification enabled. `metadata_expire` controls cache freshness, not cryptographic expiry.
+
+Upgrade when a newer CLI or RPM packaging release is available:
+
+```bash
+sudo dnf --refresh upgrade flashdata
+rpm -q flashdata
+/usr/bin/flashdata --version
+```
+
+Inspect package contents or uninstall:
+
+```bash
+rpm -ql flashdata
+ls /usr/share/doc/flashdata/examples
+man flashdata
+sudo dnf remove flashdata
+```
+
+Removal preserves profiles, credentials and run history. Use `flashdata auth logout` for the selected profile first if you want to remove its saved credential. Remove `/etc/yum.repos.d/flashdata.repo` to stop using the source; removing its local key file does not remove the imported certificate from RPM's global key database. An administrator must check other uses before removing that database entry.
+
+When switching from a manual or Homebrew installation, check `command -v flashdata`; an earlier PATH entry can hide `/usr/bin/flashdata`. Remove/move the previous executable or adjust PATH, then restart the shell or run `hash -r`. Keep the state directory. [RPM maintenance and validation](https://github.com/flashdatadev/rpm/blob/main/docs/maintaining.md) describes signed upgrade fixtures and key recovery.
+
 ## Homebrew (Linux and macOS)
 
 Install [Homebrew](https://brew.sh) and follow its PATH instructions, then use the [official FlashData tap](https://github.com/flashdatadev/homebrew-tap):

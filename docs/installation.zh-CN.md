@@ -84,6 +84,72 @@ sudo apt-get update
 
 从 Homebrew 或手动归档安装迁移时，请检查 `command -v flashdata`：PATH 中靠前的旧版本可能遮蔽 `/usr/bin/flashdata`。卸载/移走旧可执行文件或调整 PATH，再重启终端或执行 `hash -r`；保留 CLI 状态目录。[APT 维护与验证说明](https://github.com/flashdatadev/apt/blob/main/docs/maintaining.md)介绍了签名有效期和升级测试。
 
+## RPM（Fedora 和 RHEL）
+
+[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.0.0-1** 包含与官方发布文件逐字节一致的 CLI **1.0.0**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
+
+使用 sudo 权限在 Bash 中执行一次以下配置。命令核对证书完整指纹、导入已验证证书，并同时启用元数据和软件包签名检查：
+
+```bash
+(
+  set -eu
+  case "$(rpm --eval '%{_arch}')" in
+    x86_64|aarch64) ;;
+    *) echo 'Supported RPM architectures: x86_64, aarch64' >&2; exit 1 ;;
+  esac
+  sudo dnf install -y ca-certificates gnupg2
+  if ! command -v curl >/dev/null 2>&1; then sudo dnf install -y curl; fi
+  work_dir="$(mktemp -d)"
+  trap 'rm -rf -- "$work_dir"' EXIT
+  curl -fsSL https://flashdatadev.github.io/rpm/flashdata.asc -o "$work_dir/flashdata.asc"
+  expected=23AB58683E85FE7236D369713D19EA52D181CC36
+  actual="$(gpg --batch --show-keys --with-colons "$work_dir/flashdata.asc" 2>/dev/null | awk -F: '$1 == "fpr" {print $10; exit}')"
+  test "$actual" = "$expected" || { echo 'FlashData RPM key fingerprint mismatch' >&2; exit 1; }
+  sudo install -d -m 0755 /etc/pki/rpm-gpg
+  sudo install -m 0644 "$work_dir/flashdata.asc" /etc/pki/rpm-gpg/RPM-GPG-KEY-flashdata
+  sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-flashdata
+  sudo tee /etc/yum.repos.d/flashdata.repo >/dev/null <<'EOF'
+[flashdata]
+name=FlashData CLI stable
+baseurl=https://flashdatadev.github.io/rpm/stable/$basearch/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-flashdata
+sslverify=1
+includepkgs=flashdata
+metadata_expire=6h
+skip_if_unavailable=0
+EOF
+  sudo dnf -y --refresh install flashdata
+  flashdata --version
+  flashdata --help
+)
+```
+
+独立的 RSA-4096 证书指纹为 `23AB58683E85FE7236D369713D19EA52D181CC36`，身份为 `FlashData RPM Signing <support@flashdata.dev>`，与 APT 证书分开管理。可对照[公开密钥记录](https://github.com/flashdatadev/rpm/tree/main/keys)核验。DNF 可能再次导入密钥用于元数据验证：每仓库独立的元数据密钥环与系统全局 RPM 软件包密钥库不同。RPM 证书不是仅对单一仓库生效；`includepkgs=flashdata` 限制本源提供的软件包。请保持 `gpgcheck=1`、`repo_gpgcheck=1` 和 HTTPS 校验；`metadata_expire` 仅控制缓存更新，不是密码学有效期。
+
+新的 CLI 版本或 RPM 打包修订发布后，可运行：
+
+```bash
+sudo dnf --refresh upgrade flashdata
+rpm -q flashdata
+/usr/bin/flashdata --version
+```
+
+查看附带文件或卸载：
+
+```bash
+rpm -ql flashdata
+ls /usr/share/doc/flashdata/examples
+man flashdata
+sudo dnf remove flashdata
+```
+
+卸载保留用户配置、凭据和执行历史。如需移除保存的凭据，请先为对应配置执行 `flashdata auth logout`。删除 `/etc/yum.repos.d/flashdata.repo` 可停用软件源；删除本地公钥文件不会移除 RPM 全局密钥库中的证书，管理员应确认其他用途后再移除该记录。
+
+从手动安装或 Homebrew 迁移时，检查 `command -v flashdata`：PATH 中靠前的旧文件可能遮蔽 `/usr/bin/flashdata`。移走旧可执行文件或调整 PATH，再重启终端或执行 `hash -r`，并保留状态目录。[RPM 维护与验证](https://github.com/flashdatadev/rpm/blob/main/docs/maintaining.md)介绍了签名升级测试包及密钥恢复。
+
 ## Homebrew（Linux 和 macOS）
 
 先安装 [Homebrew](https://brew.sh) 并按提示配置 PATH，然后使用 [FlashData 官方软件源](https://github.com/flashdatadev/homebrew-tap)：
