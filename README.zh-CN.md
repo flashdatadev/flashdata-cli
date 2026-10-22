@@ -24,6 +24,8 @@ uv tool install --no-index --find-links dist/wheels flashdata-cli==1.0.0
 
 安装后使用 `flashdata` 命令。[安装、重装与卸载](docs/installation.zh-CN.md#python-安装器本地候选包)介绍了具体操作。发行包 `flashdata-cli` 与 Python SDK `flashdata` 相互独立；经过明确授权的 PyPI 正式发布后才能直接从注册表安装。
 
+[原生 CI 验证](docs/python-packaging.zh-CN.md#验证)通过全部 30 种安装器/平台/Python 组合。成功的 GitHub Actions 任务提供 `wheel-candidates` 候选产物；尚未发布至 PyPI。
+
 ### Homebrew（Linux 和 macOS）
 
 安装 [Homebrew](https://brew.sh) 并配置 PATH 后执行：

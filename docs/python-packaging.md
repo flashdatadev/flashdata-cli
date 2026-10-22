@@ -62,7 +62,19 @@ python scripts/test_wheel_install.py --uv uv --python /path/to/python3.10 --work
 
 `scripts/wheel_validation.py` independently checks tags, executable format/minimum OS, metadata, licenses/docs and every `RECORD` hash. Rebuilding into another empty output should produce identical wheel hashes. The `wheels.yml` workflow builds candidates and runs native tests on five OS/CPU combinations and Python 3.10/3.15. Its [GitHub Actions results](https://github.com/flashdatadev/flashdata-cli/actions/workflows/wheels.yml) and candidate artifacts are separate from a PyPI release.
 
-Local review exercised all three installers on Windows x86_64 with Python **3.10.22, 3.12.6 and 3.15.0**, including reinstall/uninstall. All five wheels passed integrity/metadata checks and reproduced with identical hashes. Pip resolution accepted the supported platform tags and rejected unsupported platforms and Python 3.9. Native Linux/macOS execution is still pending. The local `dist/wheels/validation-report.json` records this boundary explicitly.
+The [native validation run](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679122) passed all **30 installer combinations**: pip, uv pip and uv tool on five native platforms, each with Python **3.10 and 3.15**. Each combination verified installation, offline version/help/commands, argument/stdin/error/exit forwarding, exact executable hashes, bundled docs/licenses, reinstall, uninstall and preserved user state. The [existing CLI checks](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679107) also passed. Downloaded CI wheels matched all five previously tested local wheels byte for byte.
+
+| Native platform | Python versions | pip / uv pip / uv tool |
+| --- | --- | --- |
+| Linux x86_64 | 3.10, 3.15 | Passed |
+| Linux aarch64 | 3.10, 3.15 | Passed |
+| macOS Intel | 3.10, 3.15 | Passed |
+| macOS Apple Silicon | 3.10, 3.15 | Passed |
+| Windows x86_64 | 3.10, 3.15 | Passed |
+
+All five wheels passed strict metadata/integrity checks and reproduced with identical hashes. Pip accepted supported platform tags and rejected unsupported platforms and Python 3.9. Windows local checks additionally covered Python **3.12**. These tests exercise candidate wheels, not a PyPI release, and do not certify live service availability or real OS credential-store behavior.
+
+To try the candidates without PyPI, open the successful wheel workflow run, download the `wheel-candidates` artifact, and extract its contents into `dist/wheels` in your checkout. Use the `--no-index --find-links dist/wheels` commands in the installation guide. CI artifacts are retained for seven days; rebuild from the pinned release archives if they expire.
 
 ## Before publication
 

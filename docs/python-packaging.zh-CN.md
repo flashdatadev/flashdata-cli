@@ -62,7 +62,19 @@ python scripts/test_wheel_install.py --uv uv --python /path/to/python3.10 --work
 
 `scripts/wheel_validation.py` 独立检查平台标签、二进制格式/最低系统版本、元数据、许可证/文档以及全部 `RECORD` 哈希。重复构建至另一空目录应得到相同哈希。`wheels.yml` 构建候选包，并在五种系统/CPU 和 Python 3.10/3.15 上执行原生检查。[GitHub Actions 结果](https://github.com/flashdatadev/flashdata-cli/actions/workflows/wheels.yml)与候选产物独立于 PyPI 正式发布。
 
-本地审查在 Windows x86_64 上使用 Python **3.10.22、3.12.6 和 3.15.0** 验证三种安装器，包含重装/卸载。五种 wheel 均通过完整性/元数据检查，重复构建哈希一致。pip 能选择受支持的平台标签，并拒绝不支持的平台和 Python 3.9。Linux/macOS 原生执行仍待验证。本地 `dist/wheels/validation-report.json` 明确记录这一范围。
+[原生验证任务](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679122)通过全部 **30 种安装组合**：五种原生平台，各使用 Python **3.10 和 3.15**，分别运行 pip、uv pip 和 uv tool。每种组合验证安装、离线版本/帮助/命令、参数/标准输入/错误/退出状态传递、原生二进制哈希、附带文档/许可证、重装、卸载及用户状态保留。[原有 CLI 检查](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679107)也全部通过。下载的五种 CI wheel 与已在本地验证的产物逐字节一致。
+
+| 原生平台 | Python 版本 | pip / uv pip / uv tool |
+| --- | --- | --- |
+| Linux x86_64 | 3.10, 3.15 | 通过 |
+| Linux aarch64 | 3.10, 3.15 | 通过 |
+| macOS Intel | 3.10, 3.15 | 通过 |
+| macOS Apple Silicon | 3.10, 3.15 | 通过 |
+| Windows x86_64 | 3.10, 3.15 | 通过 |
+
+五种 wheel 均通过严格的元数据/完整性检查，重复构建哈希一致。pip 能选择支持的平台标签，拒绝不支持的平台和 Python 3.9。本地 Windows 检查还覆盖 Python **3.12**。测试对象是候选 wheel，而非 PyPI 正式发布，不代表已认证线上服务可用性或真实系统凭据库行为。
+
+无需 PyPI 即可试用：打开成功的 wheel 工作流任务，下载 `wheel-candidates` 产物，将内容解压到仓库的 `dist/wheels`，再运行安装指南中带 `--no-index --find-links dist/wheels` 的命令。CI 产物保留七天；过期后可从固定版本归档重新构建。
 
 ## 发布前提
 

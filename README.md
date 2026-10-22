@@ -24,6 +24,8 @@ uv tool install --no-index --find-links dist/wheels flashdata-cli==1.0.0
 
 The installed command is `flashdata`. See [installation, reinstall and removal](docs/installation.md#python-installers-local-candidate). The distribution `flashdata-cli` is separate from the Python SDK `flashdata`; direct registry installation will be available after an authorized PyPI release.
 
+[Native CI validation](docs/python-packaging.md#validate) passed all 30 installer/platform/Python combinations. Candidate wheels are available as the `wheel-candidates` artifact in the successful GitHub Actions run; PyPI publication remains pending.
+
 ### Homebrew (Linux and macOS)
 
 With [Homebrew](https://brew.sh) installed and on PATH:
