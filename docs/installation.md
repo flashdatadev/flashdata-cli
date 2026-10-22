@@ -1,6 +1,6 @@
-# Install FlashData CLI v1.0.0
+# Install FlashData CLI v1.0.1
 
-[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0)
+[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.1)
 
 Install the matching standalone executable. Standalone/OS packages need no Go, Node.js, Python or Docker; the Python installer route requires Python 3.10+. Downloading and offline version/help checks need no API key.
 
@@ -40,7 +40,7 @@ For an updated local wheel set, retain `--no-index --find-links dist/wheels` and
 
 ## APT (Ubuntu and Debian)
 
-Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.0.0-1** contains the same CLI **1.0.0** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
+Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.0.1-1** contains the same CLI **1.0.1** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
 
 Run this one-time Bash setup with sudo access. It checks the public key fingerprint, uses a repository-scoped `Signed-By` keyring and permits only the `flashdata` package from this source:
 
@@ -120,7 +120,7 @@ When switching from Homebrew or a manual archive, check `command -v flashdata`; 
 
 ## RPM (Fedora and RHEL)
 
-Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.0.0-1** contains the exact official CLI **1.0.0** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
+Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.0.1-1** contains the exact official CLI **1.0.1** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
 
 Run this one-time setup in Bash with sudo access. It verifies the full certificate fingerprint, imports the verified certificate and enables both metadata and package signature checks:
 
@@ -228,7 +228,7 @@ The following Bash commands select Linux/macOS and amd64/arm64 automatically, do
 ```bash
 (
   set -eu
-  version=1.0.0
+  version=1.0.1
   case "$(uname -s)" in
     Linux) platform=linux ;;
     Darwin) platform=darwin ;;
@@ -269,7 +269,7 @@ These commands verify the ZIP before extraction, install into `%LOCALAPPDATA%\Fl
 ```powershell
 & {
     $ErrorActionPreference = 'Stop'
-    $version = '1.0.0'
+    $version = '1.0.1'
     $archive = "flashdata_${version}_windows_amd64.zip"
     $releaseUrl = "https://github.com/flashdatadev/flashdata-cli/releases/download/v$version"
     $workDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
@@ -301,4 +301,4 @@ For future terminals, add `%LOCALAPPDATA%\FlashData\bin` to your user PATH in Wi
 
 Run `flashdata auth login` to import an existing key from your [FlashData account](https://flashdata.dev). Terminal input is hidden. Automation can use a secret manager piped to `auth login --api-key-stdin --non-interactive`; never put a key in command arguments. See [onboarding](onboarding.md), [bulk workflows](bulk.md) and [run recovery](runs.md).
 
-The executable's `--version` reports 1.0.0 and the source commit recorded in the release build report. Archives include updated docs; `documentationCommit` identifies that separate snapshot. Packages are not signed/notarized; checksums verify downloaded bytes. Native Apple Silicon execution and live Keychain/Secret Service acceptance remain separate checks, as described in the [release notes](release-notes-1.0.0.md).
+The executable's `--version` reports 1.0.1 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.0.1.md).

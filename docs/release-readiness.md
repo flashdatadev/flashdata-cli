@@ -1,8 +1,8 @@
-# Joint release-readiness check
+# Initial joint release-readiness review (historical)
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-This records the local review before initial GitHub source publication. Current workflow results are available in [GitHub Actions](https://github.com/flashdatadev/flashdata-cli/actions). Source publication does not create version tags, GitHub Releases or backend deployments.
+This records the local review before initial GitHub source publication, not the current distribution state. See [v1.0.1 release notes](release-notes-1.0.1.md) and [current release process](releases.md) for standalone packages, signed repositories and native archive acceptance. Current workflow results are available in [GitHub Actions](https://github.com/flashdatadev/flashdata-cli/actions).
 
 Reviewed together on 2026-10-22 as local 1.0.0 candidates. This check does not publish, tag, push, deploy, register real accounts or submit live paid work. Exact executed counts and platform evidence are in [validation](validation.md).
 
@@ -24,5 +24,5 @@ English is the default README with a top-level 简体中文 link. Chinese comman
 
 - Deploy the reviewed identity backend patch and verify the production onboarding feature configuration. Complete authorized live claim/handoff, callback and customer-storage checks.
 - Run native Linux/macOS credential-store acceptance and the Linux race check. Windows native protection and subprocess workflows are covered locally; cross-compilation does not establish other native OS behavior.
-- The CLI now pins the SDK commit through a Go pseudo-version in go.mod and go.sum, with no local replacement or sibling checkout. A future stable SDK tag can replace this pin after review; no version tag is needed for source builds or CI.
+- The initial source candidate pinned an SDK pseudo-version. Released CLI versions pin the public SDK v1.0.0 tag and go.sum checksums, with no local replacement or sibling checkout.
 - Review the final source, archives and SHA-256 checksums; sign/notarize platform executables as appropriate to the distribution plan. No signing, remote CI execution or publication is claimed by this check.

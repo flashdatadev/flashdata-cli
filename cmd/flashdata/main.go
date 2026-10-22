@@ -7,7 +7,7 @@ import (
 	"os/signal"
 )
 
-var version = "1.0.0"
+var version = "1.0.1"
 var commit = "local"
 
 func main() {

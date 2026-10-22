@@ -2,9 +2,9 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-## Unreleased
+## 1.0.1
 
-Add English/Chinese workflow selectors, uploaded-caption and MP4 bulk recipes, explicit API coverage and an SDK/CLI comparison. Add public discover plans/status commands on main, with no API key required. These two commands require a source build until the next binary release; published v1.0.0 assets are unchanged.
+Ship public `discover plans` and `discover status` commands in all five standalone binaries; neither needs an API key. Add English/Chinese workflow selectors, uploaded-caption and complete MP3/MP4 bulk recipes, explicit API coverage and an SDK/CLI comparison. Update release installation and upgrade instructions for Homebrew, APT and RPM. Native archive acceptance tests run the packaged binaries against mock APIs on every supported platform. The Go SDK stays pinned to v1.0.0; existing v1.0.0 release assets are unchanged.
 
 ## Unreleased packaging
 

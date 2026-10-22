@@ -29,7 +29,7 @@
 brew install flashdatadev/tap/flashdata
 ```
 
-**Ubuntu/Debian**、**Fedora/RHEL** 和 **Windows** 用户请参阅[安装指南](docs/installation.zh-CN.md)，或下载[独立可执行文件](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0)。原生安装无需 Go、Python 或 Node.js。Linux 和 macOS 支持 Intel/AMD 与 ARM64，Windows 支持 x64。
+**Ubuntu/Debian**、**Fedora/RHEL** 和 **Windows** 用户请参阅[安装指南](docs/installation.zh-CN.md)，或下载[独立可执行文件](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.1)。原生安装无需 Go、Python 或 Node.js。Linux 和 macOS 支持 Intel/AMD 与 ARM64，Windows 支持 x64。
 
 从 [FlashData 账户](https://flashdata.dev) 获取 API 密钥。运行 `auth login`，在隐藏输入提示中粘贴密钥，然后执行第一次搜索：
 
@@ -203,9 +203,9 @@ flashdata runs recover audio-bulk-001 --timeout 1h --output recovered-receipts.j
 | 全部五个批量来源、任务控制和结果 | `bulk run`、手动 `bulk` 命令、`runs recover` |
 | 访问权限、余额、定价、限制和用量 | `auth status`、`account balance/pricing/limits/usage` |
 | 公共来源目录和健康状态 | `sources list`、`discover` |
-| 公共套餐目录和服务状态（main 源码构建） | `discover plans`、`discover status` |
+| 公共套餐目录和服务状态 | `discover plans`、`discover status` |
 
-公共套餐/状态命令是 `main` 上的新功能，在下一次二进制发布前需[从源码构建](CONTRIBUTING.md#build-from-source)。现有 v1.0.0 二进制已支持上面的搜索、YouTube、批次和批量工作流。
+上述所有命令均包含在开箱即用的 **v1.0.1** 正式版中。`discover plans` 和 `discover status` 无需 API 密钥。已有安装可执行 `brew update && brew upgrade flashdatadev/tap/flashdata`、`sudo apt-get update && sudo apt-get install --only-upgrade flashdata` 或 `sudo dnf --refresh upgrade flashdata` 升级；软件源配置及 Windows 升级见[安装指南](docs/installation.zh-CN.md)。升级保留用户配置和执行历史。
 
 全部 15 个来源支持后台/批次执行，其中 14 个支持实时请求。下载在后台运行，需要自己的云存储。
 通过 `sources show SOURCE` 查看来源模式和可运行 JSON 请求。单视频 `youtube download` 快捷命令面向音频；`query --mode async` 和批量任务支持完整的媒体来源选项。
@@ -227,4 +227,4 @@ flashdata --help
 - **新代理接入与浏览器认领：** 参阅[接入指南](docs/onboarding.md)。此可选流程取决于服务端是否启用；已有账户可直接使用 `auth login`。
 - **在 Go 应用中使用 FlashData：** 安装本 CLI 所使用的 [Go SDK](https://github.com/flashdatadev/flashdata-go)。
 
-[安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.0.0.md) · [MIT 许可](LICENSE)
+[安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.0.1.md) · [MIT 许可](LICENSE)

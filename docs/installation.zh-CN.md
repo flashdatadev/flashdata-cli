@@ -1,6 +1,6 @@
-# 安装 FlashData CLI v1.0.0
+# 安装 FlashData CLI v1.0.1
 
-[FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [English](installation.md) · [正式版下载](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.0)
+[FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [English](installation.md) · [正式版下载](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.1)
 
 安装与平台匹配的独立可执行程序。独立归档和系统包无需 Go、Node.js、Python 或 Docker；Python 安装方式需要 Python 3.10+。下载及离线版本/帮助检查无需 API 密钥。
 
@@ -40,7 +40,7 @@ flashdata --help
 
 ## APT（Ubuntu 和 Debian）
 
-在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.0.0-1** 包含与发布归档一致的 CLI **1.0.0** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
+在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.0.1-1** 包含与发布归档一致的 CLI **1.0.1** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
 
 使用 sudo 权限在 Bash 中执行一次以下配置。命令会核对公钥指纹，通过专用 `Signed-By` 密钥环限制信任范围，并只允许从该软件源选择 `flashdata` 软件包：
 
@@ -120,7 +120,7 @@ sudo apt-get update
 
 ## RPM（Fedora 和 RHEL）
 
-[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.0.0-1** 包含与官方发布文件逐字节一致的 CLI **1.0.0**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
+[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.0.1-1** 包含与官方发布文件逐字节一致的 CLI **1.0.1**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
 
 使用 sudo 权限在 Bash 中执行一次以下配置。命令核对证书完整指纹、导入已验证证书，并同时启用元数据和软件包签名检查：
 
@@ -228,7 +228,7 @@ brew untap flashdatadev/tap
 ```bash
 (
   set -eu
-  version=1.0.0
+  version=1.0.1
   case "$(uname -s)" in
     Linux) platform=linux ;;
     Darwin) platform=darwin ;;
@@ -269,7 +269,7 @@ brew untap flashdatadev/tap
 ```powershell
 & {
     $ErrorActionPreference = 'Stop'
-    $version = '1.0.0'
+    $version = '1.0.1'
     $archive = "flashdata_${version}_windows_amd64.zip"
     $releaseUrl = "https://github.com/flashdatadev/flashdata-cli/releases/download/v$version"
     $workDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
@@ -301,4 +301,4 @@ brew untap flashdatadev/tap
 
 运行 `flashdata auth login`，导入 [FlashData 账户](https://flashdata.dev)中的已有密钥，终端输入会隐藏。自动化可将密钥管理器的输出通过管道传给 `auth login --api-key-stdin --non-interactive`；不要将密钥放入命令行参数。详见[接入](onboarding.md)、[Bulk 流程](bulk.md)及[执行恢复](runs.md)。
 
-`--version` 显示 1.0.0 及正式版构建记录中的源码提交。归档包含更新后的文档；`documentationCommit` 单独标识该文档快照。安装包未签名或公证，校验和用于验证下载字节。原生 Apple Silicon 运行及真实 Keychain/Secret Service 验收仍需单独检查，详见[版本说明](release-notes-1.0.0.md)。
+`--version` 显示 1.0.1 及 `build-report.json` 记录的准确源码提交。可执行文件和附带文档来自同一个源码标签。APT 元数据以及 RPM 软件包/元数据均有签名；独立归档使用 SHA-256 校验，macOS 可执行文件未经过公证。五个平台均运行原生归档验收；真实 Keychain/Secret Service 行为仍需按具体环境检查。详见[版本说明](release-notes-1.0.1.md)。

@@ -51,3 +51,51 @@ jobs:
       - run: python3 -m unittest discover -s scripts -p "test_*.py"
       - run: python3 scripts/build_release.py --go go --commit "$(git rev-parse HEAD)"
       - run: python3 scripts/generate_commands.py dist/binaries/flashdata-linux-amd64 --check
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: standalone-release-candidates
+          path: dist
+          retention-days: 14
+  packaged-binaries:
+    needs: archives
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            archive: flashdata_1.0.1_linux_amd64.tar.gz
+            binary: flashdata
+          - os: ubuntu-24.04-arm
+            archive: flashdata_1.0.1_linux_arm64.tar.gz
+            binary: flashdata
+          - os: macos-15-intel
+            archive: flashdata_1.0.1_darwin_amd64.tar.gz
+            binary: flashdata
+          - os: macos-15
+            archive: flashdata_1.0.1_darwin_arm64.tar.gz
+            binary: flashdata
+          - os: windows-latest
+            archive: flashdata_1.0.1_windows_amd64.zip
+            binary: flashdata.exe
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache-dependency-path: go.sum
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: standalone-release-candidates
+          path: dist
+      - name: Verify and extract the archive for this platform
+        env:
+          RELEASE_ARCHIVE: ${{ matrix.archive }}
+        run: python scripts/test_release_archive.py
+      - name: Test the extracted release executable against mock APIs
+        env:
+          FLASHDATA_TEST_BINARY: ${{ github.workspace }}/dist/acceptance/${{ matrix.binary }}
+        run: go test ./internal/app

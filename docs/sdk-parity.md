@@ -26,7 +26,7 @@ project automatically loads `.env` files. Run the Node.js SDK on your server.
 
 | Capability | Python | TypeScript | JavaScript | Go | CLI |
 | --- | --- | --- | --- | --- | --- |
-| Core developer REST operations | 24 | 24 | Same package | Same 24 | Same 24 on `main`; v1.0.0 binaries omit public plans/status reads |
+| Core developer REST operations | 24 | 24 | Same package | Same 24 | Same 24 in CLI v1.0.1; v1.0.0 binaries omit public plans/status reads |
 | Source schemas | 15 | Identical 15 | Same | Identical 15 | Same schemas through Go SDK v1.0.0 |
 | Realtime / background / batch sources | 14 / 15 / 15 | Same | Same | Same | Same via `query`, `--mode async`, `batch submit` |
 | Google sources | Search, images, news, shopping, videos, places | Same six | Same | Same six | `search` shortcut; all six via `query` |
@@ -38,7 +38,7 @@ project automatically loads `.env` files. Run the Node.js SDK on your server.
 | Public discovery | Sources, plans, health, status | Same four | Same | Same four | `sources list`, `discover`, `discover plans`, `discover status` |
 
 `discover plans` and `discover status` were added after the CLI v1.0.0 binary release.
-Use a source build of `main` for those commands until the next binary release. This
+Install or upgrade to CLI v1.0.1 to use those commands without building from source. This
 distinction does not affect the existing search, YouTube, batch or bulk commands.
 
 The 15 sources are six `google_*` sources and nine `youtube_*` sources. Media downloads
