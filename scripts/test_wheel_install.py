@@ -17,6 +17,7 @@ def main():
     parser.add_argument("--wheels", type=Path, default=ROOT / "dist/wheels")
     parser.add_argument("--uv", required=True, help="Path to uv executable")
     parser.add_argument("--python", default=sys.executable)
+    parser.add_argument("--go", help="Optional Go executable for installed-CLI environment-key regression checks against mock APIs")
     parser.add_argument("--work-dir", type=Path, default=ROOT / ".cache/wheel-install-tests")
     args = parser.parse_args()
     work = args.work_dir.resolve()
@@ -35,8 +36,8 @@ def main():
     for variable in ("FLASHDATA_API_KEY", "PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV", "PIP_TARGET", "PIP_PREFIX", "PIP_USER", "UV_PYTHON", "UV_PROJECT_ENVIRONMENT"):
         env.pop(variable, None)
 
-    def run(command, *, check=True, data=None):
-        result = subprocess.run([str(c) for c in command], input=data, capture_output=True, encoding="utf-8", env=env, timeout=180)
+    def run(command, *, check=True, data=None, cwd=None):
+        result = subprocess.run([str(c) for c in command], input=data, capture_output=True, encoding="utf-8", env=env, cwd=cwd, timeout=180)
         if check and result.returncode:
             raise RuntimeError(result.stdout + result.stderr)
         return result
@@ -83,6 +84,17 @@ def main():
         assert (package / "share/README.zh-CN.md").is_file()
         assert (package / "share/examples/query.json").is_file()
         assert len(list((package / "share/licenses").glob("*.txt"))) >= 10
+        if args.go:
+            previous = {name: env.get(name) for name in ("FLASHDATA_TEST_BINARY", "GOWORK")}
+            env.update({"FLASHDATA_TEST_BINARY": str(executable.resolve()), "GOWORK": "off"})
+            try:
+                run([args.go, "test", "-mod=readonly", "-count=1", "./internal/app", "-run", "^TestStandaloneEnvironmentKeyWorksAcrossProcesses$"], cwd=ROOT)
+            finally:
+                for name, value in previous.items():
+                    if value is None:
+                        env.pop(name, None)
+                    else:
+                        env[name] = value
         # Reinstall the same candidate using the same manager; no global PATH edits.
         reinstall = command + (["--reinstall"] if method != "pip" else ["--force-reinstall"])
         run(reinstall)
@@ -94,7 +106,7 @@ def main():
         else:
             run([uv, "pip", "uninstall", "--python", interpreter, "flashdata-cli"])
         assert not executable.exists() and marker.read_text(encoding="utf-8") == "preserved profile/run state\n"
-        reports.append({"method": method, "install": True, "reinstall": True, "uninstall": True, "offlineVersionHelpCommands": True, "streamsArgumentsExitCode": True, "exactNativeBinary": True, "userStatePreserved": True})
+        reports.append({"method": method, "install": True, "reinstall": True, "uninstall": True, "offlineVersionHelpCommands": True, "streamsArgumentsExitCode": True, "exactNativeBinary": True, "environmentKeyReuse": bool(args.go), "userStatePreserved": True})
         print("PASS: " + method, flush=True)
     report = {"target": target, "python": run([python, "--version"]).stdout.strip(), "uv": uv_version, "publishes": False, "methods": reports}
     (work / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")

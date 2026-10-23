@@ -2,11 +2,11 @@
 
 [FlashData](https://flashdata.dev) · [简体中文](python-packaging.zh-CN.md) · [Installation](installation.md#python-pip-and-uv)
 
-[`flashdata-cli` 1.1.0 is available on PyPI](https://pypi.org/project/flashdata-cli/). For pip and uv installation, see the [installation guide](installation.md#python-pip-and-uv). This guide covers building and validating local wheels. The package provides `flashdata` and `python -m flashdata_cli`; the Python SDK is the separate `flashdata` distribution.
+[`flashdata-cli` on PyPI](https://pypi.org/project/flashdata-cli/) installs the official FlashData CLI. For pip and uv installation, see the [installation guide](installation.md#python-pip-and-uv). This guide covers building and validating local wheels. The package provides `flashdata` and `python -m flashdata_cli`; the Python SDK is the separate `flashdata` distribution.
 
 ## Compatibility and contents
 
-The dependency-free Python 3.10+ launcher runs the bundled official v1.1.0 executable. Linux/macOS use `execv` to preserve PID and native signal handling; Windows waits for its child sharing the console. Arguments pass without a shell, with inherited stdin/stdout/stderr and environment and preserved exit status. The launcher does not load `.env`, read credentials, download binaries or manage profiles. Authentication, storage and run recovery remain native CLI responsibilities.
+The dependency-free Python 3.10+ launcher runs the bundled official v1.1.1 executable. Linux/macOS use `execv` to preserve PID and native signal handling; Windows waits for its child sharing the console. Arguments pass without a shell, with inherited stdin/stdout/stderr and environment and preserved exit status. The launcher does not load `.env`, read credentials, download binaries or manage profiles. Authentication, storage and run recovery remain native CLI responsibilities.
 
 | Wheel platform | Target | Minimum |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ The [v1.1.0 native validation run](https://github.com/flashdatadev/flashdata-cli
 
 All five v1.1.0 wheels passed strict metadata/integrity checks and reproduced with identical hashes. Pip accepted supported platform tags and rejected unsupported platforms and Python 3.9. These CI tests exercise candidate wheels and do not certify live service availability or real OS credential-store behavior.
 
-To try local candidates without PyPI, download the successful workflow's `wheel-candidates` artifact and extract it into `dist/wheels` in your checkout. Install with `python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.1.0`, or use `uv pip install` with the same options in a virtual environment. CI artifacts are retained for seven days; rebuild from the pinned release archives if they expire.
+To try local candidates without PyPI, download the successful workflow's `wheel-candidates` artifact and extract it into `dist/wheels` in your checkout. Install with `python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.1.1`, or use `uv pip install` with the same options in a virtual environment. CI artifacts are retained for seven days; rebuild from the pinned release archives if they expire.
 
 ## Before publication
 

@@ -48,13 +48,17 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache-dependency-path: go.sum
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: wheel-candidates
           path: dist/wheels
       - run: python -m pip install uv==0.13.1
       - run: python -m unittest discover -s scripts -p 'test_*.py'
-      - run: python scripts/test_wheel_install.py --uv uv
+      - run: python scripts/test_wheel_install.py --uv uv --go go
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: wheel-install-${{ matrix.os }}-${{ matrix.python }}

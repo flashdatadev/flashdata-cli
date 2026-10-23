@@ -4,9 +4,11 @@
 
 [FlashData](https://flashdata.dev) 提供结构化 Google 搜索、YouTube 数据、转录/字幕、后台任务和批量交付。本包安装官方 [FlashData CLI](https://github.com/flashdatadev/flashdata-cli)，支持安全配置、初始化和可恢复批量任务。命令名为 `flashdata`；Python SDK 是独立的 `flashdata` 发行包。
 
-版本 **1.1.0** 封装官方 v1.1.0 可执行文件，支持 JSON、纯文本和 Markdown 响应选项。轻量启动器需要 Python 3.10+，无需 Go 编译器或运行时，没有 Python 运行时依赖，安装和启动时均不下载可执行文件。
+版本 **1.1.1** 封装官方 v1.1.1 可执行文件，支持 JSON、纯文本和 Markdown 响应选项。轻量启动器需要 Python 3.10+，无需 Go 编译器或运行时，没有 Python 运行时依赖，安装和启动时均不下载可执行文件。
 
 提供以下 wheel：Linux glibc 2.17+ x86_64/aarch64、macOS 13+ Intel/Apple Silicon、Windows x86_64。不提供 Linux musl/Alpine、Windows ARM64 或 32 位 wheel。不支持的平台会解析失败，不会安装其他架构的程序。
+
+1.1.1 修复使用 `FLASHDATA_API_KEY` 时后续命令认证失败的问题，不会保存环境变量中的密钥。已有配置和执行历史会保留。
 
 ## 安装
 
@@ -19,17 +21,17 @@ python -m venv .venv-cli
 Bash 通过 `source .venv-cli/bin/activate` 激活，PowerShell 使用 `.venv-cli\Scripts\Activate.ps1`。然后任选 pip 或 uv pip：
 
 ```bash
-python -m pip install flashdata-cli==1.1.0
+python -m pip install flashdata-cli==1.1.1
 ```
 
 ```bash
-uv pip install flashdata-cli==1.1.0
+uv pip install flashdata-cli==1.1.1
 ```
 
 也可在虚拟环境之外使用：
 
 ```bash
-uv tool install flashdata-cli==1.1.0
+uv tool install flashdata-cli==1.1.1
 flashdata --version
 flashdata --help
 ```
@@ -42,6 +44,6 @@ flashdata --help
 
 从 [FlashData 账户](https://flashdata.dev) 获取密钥，再运行 `flashdata auth login`，终端输入隐藏。参阅[英文初始化与安装](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.md)、[简体中文](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.zh-CN.md)及[完整批量流程](https://github.com/flashdatadev/flashdata-cli/blob/main/README.zh-CN.md)。启动器传递原生参数、标准输入/输出、信号和退出状态；安装命令不应包含 API 凭据。
 
-升级时，pip/uv pip 使用 `--upgrade`；uv tool 使用 `uv tool install --reinstall`。`==1.1.0` 会固定版本，需要升级时明确修改约束。按原安装方式分别使用 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli` 卸载。卸载保留用户配置及运行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。
+升级时，pip/uv pip 使用 `--upgrade`；uv tool 使用 `uv tool install --reinstall`。`==1.1.1` 会固定版本，需要升级时明确修改约束。按原安装方式分别使用 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli` 卸载。卸载保留用户配置及运行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。
 
 构建、验证及发布前提见仓库中的 `docs/python-packaging.zh-CN.md`。打包和测试脚本均不上传软件包。支持：[support@flashdata.dev](mailto:support@flashdata.dev)。

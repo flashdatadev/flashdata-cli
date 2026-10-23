@@ -1,35 +1,35 @@
 {
-  "version": "1.1.0",
-  "source_commit": "604c679d60e4a0bb6e59bf9fe9006ec1c82bf787",
+  "version": "1.1.1",
+  "source_commit": "96cfce0e313d27bccbf6371dbd302d3f867d143b",
   "targets": {
     "linux/amd64": {
-      "archive": "flashdata_1.1.0_linux_amd64.tar.gz",
-      "archive_sha256": "20936e2068d32634765ed3ab6dc2fa28ea2f92da1208fae73d0cf4d02654f28a",
-      "executable_sha256": "3f88112ce4fbdfd53aed406a15a893ec9ca63879c95319d00785b23f727fa621",
+      "archive": "flashdata_1.1.1_linux_amd64.tar.gz",
+      "archive_sha256": "1e2568f0e92183d9e936a8b9e982a3367aca760102c71a89fd2ef26bf9a1150e",
+      "executable_sha256": "9b8fbfc9e22b867b16d3d0407967945bfdbd4329227e07f4f34e0178ceac29b0",
       "wheel_platform": "manylinux_2_17_x86_64.manylinux2014_x86_64"
     },
     "linux/arm64": {
-      "archive": "flashdata_1.1.0_linux_arm64.tar.gz",
-      "archive_sha256": "991d998df8504ad2569f19b4eea41062dad2cd3a7cc31a6570a16eebd5cac93a",
-      "executable_sha256": "a01262d8ed7007099fa77a59052644a28feedc96753c55725d0a8e5ec90a7e66",
+      "archive": "flashdata_1.1.1_linux_arm64.tar.gz",
+      "archive_sha256": "be3df696b675f8fd6f8e9782a6b45e629c13a93614febec4374bc5525744be49",
+      "executable_sha256": "9102db219d8b2e3b6edee5d3be4080208e9203eb18c61f2c1e519bf6e5f5f04e",
       "wheel_platform": "manylinux_2_17_aarch64.manylinux2014_aarch64"
     },
     "darwin/amd64": {
-      "archive": "flashdata_1.1.0_darwin_amd64.tar.gz",
-      "archive_sha256": "ef2e6b0280bb8cfebe4e466f652dda275b97d7479191c0c4a97a7a16b3f455dd",
-      "executable_sha256": "9232524e0b0aebe1fb861d41cdd1ed3d6c843c7e88381184cc850a89de89f88b",
+      "archive": "flashdata_1.1.1_darwin_amd64.tar.gz",
+      "archive_sha256": "7744340e5d89406cf9929d111825df53c5974bf034c95c35a4d47e61d4ae8d11",
+      "executable_sha256": "41c6787dd84d56913fe8b2a415b4d35fec6f5bd8ba5e5b84f9a0d5a5e907c5c7",
       "wheel_platform": "macosx_13_0_x86_64"
     },
     "darwin/arm64": {
-      "archive": "flashdata_1.1.0_darwin_arm64.tar.gz",
-      "archive_sha256": "dee0fb10a6dfdd782f310b91dd0961ca6ec09654c8bbde16a938d838435c5748",
-      "executable_sha256": "b2e7390d76c0aba756212435edd25e426f2750d323cc9722e1e02bbd7df495ee",
+      "archive": "flashdata_1.1.1_darwin_arm64.tar.gz",
+      "archive_sha256": "ed5c313792584376ca7440e457878fec9115b47d2d2f5680be2fc76c5b9120a6",
+      "executable_sha256": "5dcedfabcae2c5387058d1388ad00b13da0d85b8b02bde3d4d929fe9f0088a89",
       "wheel_platform": "macosx_13_0_arm64"
     },
     "windows/amd64": {
-      "archive": "flashdata_1.1.0_windows_amd64.zip",
-      "archive_sha256": "0f7f09d685f5ef633a525b3a0c8f6abcb4780179f0eb6604af4c4adb158d402f",
-      "executable_sha256": "1497806a7411a58652dc1e6b12f0b547c9eb4e3b73cca9b78546aa444f2ad8fb",
+      "archive": "flashdata_1.1.1_windows_amd64.zip",
+      "archive_sha256": "f658675205985b6d4217d29edd9a7620a4f74491993605871db2fef2d47bab0e",
+      "executable_sha256": "4c8729ccb4eca5d1212e5e4950d1d8bff3a9832e36bd052fcc459b4341de2c32",
       "wheel_platform": "win_amd64"
     }
   }
