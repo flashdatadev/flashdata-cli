@@ -78,9 +78,14 @@ func (a *App) addRuns() {
 	}
 	runs.AddCommand(show)
 	var recoverOutput string
+	recoverFormat := &responseFlags{}
 	recover := &cobra.Command{Use: "recover RUN_ID", Short: "Read accepted remote jobs and save results; never resubmit a query or create a job", Args: cobra.ExactArgs(1)}
+	bindResponse(recover, recoverFormat, true)
 	recover.Flags().StringVar(&recoverOutput, "output", "", "new result output file")
 	recover.RunE = func(cmd *cobra.Command, args []string) error {
+		if err := recoverFormat.validate(true); err != nil {
+			return err
+		}
 		if err := ensureOutput(recoverOutput); err != nil {
 			return err
 		}
@@ -97,6 +102,9 @@ func (a *App) addRuns() {
 		}
 		if r == nil {
 			return fail("run_not_found", "No such local run exists.", "")
+		}
+		if strings.HasPrefix(r.Kind, "bulk:") && (cmd.Flags().Changed("accept") || cmd.Flags().Changed("respond-with")) {
+			return fail("bulk_response_format_unsupported", "Bulk exports keep their JSONL format.", "Use --output to save the export.")
 		}
 		v, err := a.load(ctx, s)
 		if err != nil {
@@ -117,7 +125,7 @@ func (a *App) addRuns() {
 				return err
 			}
 		}
-		return a.recoverRun(ctx, s, auth, r, recoverOutput)
+		return a.recoverRun(ctx, s, auth, r, recoverOutput, selectedResponse(cmd, r, *recoverFormat))
 	}
 	runs.AddCommand(recover)
 }
@@ -181,9 +189,16 @@ func (a *App) exportRun(s *state.Store, r *state.Run, output string, cached bool
 	}
 	return a.success(data, r.ID, cached, r.Usage)
 }
-func (a *App) recoverRun(ctx context.Context, s *state.Store, auth *access, r *state.Run, output string) error {
-	if r.Status == "succeeded" {
+func (a *App) recoverRun(ctx context.Context, s *state.Store, auth *access, r *state.Run, output string, formats ...responseFlags) error {
+	format := savedResponse(r)
+	if len(formats) > 0 {
+		format = formats[0]
+	}
+	if r.Status == "succeeded" && format == savedResponse(r) {
 		return a.exportRun(s, r, output, true)
+	}
+	if r.Kind == "query:realtime" && format != savedResponse(r) {
+		return formatConflict(r)
 	}
 	if strings.HasPrefix(r.Kind, "bulk:") {
 		if r.RemoteID == "" {
@@ -242,12 +257,12 @@ func (a *App) recoverRun(ctx context.Context, s *state.Store, auth *access, r *s
 		if _, err := auth.Client.Jobs.Wait(ctx, r.RemoteID, fd.PollOptions{Timeout: a.Timeout}); err != nil {
 			return &Error{Code: "job_wait_stopped", Message: "Keep the accepted job ID and recover later.", RunID: r.ID, RemoteID: r.RemoteID, Cause: err}
 		}
-		data, err := auth.Client.Jobs.Result(ctx, r.RemoteID)
+		data, err := auth.Client.Jobs.ResultWithFormat(ctx, r.RemoteID, format.content())
 		if err != nil {
 			return err
 		}
-		raw, _ := json.Marshal(a.redacted(data))
-		if err = s.SaveResult(r, raw); err != nil {
+		raw, err := a.saveResponse(s, r, data, format)
+		if err != nil {
 			return err
 		}
 		return a.emitResult(r, raw, output, false)
@@ -257,23 +272,41 @@ func (a *App) recoverRun(ctx context.Context, s *state.Store, auth *access, r *s
 			return a.existing(s, r, output)
 		}
 		results := []json.RawMessage{}
+		var text strings.Builder
 		size := 0
 		for _, id := range r.RemoteIDs {
 			if _, err := auth.Client.Jobs.Wait(ctx, id, fd.PollOptions{Timeout: a.Timeout}); err != nil {
 				return &Error{Code: "batch_wait_stopped", Message: "The original batch IDs are retained.", RunID: r.ID, RemoteID: id, Cause: err}
 			}
-			data, err := auth.Client.Jobs.Result(ctx, id)
+			data, err := auth.Client.Jobs.ResultWithFormat(ctx, id, format.content())
 			if err != nil {
 				return err
 			}
-			b, _ := json.Marshal(a.redacted(data))
-			size += len(b)
+			b, _, err := a.responseBytes(data)
+			if err != nil {
+				return err
+			}
+			part := string(b)
+			if format.Accept == "text/plain" {
+				part = batchText(id, part)
+			}
+			size += len(part) + 1
 			if size > 128<<20 {
 				return fail("result_aggregation_limit", "Batch result aggregation exceeds 128 MiB.", "Fetch individual jobs with jobs result --output FILE.")
 			}
-			results = append(results, b)
+			if format.Accept == "text/plain" {
+				text.WriteString(part)
+			} else {
+				results = append(results, b)
+			}
 		}
 		b, _ := json.Marshal(results)
+		r.ResultFormat = ""
+		if format.Accept == "text/plain" {
+			b = []byte(text.String())
+			r.ResultFormat = "text"
+		}
+		recordResponse(r, format)
 		if err := s.SaveResult(r, b); err != nil {
 			return err
 		}

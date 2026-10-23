@@ -6,6 +6,17 @@ This records the local review before initial GitHub source publication. Current 
 
 Reviewed against the supplied CLI spec, the checked-out backend implementation and the sibling Go SDK. No live credentials or production mutations were used. The final joint review also updates the sibling Go SDK; the existing backend identity patch remains undeployed.
 
+## Response-format review
+
+Current source adds independent response headers while retaining JSON defaults,
+saved job IDs and the CLI output envelope. API-generated fixtures cover all 14
+realtime sources and 15 stored-result sources, text receipts, status, waiting and
+recovery. Review fixes redact signed URLs inside both Markdown response types,
+sanitize usage metadata and retain every candidate ID from malformed receipts.
+Format changes never repeat a paid query. See [response formats](response-formats.md).
+
+## Initial publication review
+
 | Area | Gap fixed |
 | --- | --- |
 | Environment overrides | Bulk recovery writes preserve the original saved credentials, proofs and phase instead of replacing them with an environment-only profile. |

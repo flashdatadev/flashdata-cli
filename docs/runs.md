@@ -27,6 +27,15 @@ The profile's kernel lock covers command mutation, including network submission 
 
 Run history has no automatic expiry or eviction. Profiles retain history on logout. Large results are separate from the credential vault. The host owns cron, Task Scheduler, Codex or other recurring invocation; the CLI writes no scheduler configuration and stores no key in scheduler text. This is local duplicate protection, not cross-machine exactly-once execution.
 
+## Response formats
+
+The journal retains the selected response format. Cached results reuse that format
+when no flags are supplied. A different explicit format never causes another paid
+query: realtime cache changes fail with `run_response_format_conflict`; completed
+background results can be read again using `runs recover --accept ... --respond-with ...`.
+Plain-text receipts still retain confirmed job IDs, and malformed receipts retain
+candidate IDs on an uncertain run. See [response formats](response-formats.md).
+
 ## Candidate IDs and partial exports
 
 Malformed responses can leave `candidateRemoteIds` on an uncertain record. These IDs do not populate the confirmed `remoteId`/`remoteIds` fields. Inspect each candidate with the original account and reconcile the entire request; repeating the run or `runs recover` does not promote candidate evidence or resubmit work.

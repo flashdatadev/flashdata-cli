@@ -4,7 +4,7 @@
 
 **Google search and YouTube data, straight from your terminal.** [FlashData](https://flashdata.dev) gives you structured search results, video metadata and existing transcripts through one API. Use `flashdata` to research a topic, feed web results to an AI assistant, build a video dataset, or deliver audio to your cloud storage.
 
-No application code is required. Commands return JSON, bulk jobs export JSONL, and saved run IDs let scripts recover accepted work after an interruption.
+No application code is required. Commands return JSON by default, with text and Markdown options in current source. Bulk jobs export JSONL, and saved run IDs let scripts recover accepted work after an interruption.
 
 ## Choose a workflow
 
@@ -42,6 +42,27 @@ flashdata search "battery recycling startups" --num 5 --json
 The result includes structured Google search data such as page titles, links and snippets. Your key is saved for later commands using the platform credential store where available; see [credential storage](docs/security.md). Queries and jobs use your account's credits; see [pricing](https://flashdata.dev/pricing).
 
 Looking for `pip` or `uv`? The Python installer package is **not published to PyPI yet**. Use the install methods above, or follow the [candidate-wheel guide](docs/python-packaging.md).
+
+## JSON, plain text and Markdown
+
+Current `main` adds `--accept` and `--respond-with`; published v1.0.1 binaries do
+not include these flags yet. With Go 1.25+, install current source:
+
+```bash
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@main
+```
+
+Choose plain text or Markdown for a search:
+
+```bash
+flashdata search "vector databases" --accept text/plain
+flashdata search "vector databases" --accept text/plain --respond-with markdown
+```
+
+JSON remains the default. `--accept` also applies to async receipts, batches and
+job status. Markdown applies to realtime queries and completed results. Add
+`--json` to wrap text in the CLI envelope, or `--output FILE` to save the selected
+body. See [response formats and recovery](docs/response-formats.md).
 
 ## Search the web for research or AI context
 

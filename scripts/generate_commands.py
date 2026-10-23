@@ -36,7 +36,7 @@ def main():
         "",
         "Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.",
         "",
-        "This reference describes CLI v1.0.1. All listed commands are included in the standalone release binaries. `discover plans` and `discover status` read public endpoints without an API key.",
+        "This reference describes current main source. Response-format flags were added after the published v1.0.1 binaries; see [response formats](response-formats.md) for source installation and examples. `discover plans` and `discover status` read public endpoints without an API key.",
         "",
     ]
 

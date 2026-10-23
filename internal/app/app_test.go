@@ -196,6 +196,10 @@ func (m *mockAPI) handler(w http.ResponseWriter, r *http.Request) {
 		}
 		_ = json.NewDecoder(r.Body).Decode(&q)
 		if r.URL.Path == "/v1/queries" {
+			if m.Jobs == nil {
+				m.Jobs = map[string]fd.Source{}
+			}
+			m.Jobs["job_offline"] = q.Source
 			send(w, map[string]any{"id": "job_offline", "source": q.Source, "status": "pending", "usage": map[string]any{"credits": 0.02}})
 			return
 		}

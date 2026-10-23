@@ -4,7 +4,7 @@
 
 **在终端直接获取 Google 搜索结果和 YouTube 数据。** [FlashData](https://flashdata.dev) 通过统一 API 提供结构化搜索结果、视频元数据和已有字幕。使用 `flashdata` 研究主题、为 AI 助手提供网页信息、构建视频数据集，或将音频交付到自己的云存储。
 
-无需编写应用代码。命令返回 JSON，批量任务导出 JSONL；保存的运行 ID 可以帮助脚本在中断后恢复已受理的任务。
+无需编写应用代码。命令默认返回 JSON，当前源码还支持纯文本和 Markdown。批量任务导出 JSONL；保存的运行 ID 可以帮助脚本在中断后恢复已受理的任务。
 
 ## 按使用场景选择工作流
 
@@ -41,6 +41,26 @@ flashdata search "battery recycling startups" --num 5 --json
 结果包含网页标题、链接和摘要等结构化 Google 搜索数据。密钥会保存供后续命令使用；平台凭据存储可用时会优先使用，详见[凭据存储](docs/security.md)。查询和任务会消耗账户额度，参见[价格](https://flashdata.dev/pricing)。
 
 想使用 `pip` 或 `uv`？Python 安装包**尚未发布到 PyPI**。请使用上述安装方式，或参阅[候选 wheel 指南](docs/python-packaging.zh-CN.md)。
+
+## JSON、纯文本和 Markdown
+
+当前 `main` 源码新增了 `--accept` 和 `--respond-with`；已发布的 v1.0.1 二进制
+尚未包含这些参数。使用 Go 1.25+ 可安装当前源码：
+
+```bash
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@main
+```
+
+为搜索选择纯文本或 Markdown：
+
+```bash
+flashdata search "vector databases" --accept text/plain
+flashdata search "vector databases" --accept text/plain --respond-with markdown
+```
+
+JSON 仍是默认格式。`--accept` 也适用于后台回执、批量提交和任务状态。Markdown
+适用于实时查询和已完成结果。增加 `--json` 可将文本放入 CLI 的 JSON 输出外层，
+使用 `--output FILE` 可保存所选格式的正文。参见[响应格式与恢复](docs/response-formats.md)。
 
 ## 搜索网页，用于研究或 AI 上下文
 

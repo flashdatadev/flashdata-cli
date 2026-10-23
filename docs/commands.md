@@ -4,7 +4,7 @@
 
 Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.
 
-This reference describes CLI v1.0.1. All listed commands are included in the standalone release binaries. `discover plans` and `discover status` read public endpoints without an API key.
+This reference describes current main source. Response-format flags were added after the published v1.0.1 binaries; see [response formats](response-formats.md) for source installation and examples. `discover plans` and `discover status` read public endpoints without an API key.
 
 ## flashdata
 
@@ -135,10 +135,12 @@ Usage: `submit`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--input` | string | `` | JSON file, or - for stdin |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for all accepted batch jobs |
 
@@ -327,6 +329,10 @@ get an accepted job; never submits work
 
 Usage: `get JOB_ID`
 
+| Flag | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
+
 ## flashdata jobs result
 
 result an accepted job; never submits work
@@ -335,13 +341,19 @@ Usage: `result JOB_ID`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--output` | string | `` | new result output file |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 
 ## flashdata jobs wait
 
 wait an accepted job; never submits work
 
 Usage: `wait JOB_ID`
+
+| Flag | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 
 ## flashdata query
 
@@ -351,11 +363,13 @@ Usage: `query`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--input` | string | `` | JSON file, or - for stdin |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |
 
@@ -383,7 +397,9 @@ Usage: `recover RUN_ID`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--output` | string | `` | new result output file |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 
 ## flashdata runs show
 
@@ -404,6 +420,7 @@ Usage: `search QUERY`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--gl` | string | `` | country code |
 | `--hl` | string | `` | interface language |
@@ -412,6 +429,7 @@ Usage: `search QUERY`
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--page` | int64 | `0` | requested page; separately billed |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |
 
@@ -447,11 +465,13 @@ Usage: `captions INPUT`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--language` | string | `en` | caption language; existing tracks only |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |
 
@@ -463,11 +483,13 @@ Usage: `download VIDEO_ID`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--format` | string | `mp3` | output format |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--storage-config` | string | `` | private customer-storage JSON file |
 | `--wait` | bool | `false` | wait for an accepted async job |
@@ -480,10 +502,12 @@ Usage: `metadata INPUT`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |
 
@@ -495,11 +519,13 @@ Usage: `search INPUT`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--max-results` | int64 | `0` | requested number of search results |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |
 
@@ -511,10 +537,12 @@ Usage: `transcript INPUT`
 
 | Flag | Type | Default | Purpose |
 | --- | --- | --- | --- |
+| `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
 | `--language` | string | `en` | caption language; existing tracks only |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
+| `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |

@@ -2,6 +2,14 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+## Unreleased
+
+Add independent `--accept` and `--respond-with` flags for API responses, preserving
+JSON defaults and the CLI's `--json` envelope. Support plain-text receipts with
+durable job IDs, Markdown completed results, cached-format checks and safe
+background-result reformatting. Pin Go SDK commit `433815342d50`, update help and
+English/Chinese documentation, and test all sources against API-generated fixtures.
+
 ## 1.0.1
 
 Ship public `discover plans` and `discover status` commands in all five standalone binaries; neither needs an API key. Add English/Chinese workflow selectors, uploaded-caption and complete MP3/MP4 bulk recipes, explicit API coverage and an SDK/CLI comparison. Update release installation and upgrade instructions for Homebrew, APT and RPM. Native archive acceptance tests run the packaged binaries against mock APIs on every supported platform. The Go SDK stays pinned to v1.0.0; existing v1.0.0 release assets are unchanged.

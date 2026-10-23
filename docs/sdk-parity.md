@@ -32,6 +32,7 @@ project automatically loads `.env` files. Run the Node.js SDK on your server.
 | Google sources | Search, images, news, shopping, videos, places | Same six | Same | Same six | `search` shortcut; all six via `query` |
 | YouTube sources | Search, extended search, metadata, transcript, captions, license labels, channel, suggestions, download | Same nine | Same | Same nine | Dedicated shortcuts plus `query` for all nine |
 | Standard jobs | Get, wait, result | Same | Same | Same | `jobs get`, `jobs wait`, `jobs result` |
+| JSON, plain text and Markdown responses | Per-call `accept` / `respond_with` | Per-call `accept` / `respondWith` | Same | `WithFormat` methods | `--accept` / `--respond-with`; `--json` selects the CLI envelope |
 | Bulk sources | Metadata, transcript, captions, license labels, download | Same five | Same | Same | Same five via `bulk run` or manual commands |
 | Bulk operations | Create, upload file, start, get/list, update, pause/resume/cancel, wait, manifest/parts/rows | Same | Same | Same plus reader-based upload | Manual lifecycle commands and streamed `bulk results` |
 | Account reads | Access, balance, pricing, limits, usage | Same five | Same | Same plus verified identity | Auth/access checks, account reads and verified identity |

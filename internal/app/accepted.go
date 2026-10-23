@@ -6,6 +6,18 @@ import (
 )
 
 func (a *App) accepted(r *state.Run, output string, cached bool) error {
+	if r.ReceiptAccept == "text/plain" {
+		var text string
+		if err := json.Unmarshal(r.Receipt, &text); err != nil {
+			return err
+		}
+		if output != "" && output != "-" {
+			return a.emitResult(&state.Run{ID: r.ID, ResultFormat: "text", Usage: r.Usage}, []byte(text), output, cached)
+		}
+		if !a.JSON {
+			return a.writeText(text, r.ID, cached, r.Usage)
+		}
+	}
 	data := map[string]any{"status": "accepted", "stage": r.Stage, "submission": r.Receipt, "remoteId": r.RemoteID, "remoteIds": r.RemoteIDs, "nextCommand": "flashdata runs recover " + r.ID}
 	if r.Stage == "awaiting_upload" {
 		data["nextCommand"] = "flashdata bulk upload " + r.RemoteID + " --input ids.txt --run-id " + r.ID

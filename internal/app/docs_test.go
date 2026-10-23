@@ -144,7 +144,7 @@ func TestReadmeWorkflows(t *testing.T) {
 		}
 	}
 	t.Chdir(dir)
-	mock, server := fixture(t)
+	mock, server, _ := formatFixture(t)
 	root := filepath.Join(dir, "state")
 	// README examples use only literal words and double-quoted query strings;
 	// reject shell syntax rather than ever executing a reader-provided shell.

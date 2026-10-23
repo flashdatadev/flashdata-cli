@@ -91,6 +91,9 @@ type Run struct {
 	Input              json.RawMessage `json:"input,omitempty"`
 	Usage              json.RawMessage `json:"usage,omitempty"`
 	Receipt            json.RawMessage `json:"receipt,omitempty"`
+	ReceiptAccept      string          `json:"receiptAccept,omitempty"`
+	ResponseAccept     string          `json:"responseAccept,omitempty"`
+	RespondWith        string          `json:"respondWith,omitempty"`
 	ResultFormat       string          `json:"resultFormat,omitempty"`
 	ItemFailures       int             `json:"itemFailures,omitempty"`
 	ErrorCode          string          `json:"errorCode,omitempty"`

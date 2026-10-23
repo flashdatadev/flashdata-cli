@@ -12,6 +12,7 @@ import (
 )
 
 type queryFlags struct {
+	responseFlags
 	Input, RunID, Mode, Output string
 	DryRun, Recurring, Wait    bool
 }
@@ -27,6 +28,7 @@ func bindRun(cmd *cobra.Command, f *queryFlags, input bool) {
 }
 func bindQuery(cmd *cobra.Command, f *queryFlags, input bool) {
 	bindRun(cmd, f, input)
+	bindResponse(cmd, &f.responseFlags, true)
 	cmd.Flags().StringVar(&f.Mode, "mode", "realtime", "realtime or async")
 	cmd.Flags().BoolVar(&f.Wait, "wait", false, "wait for an accepted async job")
 }
@@ -319,6 +321,9 @@ func (a *App) emitResult(r *state.Run, b []byte, output string, cached bool) err
 	if output != "" && output != "-" {
 		f, err := state.CreateOutput(output)
 		if err != nil {
+			if r.ID == "" {
+				return &Error{Code: "output_write_failed", Message: "Could not create result output. Choose a new output path."}
+			}
 			return &Error{Code: "output_write_failed", Message: "The result is saved in the local run journal; choose another output path.", RunID: r.ID}
 		}
 		_, err = f.Write(b)
@@ -330,12 +335,18 @@ func (a *App) emitResult(r *state.Run, b []byte, output string, cached bool) err
 			err = closeErr
 		}
 		if err != nil {
+			if r.ID == "" {
+				return &Error{Code: "output_write_failed", Message: "A partial export may remain. Read the job result again to a new output path."}
+			}
 			return &Error{Code: "output_write_failed", Message: "A partial export is retained; recover from the saved run.", RunID: r.ID}
 		}
 		return a.success(map[string]any{"output": output, "bytes": len(b), "itemFailures": r.ItemFailures}, r.ID, cached, r.Usage)
 	}
 	if r.ResultFormat == "ndjson" {
 		return a.success(map[string]any{"resultFileAvailable": true, "rowsFormat": "ndjson", "itemFailures": r.ItemFailures, "nextCommand": "flashdata runs show " + r.ID + " --result --output FILE"}, r.ID, cached, r.Usage)
+	}
+	if r.ResultFormat == "text" {
+		return a.writeText(string(b), r.ID, cached, r.Usage)
 	}
 	return a.success(json.RawMessage(b), r.ID, cached, r.Usage)
 }
@@ -345,6 +356,9 @@ func (a *App) query(cmd *cobra.Command, b []byte, f queryFlags) error {
 	}
 	if f.Wait && f.Mode != "async" {
 		return fail("wait_requires_async", "--wait requires --mode async.", "")
+	}
+	if err := f.responseFlags.validate(f.Mode == "realtime" || f.Wait); err != nil {
+		return err
 	}
 	q, canonical, err := normalizeQuery(b, f.Mode == "async")
 	if err != nil {
@@ -385,35 +399,45 @@ func (a *App) query(cmd *cobra.Command, b []byte, f queryFlags) error {
 		return err
 	}
 	if exists {
+		format := selectedResponse(cmd, r, f.responseFlags)
 		if f.Wait && r.Status == "accepted" {
-			return a.recoverRun(ctx, s, auth, r, f.Output)
+			return a.recoverRun(ctx, s, auth, r, f.Output, format)
+		}
+		if format != savedResponse(r) {
+			if r.Status == "succeeded" && r.Kind == "query:async" {
+				return a.recoverRun(ctx, s, auth, r, f.Output, format)
+			}
+			return formatConflict(r)
 		}
 		return a.existing(s, r, f.Output)
 	}
+	recordResponse(r, f.responseFlags)
+	if err := s.SaveRun(r); err != nil {
+		return err
+	}
 	if f.Mode == "async" {
-		job, err := auth.Client.Queries.Submit(ctx, q)
+		response, err := auth.Client.Queries.SubmitWithFormat(ctx, q, f.responseFlags.envelope())
 		if err != nil {
 			return a.failureRun(s, r, err)
 		}
+		if err := a.receiptResponse(r, response, []fd.Query{q}, false); err != nil {
+			return a.failureRun(s, r, err)
+		}
 		r.Status = "accepted"
-		r.RemoteID = job.ID
-		r.Receipt, _ = json.Marshal(job)
-		r.Usage, _ = json.Marshal(job.Usage)
 		if err = s.SaveRun(r); err != nil {
-			return &Error{Code: "accepted_run_not_saved", Message: "The server accepted a job; preserve the remote ID.", RunID: id, RemoteID: job.ID, Next: "Use jobs get/wait/result with this remote ID; do not resubmit."}
+			return &Error{Code: "accepted_run_not_saved", Message: "The server accepted a job; preserve the remote ID.", RunID: id, RemoteID: r.RemoteID, Next: "Use jobs get/wait/result with this remote ID; do not resubmit."}
 		}
 		if f.Wait {
 			return a.recoverRun(ctx, s, auth, r, f.Output)
 		}
 		return a.accepted(r, f.Output, false)
 	}
-	result, err := auth.Client.Queries.Realtime(ctx, q)
+	result, err := auth.Client.Queries.RealtimeWithFormat(ctx, q, f.responseFlags.content())
 	if err != nil {
 		return a.failureRun(s, r, err)
 	}
-	r.Usage, _ = json.Marshal(result.Usage)
-	data, _ := json.Marshal(a.redacted(result))
-	if err = s.SaveResult(r, data); err != nil {
+	data, err := a.saveResponse(s, r, result, f.responseFlags)
+	if err != nil {
 		return &Error{Code: "result_commit_failed", Message: "The query completed but durable result commit failed; the intent must not be replayed.", RunID: id, Next: "Inspect the run and preserve any existing result files."}
 	}
 	return a.emitResult(r, data, f.Output, false)
@@ -424,11 +448,16 @@ func (a *App) addJobs() {
 	for _, action := range []string{"get", "wait", "result"} {
 		action := action
 		var output string
+		format := &responseFlags{}
 		cmd := &cobra.Command{Use: action + " JOB_ID", Short: action + " an accepted job; never submits work", Args: cobra.ExactArgs(1)}
+		bindResponse(cmd, format, action == "result")
 		if action == "result" {
 			cmd.Flags().StringVar(&output, "output", "", "new result output file")
 		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
+			if err := format.validate(action == "result"); err != nil {
+				return err
+			}
 			if err := ensureOutput(output); err != nil {
 				return err
 			}
@@ -454,6 +483,13 @@ func (a *App) addJobs() {
 				return err
 			}
 			if action == "get" {
+				if format.Accept == "text/plain" {
+					response, err := auth.Client.Jobs.GetWithFormat(ctx, args[0], format.envelope())
+					if err != nil {
+						return err
+					}
+					return a.emitResponse(response, output)
+				}
 				return a.success(sanitize(job), "", false, nil)
 			}
 			if action == "wait" {
@@ -461,28 +497,20 @@ func (a *App) addJobs() {
 				if err != nil {
 					return err
 				}
+				if format.Accept == "text/plain" {
+					response, err := auth.Client.Jobs.GetWithFormat(ctx, args[0], format.envelope())
+					if err != nil {
+						return err
+					}
+					return a.emitResponse(response, output)
+				}
 				return a.success(sanitize(result), "", false, nil)
 			}
-			data, err := auth.Client.Jobs.Result(ctx, args[0])
+			data, err := auth.Client.Jobs.ResultWithFormat(ctx, args[0], format.content())
 			if err != nil {
 				return err
 			}
-			raw, _ := json.Marshal(a.redacted(data))
-			if output != "" && output != "-" {
-				f, err := state.CreateOutput(output)
-				if err != nil {
-					return fail("output_write_failed", "Could not create result output.", "")
-				}
-				defer f.Close()
-				if _, err = f.Write(raw); err != nil {
-					return err
-				}
-				if err = f.Sync(); err != nil {
-					return err
-				}
-				return a.success(map[string]string{"output": output}, "", false, nil)
-			}
-			return a.success(json.RawMessage(raw), "", false, nil)
+			return a.emitResponse(data, output)
 		}
 		jobs.AddCommand(cmd)
 	}
@@ -493,8 +521,12 @@ func (a *App) addBatch() {
 	f := &queryFlags{}
 	submit := &cobra.Command{Use: "submit", Short: "Validate all input and submit a batch once", Args: cobra.NoArgs}
 	bindRun(submit, f, true)
+	bindResponse(submit, &f.responseFlags, true)
 	submit.Flags().BoolVar(&f.Wait, "wait", false, "wait for all accepted batch jobs")
 	submit.RunE = func(cmd *cobra.Command, args []string) error {
+		if err := f.responseFlags.validate(f.Wait); err != nil {
+			return err
+		}
 		b, err := a.readInput(cmd, f.Input, 8<<20)
 		if err != nil {
 			return err
@@ -563,23 +595,32 @@ func (a *App) addBatch() {
 			return err
 		}
 		if exists {
+			format := selectedResponse(cmd, r, f.responseFlags)
 			if f.Wait && r.Status == "accepted" {
-				return a.recoverRun(ctx, s, auth, r, f.Output)
+				return a.recoverRun(ctx, s, auth, r, f.Output, format)
+			}
+			if format != savedResponse(r) {
+				if r.Status == "succeeded" {
+					return a.recoverRun(ctx, s, auth, r, f.Output, format)
+				}
+				return formatConflict(r)
 			}
 			return a.existing(s, r, f.Output)
 		}
-		result, err := auth.Client.Queries.Batch(ctx, queries)
+		recordResponse(r, f.responseFlags)
+		if err := s.SaveRun(r); err != nil {
+			return err
+		}
+		result, err := auth.Client.Queries.BatchWithFormat(ctx, queries, f.responseFlags.envelope())
 		if err != nil {
 			return a.failureRun(s, r, err)
 		}
 		r.Status = "accepted"
-		for _, q := range result.Queries {
-			r.RemoteIDs = append(r.RemoteIDs, q.ID)
+		if err := a.receiptResponse(r, result, queries, true); err != nil {
+			return a.failureRun(s, r, err)
 		}
-		r.Usage, _ = json.Marshal(result.Usage)
-		r.Receipt, _ = json.Marshal(result)
 		if err = s.SaveRun(r); err != nil {
-			return &Error{Code: "accepted_run_not_saved", Message: "Batch accepted; preserve these remote IDs.", RunID: id, Next: "Use jobs get/wait/result with these IDs; do not submit a replacement batch.", Details: map[string]any{"remoteIds": r.RemoteIDs, "usage": result.Usage}}
+			return &Error{Code: "accepted_run_not_saved", Message: "Batch accepted; preserve these remote IDs.", RunID: id, Next: "Use jobs get/wait/result with these IDs; do not submit a replacement batch.", Details: map[string]any{"remoteIds": r.RemoteIDs, "usage": r.Usage}}
 		}
 		if f.Wait {
 			return a.recoverRun(ctx, s, auth, r, f.Output)
