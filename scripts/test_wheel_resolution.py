@@ -27,7 +27,7 @@ def main():
     report = []
     for number, (platform, target, python) in enumerate(supported + rejected):
         destination = work / str(number)
-        command = [sys.executable, "-m", "pip", "download", "--no-index", "--find-links", str(args.wheels.resolve()), "--only-binary=:all:", "--no-deps", "--platform", platform, "--python-version", python, "--implementation", "cp", "--abi", "none", "--dest", str(destination), "flashdata-cli==1.0.0"]
+        command = [sys.executable, "-m", "pip", "download", "--no-index", "--find-links", str(args.wheels.resolve()), "--only-binary=:all:", "--no-deps", "--platform", platform, "--python-version", python, "--implementation", "cp", "--abi", "none", "--dest", str(destination), f"flashdata-cli=={manifest()['version']}"]
         result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", env=env, timeout=120)
         (work / (str(number) + ".log")).write_text(result.stdout + result.stderr, encoding="utf-8")
         if target:

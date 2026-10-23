@@ -50,7 +50,7 @@ def main():
         marker.parent.mkdir(parents=True)
         marker.write_text("preserved profile/run state\n", encoding="utf-8")
         if method == "uv-tool":
-            command = [uv, "tool", "install", "--python", python, "--no-index", "--find-links", wheels, "flashdata-cli==1.0.0"]
+            command = [uv, "tool", "install", "--python", python, "--no-index", "--find-links", wheels, f"flashdata-cli=={manifest()['version']}"]
             run(command)
             executable = work / "uv-bin" / ("flashdata.exe" if os.name == "nt" else "flashdata")
             environment = work / "uv-tools/flashdata-cli"
@@ -59,9 +59,9 @@ def main():
             run([python, "-m", "venv", environment])
             interpreter = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
             if method == "pip":
-                command = [interpreter, "-m", "pip", "install", "--no-index", "--find-links", wheels, "flashdata-cli==1.0.0"]
+                command = [interpreter, "-m", "pip", "install", "--no-index", "--find-links", wheels, f"flashdata-cli=={manifest()['version']}"]
             else:
-                command = [uv, "pip", "install", "--python", interpreter, "--no-index", "--find-links", wheels, "flashdata-cli==1.0.0"]
+                command = [uv, "pip", "install", "--python", interpreter, "--no-index", "--find-links", wheels, f"flashdata-cli=={manifest()['version']}"]
             run(command)
             executable = environment / ("Scripts/flashdata.exe" if os.name == "nt" else "bin/flashdata")
         interpreter = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
