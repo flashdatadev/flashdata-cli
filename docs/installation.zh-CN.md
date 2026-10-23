@@ -2,13 +2,13 @@
 
 [FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [English](installation.md) · [正式版下载](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0)
 
-安装与平台匹配的独立可执行程序。独立归档和系统包无需 Go、Node.js、Python 或 Docker；Python 安装方式需要 Python 3.10+。下载及离线版本/帮助检查无需 API 密钥。
+选择下方任一种安装方式。独立归档和系统包无需 Go、Node.js、Python 或 Docker；pip 和 uv 安装需要 Python 3.10+。下载及离线版本/帮助检查无需 API 密钥。
 
-## Python 安装器（本地候选包）
+## Python（pip 和 uv）
 
-**尚未发布到 PyPI。** 请按[打包指南](python-packaging.zh-CN.md)构建 `dist/wheels`。Wheel 需要 Python 3.10+，无需安装 Go，使用已核验的现有 CLI 二进制。平台范围、安装器隔离及维护说明见[软件包 README](../packaging/pypi/README.zh-CN.md)。
+从 [PyPI 安装 `flashdata-cli`](https://pypi.org/project/flashdata-cli/)，需要 Python 3.10+。软件包包含官方 CLI 可执行文件，无需安装 Go。支持 Linux glibc 2.17+ x86_64/ARM64、macOS 13+ Intel/Apple Silicon，以及 Windows x64。
 
-先构建 `dist/wheels`，再从 CLI 仓库根目录执行。任选一种方式：pip/uv pip 使用独立 Python 环境，`uv tool` 管理独立 CLI 环境。安装后的命令仍为 `flashdata`。
+任选一种方式：pip 或 uv pip 使用虚拟环境，`uv tool` 管理独立 CLI 环境。安装后的命令为 `flashdata`；Python SDK 是另一个名为 `flashdata` 的软件包。
 
 ```bash
 python -m venv .venv-cli
@@ -17,26 +17,24 @@ python -m venv .venv-cli
 Bash 通过 `source .venv-cli/bin/activate` 激活，PowerShell 使用 `.venv-cli\Scripts\Activate.ps1`。然后任选 pip 或 uv pip：
 
 ```bash
-python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+python -m pip install --upgrade flashdata-cli
 ```
 
 ```bash
-uv pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+uv pip install --upgrade flashdata-cli
 ```
 
 也可在虚拟环境之外使用：
 
 ```bash
-uv tool install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+uv tool install flashdata-cli
 flashdata --version
 flashdata --help
 ```
 
 若 uv 提示可执行文件目录不在 PATH，请运行 `uv tool update-shell` 并重新打开终端。旧的 Homebrew/APT/RPM/手动安装可能遮蔽新命令；Bash 用 `command -v flashdata`，PowerShell 用 `Get-Command flashdata` 检查。避免多个管理器同时管理同一个 PATH 条目。
 
-今后发布到 PyPI 后，可使用 `pip install flashdata-cli`、`uv pip install flashdata-cli` 或 `uv tool install flashdata-cli`。**目前它们尚不是官方的在线安装方式。** 现在可以使用上方带 `--no-index --find-links` 的本地安装命令。
-
-获得更新的本地 wheel 后，保留 `--no-index --find-links dist/wheels`，pip/uv pip 使用 `--upgrade`，uv tool 使用 `--reinstall`。明确修改固定版本约束；`==1.0.0` 会保持固定版本。分别通过 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli` 卸载。卸载保留用户配置、凭据和执行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。
+升级时重复上方 pip 或 uv pip 命令，或执行 `uv tool upgrade flashdata-cli`。如需固定版本，使用 `flashdata-cli==1.1.0`。卸载时按原安装方式运行 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli`。卸载保留用户配置和执行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。离线安装或本地构建见 [wheel 打包指南](python-packaging.zh-CN.md)。
 
 ## APT（Ubuntu 和 Debian）
 

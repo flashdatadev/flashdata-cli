@@ -30,6 +30,20 @@ On macOS or Linux with [Homebrew](https://brew.sh):
 brew install flashdatadev/tap/flashdata
 ```
 
+Or install from [PyPI](https://pypi.org/project/flashdata-cli/) with Python 3.10+. In an active virtual environment, choose **pip**:
+
+```bash
+python -m pip install --upgrade flashdata-cli
+```
+
+Or **uv pip**:
+
+```bash
+uv pip install --upgrade flashdata-cli
+```
+
+Both install the `flashdata` command. See [Python installation](docs/installation.md#python-pip-and-uv) for virtual environment setup and supported platforms.
+
 For **Ubuntu/Debian**, **Fedora/RHEL** or **Windows**, follow the [installation guide](docs/installation.md), or download a [standalone executable](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0). Native installs need no Go, Python or Node.js. Linux and macOS support Intel/AMD and ARM64; Windows supports x64.
 
 Get an API key from your [FlashData account](https://flashdata.dev). Run `auth login` and paste it at the hidden prompt, then make your first search:
@@ -41,12 +55,10 @@ flashdata search "battery recycling startups" --num 5 --json
 
 The result includes structured Google search data such as page titles, links and snippets. Your key is saved for later commands using the platform credential store where available; see [credential storage](docs/security.md). Queries and jobs use your account's credits; see [pricing](https://flashdata.dev/pricing).
 
-Looking for `pip` or `uv`? The Python installer package is **not published to PyPI yet**. Use the install methods above, or follow the [candidate-wheel guide](docs/python-packaging.md).
-
 ## JSON, plain text and Markdown
 
-Version 1.1.0 includes `--accept` and `--respond-with`. Install a standalone
-release binary, or use Go 1.25+:
+Version 1.1.0 includes `--accept` and `--respond-with` with every installation
+method above. To install from source with Go 1.25+:
 
 ```bash
 go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.0

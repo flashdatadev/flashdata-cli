@@ -2,13 +2,13 @@
 
 [FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0)
 
-Install the matching standalone executable. Standalone/OS packages need no Go, Node.js, Python or Docker; the Python installer route requires Python 3.10+. Downloading and offline version/help checks need no API key.
+Choose an installation method below. Standalone archives and OS packages need no Go, Node.js, Python or Docker; pip and uv installation requires Python 3.10+. Downloading and offline version/help checks need no API key.
 
-## Python installers (local candidate)
+## Python (pip and uv)
 
-**Not published to PyPI yet.** Build `dist/wheels` using the [packaging guide](python-packaging.md). These wheels require Python 3.10+, no Go installation, and use the verified existing CLI binary. See the [package README](../packaging/pypi/README.md) for supported platforms, installer isolation and maintenance.
+Install [`flashdata-cli` from PyPI](https://pypi.org/project/flashdata-cli/) with Python 3.10+. It includes the official CLI executable; no Go installation is needed. Supported platforms are Linux glibc 2.17+ x86_64/ARM64, macOS 13+ Intel/Apple Silicon, and Windows x64.
 
-Run from the CLI checkout after building `dist/wheels`. Choose one method. Use an isolated Python environment for pip/uv pip; use `uv tool` for an independent CLI environment. The command remains `flashdata`.
+Choose one method. Use a virtual environment for pip or uv pip; use `uv tool` for an independent CLI environment. The command is `flashdata`; the Python SDK is the separate `flashdata` package.
 
 ```bash
 python -m venv .venv-cli
@@ -17,26 +17,24 @@ python -m venv .venv-cli
 Activate it with `source .venv-cli/bin/activate` on Bash, or `.venv-cli\Scripts\Activate.ps1` on PowerShell. Then choose pip or uv pip:
 
 ```bash
-python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+python -m pip install --upgrade flashdata-cli
 ```
 
 ```bash
-uv pip install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+uv pip install --upgrade flashdata-cli
 ```
 
 Alternatively, outside the virtual environment:
 
 ```bash
-uv tool install --no-index --find-links dist/wheels flashdata-cli==1.0.0
+uv tool install flashdata-cli
 flashdata --version
 flashdata --help
 ```
 
 If uv reports that its executable directory is not on PATH, run `uv tool update-shell` and restart the shell. A previous Homebrew/APT/RPM/manual installation can shadow this command; check `command -v flashdata` on Bash or `Get-Command flashdata` on PowerShell. Avoid using multiple managers for the same PATH entry.
 
-After a future PyPI publication, the registry commands will be `pip install flashdata-cli`, `uv pip install flashdata-cli`, or `uv tool install flashdata-cli`. **They are not currently an official registry installation method.** The local `--no-index --find-links` instructions above are usable now.
-
-For an updated local wheel set, retain `--no-index --find-links dist/wheels` and use pip/uv pip `--upgrade` or uv tool `--reinstall`. Update the exact version constraint intentionally; `==1.0.0` stays pinned. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`. Removal preserves profiles, credentials and run history; use `flashdata auth logout` first to remove a saved credential.
+Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.1.0`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
 
 ## APT (Ubuntu and Debian)
 

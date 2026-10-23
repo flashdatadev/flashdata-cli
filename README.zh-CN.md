@@ -4,7 +4,7 @@
 
 **在终端直接获取 Google 搜索结果和 YouTube 数据。** [FlashData](https://flashdata.dev) 通过统一 API 提供结构化搜索结果、视频元数据和已有字幕。使用 `flashdata` 研究主题、为 AI 助手提供网页信息、构建视频数据集，或将音频交付到自己的云存储。
 
-无需编写应用代码。命令默认返回 JSON，当前源码还支持纯文本和 Markdown。批量任务导出 JSONL；保存的运行 ID 可以帮助脚本在中断后恢复已受理的任务。
+无需编写应用代码。命令默认返回 JSON，并支持纯文本和 Markdown。批量任务导出 JSONL；保存的运行 ID 可以帮助脚本在中断后恢复已受理的任务。
 
 ## 按使用场景选择工作流
 
@@ -29,6 +29,20 @@
 brew install flashdatadev/tap/flashdata
 ```
 
+也可通过 [PyPI](https://pypi.org/project/flashdata-cli/) 安装，需要 Python 3.10+。在已激活的虚拟环境中使用 **pip**：
+
+```bash
+python -m pip install --upgrade flashdata-cli
+```
+
+或使用 **uv pip**：
+
+```bash
+uv pip install --upgrade flashdata-cli
+```
+
+两种方式均安装 `flashdata` 命令。虚拟环境配置和支持平台见 [Python 安装指南](docs/installation.zh-CN.md#pythonpip-和-uv)。
+
 **Ubuntu/Debian**、**Fedora/RHEL** 和 **Windows** 用户请参阅[安装指南](docs/installation.zh-CN.md)，或下载[独立可执行文件](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0)。原生安装无需 Go、Python 或 Node.js。Linux 和 macOS 支持 Intel/AMD 与 ARM64，Windows 支持 x64。
 
 从 [FlashData 账户](https://flashdata.dev) 获取 API 密钥。运行 `auth login`，在隐藏输入提示中粘贴密钥，然后执行第一次搜索：
@@ -40,12 +54,10 @@ flashdata search "battery recycling startups" --num 5 --json
 
 结果包含网页标题、链接和摘要等结构化 Google 搜索数据。密钥会保存供后续命令使用；平台凭据存储可用时会优先使用，详见[凭据存储](docs/security.md)。查询和任务会消耗账户额度，参见[价格](https://flashdata.dev/pricing)。
 
-想使用 `pip` 或 `uv`？Python 安装包**尚未发布到 PyPI**。请使用上述安装方式，或参阅[候选 wheel 指南](docs/python-packaging.zh-CN.md)。
-
 ## JSON、纯文本和 Markdown
 
-1.1.0 正式版包含 `--accept` 和 `--respond-with`。可安装独立可执行文件，
-或使用 Go 1.25+ 安装：
+上述所有安装方式均提供 1.1.0 正式版的 `--accept` 和 `--respond-with`。
+也可使用 Go 1.25+ 从源码安装：
 
 ```bash
 go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.0

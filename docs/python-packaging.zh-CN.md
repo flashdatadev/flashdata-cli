@@ -1,12 +1,12 @@
 # Python wheel 打包
 
-[FlashData](https://flashdata.dev) · [English](python-packaging.md) · [安装指南](installation.zh-CN.md#python-安装器本地候选包)
+[FlashData](https://flashdata.dev) · [English](python-packaging.md) · [安装指南](installation.zh-CN.md#pythonpip-和-uv)
 
-**尚未发布的 PyPI 候选包。源码和 CI 定义位于 GitHub，未发布任何 PyPI 或 TestPyPI 版本。** 发行包 `flashdata-cli` **1.0.0** 提供 `flashdata` 命令及 `python -m flashdata_cli`。Python SDK 是独立的 `flashdata` 发行包。
+[`flashdata-cli` 1.1.0 已发布至 PyPI](https://pypi.org/project/flashdata-cli/)。通过 pip 或 uv 安装请参阅[安装指南](installation.zh-CN.md#pythonpip-和-uv)。本指南介绍本地 wheel 的构建与验证。软件包提供 `flashdata` 命令及 `python -m flashdata_cli`；Python SDK 是独立的 `flashdata` 发行包。
 
 ## 兼容性与内容
 
-无依赖的 Python 3.10+ 启动器执行内置的官方 v1.0.0 二进制。Linux/macOS 用 `execv` 保留 PID 和原生信号处理；Windows 等待共享控制台的子进程。参数不经 shell，继承标准输入/输出和环境，并保留退出状态。启动器不加载 `.env`、读取凭据、下载二进制或管理配置；认证、存储和执行恢复仍由原生 CLI 负责。
+无依赖的 Python 3.10+ 启动器执行内置的官方 v1.1.0 二进制。Linux/macOS 用 `execv` 保留 PID 和原生信号处理；Windows 等待共享控制台的子进程。参数不经 shell，继承标准输入/输出和环境，并保留退出状态。启动器不加载 `.env`、读取凭据、下载二进制或管理配置；认证、存储和执行恢复仍由原生 CLI 负责。
 
 | Wheel 平台 | 目标 | 最低要求 |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ python scripts/test_wheel_install.py --uv uv --python /path/to/python3.10 --work
 
 `scripts/wheel_validation.py` 独立检查平台标签、二进制格式/最低系统版本、元数据、许可证/文档以及全部 `RECORD` 哈希。重复构建至另一空目录应得到相同哈希。`wheels.yml` 构建候选包，并在五种系统/CPU 和 Python 3.10/3.15 上执行原生检查。[GitHub Actions 结果](https://github.com/flashdatadev/flashdata-cli/actions/workflows/wheels.yml)与候选产物独立于 PyPI 正式发布。
 
-[原生验证任务](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679122)通过全部 **30 种安装组合**：五种原生平台，各使用 Python **3.10 和 3.15**，分别运行 pip、uv pip 和 uv tool。每种组合验证安装、离线版本/帮助/命令、参数/标准输入/错误/退出状态传递、原生二进制哈希、附带文档/许可证、重装、卸载及用户状态保留。[原有 CLI 检查](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679107)也全部通过。下载的五种 CI wheel 与已在本地验证的产物逐字节一致。
+[v1.1.0 原生验证任务](https://github.com/flashdatadev/flashdata-cli/actions/runs/39943624896)通过全部 **30 种安装组合**：五种原生平台，各使用 Python **3.10 和 3.15**，分别运行 pip、uv pip 和 uv tool。每种组合验证安装、离线版本/帮助/命令、参数/标准输入/错误/退出状态传递、原生二进制哈希、附带文档/许可证、重装、卸载及用户状态保留。[CLI 检查](https://github.com/flashdatadev/flashdata-cli/actions/runs/39943624704)也全部通过。
 
 | 原生平台 | Python 版本 | pip / uv pip / uv tool |
 | --- | --- | --- |
@@ -72,9 +72,9 @@ python scripts/test_wheel_install.py --uv uv --python /path/to/python3.10 --work
 | macOS Apple Silicon | 3.10, 3.15 | 通过 |
 | Windows x86_64 | 3.10, 3.15 | 通过 |
 
-五种 wheel 均通过严格的元数据/完整性检查，重复构建哈希一致。pip 能选择支持的平台标签，拒绝不支持的平台和 Python 3.9。本地 Windows 检查还覆盖 Python **3.12**。测试对象是候选 wheel，而非 PyPI 正式发布，不代表已认证线上服务可用性或真实系统凭据库行为。
+五种 v1.1.0 wheel 均通过严格的元数据/完整性检查，重复构建哈希一致。pip 能选择支持的平台标签，拒绝不支持的平台和 Python 3.9。CI 测试对象是候选 wheel，不代表已认证线上服务可用性或真实系统凭据库行为。
 
-无需 PyPI 即可试用：打开成功的 wheel 工作流任务，下载 `wheel-candidates` 产物，将内容解压到仓库的 `dist/wheels`，再运行安装指南中带 `--no-index --find-links dist/wheels` 的命令。CI 产物保留七天；过期后可从固定版本归档重新构建。
+无需 PyPI 即可试用本地候选包：下载成功工作流中的 `wheel-candidates` 产物并解压至仓库的 `dist/wheels`。在虚拟环境中运行 `python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.1.0`，或使用带相同选项的 `uv pip install`。CI 产物保留七天；过期后可从固定版本归档重新构建。
 
 ## 发布前提
 
