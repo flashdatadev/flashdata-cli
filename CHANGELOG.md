@@ -2,7 +2,7 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-## Unreleased
+## 1.1.1 — 2026-10-23
 
 Fix consecutive commands with `FLASHDATA_API_KEY` on a new profile. Save profile
 origins before the first run without saving the environment key, so later queries,
