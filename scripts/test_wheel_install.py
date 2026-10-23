@@ -88,7 +88,7 @@ def main():
             previous = {name: env.get(name) for name in ("FLASHDATA_TEST_BINARY", "GOWORK")}
             env.update({"FLASHDATA_TEST_BINARY": str(executable.resolve()), "GOWORK": "off"})
             try:
-                run([args.go, "test", "-mod=readonly", "-count=1", "./internal/app", "-run", "^TestStandaloneEnvironmentKeyWorksAcrossProcesses$"], cwd=ROOT)
+                run([args.go, "test", "-mod=readonly", "-count=1", "./internal/app", "-run", "^(TestStandaloneEnvironmentKeyWorksAcrossProcesses|TestDefaultLinuxLoginOnHeadlessHost)$"], cwd=ROOT)
             finally:
                 for name, value in previous.items():
                     if value is None:

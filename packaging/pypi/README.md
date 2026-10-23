@@ -4,11 +4,11 @@ English | [简体中文](README.zh-CN.md)
 
 [FlashData](https://flashdata.dev) provides structured Google search and YouTube data, transcripts/captions, background jobs and bulk delivery. This package installs the official [FlashData CLI](https://github.com/flashdatadev/flashdata-cli), including secure profiles, onboarding and recoverable bulk workflows. The command is `flashdata`; the Python SDK is the separate `flashdata` distribution.
 
-Version **1.1.1** wraps the official v1.1.1 executable, including JSON, plain-text and Markdown response options. The package requires Python 3.10+ for its small launcher and no Go compiler or runtime. It has no Python runtime dependencies and never downloads an executable during installation or startup.
+Version **1.1.2** wraps the official v1.1.2 executable, including JSON, plain-text and Markdown response options. The package requires Python 3.10+ for its small launcher and no Go compiler or runtime. It has no Python runtime dependencies and never downloads an executable during installation or startup.
 
 Supported wheels: Linux glibc 2.17+ x86_64/aarch64, macOS 13+ Intel/Apple Silicon, Windows x86_64. Linux musl/Alpine, Windows ARM64 and 32-bit systems have no matching wheels. An unsupported platform fails resolution rather than installing a different executable.
 
-Version 1.1.1 fixes consecutive commands using `FLASHDATA_API_KEY` without saving the environment key. Existing profiles and run history are preserved.
+Version 1.1.2 makes default login work on fresh headless Linux profiles when the desktop keyring is unavailable. Existing profiles and run history are preserved.
 
 ## Install
 
@@ -21,17 +21,17 @@ python -m venv .venv-cli
 Activate it with `source .venv-cli/bin/activate` on Bash, or `.venv-cli\Scripts\Activate.ps1` on PowerShell. Then choose pip or uv pip:
 
 ```bash
-python -m pip install flashdata-cli==1.1.1
+python -m pip install flashdata-cli==1.1.2
 ```
 
 ```bash
-uv pip install flashdata-cli==1.1.1
+uv pip install flashdata-cli==1.1.2
 ```
 
 Alternatively, outside the virtual environment:
 
 ```bash
-uv tool install flashdata-cli==1.1.1
+uv tool install flashdata-cli==1.1.2
 flashdata --version
 flashdata --help
 ```
@@ -44,8 +44,8 @@ For offline installation, download the wheel for your platform and install its l
 
 Get a key from your [FlashData account](https://flashdata.dev), then use `flashdata auth login` (hidden terminal input). See [English onboarding and installation](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.md), [简体中文](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.zh-CN.md) and the [complete bulk workflow](https://github.com/flashdatadev/flashdata-cli#complete-bulk-workflow). Native arguments, stdin/stdout/stderr, signals and exit status pass through the launcher; no API credentials belong in installation commands.
 
-For headless Linux with CLI 1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. The key is saved in a private file with owner-only permissions, without encryption. Later commands reuse the saved storage automatically.
+On a fresh headless Linux setup, `flashdata auth login` automatically uses a private credential file if the desktop keyring is unavailable. The file has owner-only permissions and is not encrypted. Later commands reuse it without extra flags.
 
-To upgrade, use `--upgrade` with pip/uv pip or `uv tool install --reinstall` with uv tool. An exact `==1.1.1` constraint stays pinned; change it intentionally for a newer version. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching the installer you used. Removing the package preserves per-user CLI profiles and run history; use `flashdata auth logout` first if you want to remove a saved credential.
+To upgrade, use `--upgrade` with pip/uv pip or `uv tool install --reinstall` with uv tool. An exact `==1.1.2` constraint stays pinned; change it intentionally for a newer version. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching the installer you used. Removing the package preserves per-user CLI profiles and run history; use `flashdata auth logout` first if you want to remove a saved credential.
 
 Build, validation and publication prerequisites are in the checkout's `docs/python-packaging.md`. Nothing in the packaging or test scripts uploads packages. Support: [support@flashdata.dev](mailto:support@flashdata.dev).

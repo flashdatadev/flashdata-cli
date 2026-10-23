@@ -6,7 +6,7 @@
 
 ## 兼容性与内容
 
-无依赖的 Python 3.10+ 启动器执行内置的官方 v1.1.1 二进制。Linux/macOS 用 `execv` 保留 PID 和原生信号处理；Windows 等待共享控制台的子进程。参数不经 shell，继承标准输入/输出和环境，并保留退出状态。启动器不加载 `.env`、读取凭据、下载二进制或管理配置；认证、存储和执行恢复仍由原生 CLI 负责。
+无依赖的 Python 3.10+ 启动器执行内置的官方 v1.1.2 二进制。Linux/macOS 用 `execv` 保留 PID 和原生信号处理；Windows 等待共享控制台的子进程。参数不经 shell，继承标准输入/输出和环境，并保留退出状态。启动器不加载 `.env`、读取凭据、下载二进制或管理配置；认证、存储和执行恢复仍由原生 CLI 负责。
 
 | Wheel 平台 | 目标 | 最低要求 |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ python scripts/test_wheel_install.py --uv uv --python /path/to/python3.10 --work
 
 五种 v1.1.0 wheel 均通过严格的元数据/完整性检查，重复构建哈希一致。pip 能选择支持的平台标签，拒绝不支持的平台和 Python 3.9。CI 测试对象是候选 wheel，不代表已认证线上服务可用性或真实系统凭据库行为。
 
-无需 PyPI 即可试用本地候选包：下载成功工作流中的 `wheel-candidates` 产物并解压至仓库的 `dist/wheels`。在虚拟环境中运行 `python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.1.1`，或使用带相同选项的 `uv pip install`。CI 产物保留七天；过期后可从固定版本归档重新构建。
+无需 PyPI 即可试用本地候选包：下载成功工作流中的 `wheel-candidates` 产物并解压至仓库的 `dist/wheels`。在虚拟环境中运行 `python -m pip install --no-index --find-links dist/wheels flashdata-cli==1.1.2`，或使用带相同选项的 `uv pip install`。CI 产物保留七天；过期后可从固定版本归档重新构建。
 
 ## 发布前提
 
