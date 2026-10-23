@@ -260,7 +260,7 @@ flashdata account balance
 flashdata --help
 ```
 
-- **脚本与 AI 代理：** 使用 `--json --non-interactive`、[配置和凭据管理](docs/security.md)，以及[稳定的运行 ID](docs/runs.md)。集成密钥管理器时可通过 `auth login --api-key-stdin` 保存密钥。显式设置的 `FLASHDATA_API_KEY` 会在当前命令中覆盖已保存密钥；不会自动加载 `.env` 文件。
+- **脚本与 AI 代理：** 使用 `--json --non-interactive`、[配置和凭据管理](docs/security.md)，以及[稳定的运行 ID](docs/runs.md)。集成密钥管理器时可通过 `auth login --api-key-stdin` 保存密钥；如不希望保存密钥，可在每次执行命令时设置 `FLASHDATA_API_KEY`。环境变量中的密钥优先于已保存密钥；不会自动加载 `.env` 文件。
 - **后台查询与混合批次：** 参阅[可运行输入示例](examples/README.md)及[命令参考](docs/commands.md)。
 - **开始试用并连接账户：** 参阅[接入指南（英文）](docs/onboarding.md)，了解 `init`、浏览器授权及恢复操作。
 - **在 Go 应用中使用 FlashData：** 安装本 CLI 所使用的 [Go SDK](https://github.com/flashdatadev/flashdata-go)。

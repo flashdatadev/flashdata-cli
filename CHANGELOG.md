@@ -2,6 +2,13 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+## Unreleased
+
+Fix consecutive commands with `FLASHDATA_API_KEY` on a new profile. Save profile
+origins before the first run without saving the environment key, so later queries,
+account commands and recovery work with the same environment variable. Preserve
+saved credentials, origin bindings and protection against duplicate submissions.
+
 ## 1.1.0 — 2026-10-23
 
 Redact credentials escaped by the API's Markdown renderer in JSON and plain-text

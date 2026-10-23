@@ -58,6 +58,9 @@ func cleanEnv() []string {
 	return env
 }
 func binaryCall(t *testing.T, binary, root, url, input string, args ...string) (int, string, string) {
+	return binaryCallWithEnv(t, binary, root, url, input, nil, args...)
+}
+func binaryCallWithEnv(t *testing.T, binary, root, url, input string, env []string, args ...string) (int, string, string) {
 	t.Helper()
 	base := []string{"--state-dir", root, "--json", "--non-interactive"}
 	if runtime.GOOS != "windows" {
@@ -69,7 +72,7 @@ func binaryCall(t *testing.T, binary, root, url, input string, args ...string) (
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, binary, append(base, args...)...)
-	cmd.Env = cleanEnv()
+	cmd.Env = append(cleanEnv(), env...)
 	cmd.Stdin = strings.NewReader(input)
 	var out, stderr bytes.Buffer
 	cmd.Stdout = &out

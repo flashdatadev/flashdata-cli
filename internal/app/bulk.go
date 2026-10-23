@@ -65,7 +65,7 @@ func (a *App) addBulk() {
 			pricing, e := auth.Client.Account.Pricing(ctx, fd.PricingParams{Source: request.Source})
 			return a.success(map[string]any{"dryRun": true, "request": sanitize(request), "inputBytes": size, "inputFileHash": hash, "pricing": pricing, "pricingAvailable": e == nil, "note": "No job was created. Download billing depends on delivered bytes; per-request data billing depends on accepted IDs."}, "", false, nil)
 		}
-		r, exists, err := a.begin(s, auth, id, "bulk:run", canonical, []fd.Source{request.Source}, f.Recurring)
+		r, exists, err := a.begin(ctx, s, v, auth, id, "bulk:run", canonical, []fd.Source{request.Source}, f.Recurring)
 		if err != nil {
 			return err
 		}
@@ -167,7 +167,7 @@ func (a *App) addBulk() {
 		if cf.DryRun {
 			return a.success(map[string]any{"dryRun": true, "request": sanitize(request)}, "", false, nil)
 		}
-		r, exists, err := a.begin(s, auth, id, "bulk:create", canonical, []fd.Source{request.Source}, cf.Recurring)
+		r, exists, err := a.begin(ctx, s, v, auth, id, "bulk:create", canonical, []fd.Source{request.Source}, cf.Recurring)
 		if err != nil {
 			return err
 		}
@@ -340,7 +340,7 @@ func (a *App) addBulk() {
 					return e
 				}
 				canonical, _ := json.Marshal(map[string]string{"bulkId": args[0]})
-				r, exists, e := a.begin(s, auth, id, "bulk:results", canonical, []fd.Source{fd.Source(job.Source)}, false)
+				r, exists, e := a.begin(ctx, s, v, auth, id, "bulk:results", canonical, []fd.Source{fd.Source(job.Source)}, false)
 				if e != nil {
 					return e
 				}

@@ -37,6 +37,7 @@ Windows and Intel macOS source checks on Go 1.25/1.27, Linux race checks, source
 and command generation checks, archive-policy tests and all five native archive
 acceptance jobs. Release checks use mock APIs and submit no paid queries.
 
-The separate unpublished Python installer candidate remains pinned to historical
-v1.0.0 binaries. It is not the Python SDK and does not provide v1.1.0 CLI flags.
-Use the standalone distribution for this release. See [wheel preparation](python-packaging.md).
+The [PyPI CLI installer](https://pypi.org/project/flashdata-cli/) provides the same
+v1.1.0 CLI through pip and uv. It is separate from the Python SDK. See
+[Python installation](installation.md#python-pip-and-uv) and
+[wheel preparation](python-packaging.md).

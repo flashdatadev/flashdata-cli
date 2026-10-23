@@ -122,3 +122,35 @@ func TestStandaloneLostACKAndBulkStartRecoverAcrossProcesses(t *testing.T) {
 		t.Fatal("recovery replayed a mutation or retained a spent capability", err, stats)
 	}
 }
+
+func TestStandaloneEnvironmentKeyWorksAcrossProcesses(t *testing.T) {
+	if testing.Short() {
+		t.Skip("compiled binary and real fresh-process recovery")
+	}
+	m, server := fixture(t)
+	binary := buildBinary(t)
+	root := filepath.Join(t.TempDir(), "state")
+	env := []string{"FLASHDATA_API_KEY=fd_environment_offline"}
+	code, out, stderr := binaryCallWithEnv(t, binary, root, server.URL, "", env, "search", "offline", "--run-id", "env-process")
+	if code != 0 {
+		t.Fatal(out, stderr)
+	}
+	for _, args := range [][]string{
+		{"account", "balance"},
+		{"search", "offline", "--run-id", "env-process"},
+		{"runs", "show", "env-process", "--result"},
+	} {
+		code, out, stderr = binaryCallWithEnv(t, binary, root, "", "", env, args...)
+		if code != 0 {
+			t.Fatal("environment key failed in a fresh process", out, stderr)
+		}
+	}
+	code, out, stderr = binaryCall(t, binary, root, "", "", "account", "balance")
+	if code != 1 || out != "" || !strings.Contains(stderr, "credentials_missing") {
+		t.Fatal("environment key was persisted", out, stderr)
+	}
+	code, out, stderr = binaryCallWithEnv(t, binary, root, "", "", env, "account", "balance")
+	if code != 0 || m.stats().QueryCount != 1 || m.stats().RegisterCount != 0 {
+		t.Fatal("environment-key reuse failed or repeated work", out, stderr, m.stats())
+	}
+}

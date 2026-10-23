@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -10,8 +11,145 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/flashdatadev/flashdata-cli/internal/state"
 	fd "github.com/flashdatadev/flashdata-go"
 )
+
+func TestEnvironmentOnlyRunsKeepProfileUsable(t *testing.T) {
+	ids := filepath.Join(t.TempDir(), "ids.txt")
+	if err := os.WriteFile(ids, []byte("dQw4w9WgXcQ\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name, input string
+		args        []string
+	}{
+		{"realtime", "", []string{"search", "offline", "--run-id", "env-run"}},
+		{"async", "", []string{"search", "offline", "--mode", "async", "--run-id", "env-run"}},
+		{"batch", `[{"source":"google_search","query":"offline"}]`, []string{"batch", "submit", "--input", "-", "--run-id", "env-run"}},
+		{"bulk-create", `{"source":"youtube_metadata"}`, []string{"bulk", "create", "--input", "-", "--run-id", "env-run"}},
+		{"bulk-run", "", []string{"bulk", "run", "--input", ids, "--run-id", "env-run"}},
+		{"bulk-results", "", []string{"bulk", "results", "bulk_offline1", "--run-id", "env-run"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("FLASHDATA_API_KEY", "fd_environment_offline")
+			m, server := fixture(t)
+			m.set(func(m *mockAPI) { m.BulkStatus = "completed" })
+			root := filepath.Join(t.TempDir(), "state")
+			code, out, stderr := invoke(t, root, server.URL, tc.input, tc.args...)
+			if code != 0 {
+				t.Fatal(out, stderr)
+			}
+			v, err := stateStore(t, root).Load(context.Background())
+			if err != nil || v == nil || v.Phase != "environment-required" || v.Credentials != (fd.AgentCredentials{}) {
+				t.Fatal("environment-only profile was not saved without credentials", v, err)
+			}
+			if v.DataOrigin != server.URL || v.ManagementOrigin != server.URL || v.WebOrigin != server.URL {
+				t.Fatal("profile origins were not retained")
+			}
+			before := m.stats()
+			for _, command := range []struct {
+				input string
+				args  []string
+			}{{"", []string{"account", "balance"}}, {tc.input, tc.args}} {
+				// Omit origin flags on later commands to verify persisted binding.
+				code, out, stderr = invoke(t, root, "", command.input, command.args...)
+				if code != 0 {
+					t.Fatal("consecutive environment-key command failed", out, stderr)
+				}
+			}
+			after := m.stats()
+			if after.QueryCount != before.QueryCount || after.CreateCount != before.CreateCount || after.RegisterCount != 0 {
+				t.Fatal("reusing the profile repeated work or created a trial", after)
+			}
+			t.Setenv("FLASHDATA_API_KEY", "")
+			code, out, stderr = invoke(t, root, "", "", "account", "balance")
+			if code != 1 || out != "" || !strings.Contains(stderr, "credentials_missing") {
+				t.Fatal("environment key was reused after being unset", out, stderr)
+			}
+			t.Setenv("FLASHDATA_API_KEY", "fd_environment_offline")
+			code, out, stderr = invoke(t, root, "https://other.example", "", "account", "balance")
+			if code != 1 || out != "" || !strings.Contains(stderr, "origin_conflict") {
+				t.Fatal("environment key bypassed origin binding", out, stderr)
+			}
+		})
+	}
+}
+
+func TestImportRepairsOldEnvironmentProfileWithoutRepeatingWork(t *testing.T) {
+	t.Setenv("FLASHDATA_API_KEY", "fd_environment_offline")
+	m, server := fixture(t)
+	root := filepath.Join(t.TempDir(), "state")
+	code, out, stderr := invoke(t, root, server.URL, "", "search", "offline", "--run-id", "old-env")
+	if code != 0 {
+		t.Fatal(out, stderr)
+	}
+	s := stateStore(t, root)
+	// Recreate 1.1.0's environment-only state: history without profile metadata.
+	for _, name := range []string{"vault.json", "profile.json"} {
+		if err := os.Remove(filepath.Join(s.Dir, name)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	t.Setenv("FLASHDATA_API_KEY", "")
+	login(t, root, server.URL, "fd_environment_offline")
+	code, out, stderr = invoke(t, root, "", "", "search", "offline", "--run-id", "old-env")
+	if code != 0 || !strings.Contains(out, `"cached":true`) || m.stats().QueryCount != 1 || m.stats().RegisterCount != 0 {
+		t.Fatal("key import lost or resubmitted old work", out, stderr, m.stats())
+	}
+}
+
+func TestEnvironmentProfileSavedBeforeUncertainSubmission(t *testing.T) {
+	t.Setenv("FLASHDATA_API_KEY", "fd_environment_offline")
+	m, server := fixture(t)
+	m.set(func(m *mockAPI) { m.DropQuery = true })
+	root := filepath.Join(t.TempDir(), "state")
+	args := []string{"search", "offline", "--run-id", "env-uncertain"}
+	for i := 0; i < 2; i++ {
+		code, out, stderr := invoke(t, root, server.URL, "", args...)
+		if code != 1 || out != "" || strings.Contains(stderr, "credentials_missing") {
+			t.Fatal("uncertain submission lost its profile", out, stderr)
+		}
+	}
+	r, err := stateStore(t, root).ReadRun("env-uncertain")
+	if err != nil || r == nil || r.Status != "uncertain" || m.stats().QueryCount != 1 {
+		t.Fatal("uncertain environment run was not retained or was resubmitted", err, m.stats())
+	}
+}
+
+func TestEnvironmentKeyDoesNotReplaceMissingOrCorruptVault(t *testing.T) {
+	for _, corrupt := range []bool{false, true} {
+		t.Run(map[bool]string{false: "missing", true: "corrupt"}[corrupt], func(t *testing.T) {
+			t.Setenv("FLASHDATA_API_KEY", "")
+			m, server := fixture(t)
+			root := filepath.Join(t.TempDir(), "state")
+			login(t, root, server.URL, "fd_owner_offline")
+			s := stateStore(t, root)
+			path := filepath.Join(s.Dir, "vault.json")
+			var err error
+			if corrupt {
+				err = state.AtomicWrite(path, []byte(`{"version":99}`))
+			} else {
+				err = os.Remove(path)
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("FLASHDATA_API_KEY", "fd_environment_offline")
+			code, out, stderr := invoke(t, root, server.URL, "", "search", "offline", "--run-id", "blocked")
+			if code != 1 || out != "" || m.stats().QueryCount != 0 {
+				t.Fatal("environment key bypassed missing/corrupt vault", out, stderr)
+			}
+			want := state.ErrMissing
+			if corrupt {
+				want = state.ErrCorrupt
+			}
+			if _, err = s.Load(context.Background()); !errors.Is(err, want) {
+				t.Fatal("damaged state was replaced", err)
+			}
+		})
+	}
+}
 
 func TestEnvironmentBulkUpdatesPreserveSavedCredentials(t *testing.T) {
 	t.Setenv("FLASHDATA_API_KEY", "")

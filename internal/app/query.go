@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"strings"
@@ -240,7 +241,7 @@ func (a *App) runID(f queryFlags) (string, error) {
 	}
 	return id, nil
 }
-func (a *App) begin(s *state.Store, auth *access, id, kind string, input []byte, sources []fd.Source, recurring bool) (*state.Run, bool, error) {
+func (a *App) begin(ctx context.Context, s *state.Store, v *state.Vault, auth *access, id, kind string, input []byte, sources []fd.Source, recurring bool) (*state.Run, bool, error) {
 	hash := state.Digest(append([]byte(kind+"\x00"), input...))
 	r, err := s.ReadRun(id)
 	if err != nil {
@@ -265,6 +266,13 @@ func (a *App) begin(s *state.Store, auth *access, id, kind string, input []byte,
 	}
 	if legacy {
 		return nil, false, &Error{Code: "legacy_run_requires_inspection", Message: "This stable ID exists in migrated legacy history; it cannot be resubmitted automatically.", RunID: id, Next: "Inspect runs list/show for legacy records before intentionally choosing a new execution ID."}
+	}
+	// Callers hold the profile lock. Initialize before journaling intent so the
+	// next command can load pinned origins; Save omits the environment API key.
+	if v.Phase == "environment" && !s.Exists() {
+		if err = s.Save(ctx, v); err != nil {
+			return nil, false, err
+		}
 	}
 	r = &state.Run{ID: id, Kind: kind, InputHash: hash, AccountRef: account, Status: "intent", Sources: sources, Recurring: recurring}
 	if len(sources) == 1 {
@@ -407,7 +415,7 @@ func (a *App) query(cmd *cobra.Command, b []byte, f queryFlags) error {
 		pricing, e := auth.Client.Account.Pricing(ctx, fd.PricingParams{Source: q.Source, RequestCount: 1})
 		return a.success(map[string]any{"dryRun": true, "request": sanitize(q), "mode": f.Mode, "estimate": pricing, "estimateAvailable": e == nil, "note": "Estimate only; admission and actual usage are determined by FlashData."}, "", false, nil)
 	}
-	r, exists, err := a.begin(s, auth, id, "query:"+f.Mode, canonical, []fd.Source{q.Source}, f.Recurring)
+	r, exists, err := a.begin(ctx, s, v, auth, id, "query:"+f.Mode, canonical, []fd.Source{q.Source}, f.Recurring)
 	if err != nil {
 		return err
 	}
@@ -603,7 +611,7 @@ func (a *App) addBatch() {
 			}
 			return a.success(map[string]any{"dryRun": true, "queries": sanitize(queries), "count": len(queries), "estimates": estimates, "note": "Estimates only; download cost depends on delivered bytes, and server admission is authoritative."}, "", false, nil)
 		}
-		r, exists, err := a.begin(s, auth, id, "batch", canonical, sources, f.Recurring)
+		r, exists, err := a.begin(ctx, s, v, auth, id, "batch", canonical, sources, f.Recurring)
 		if err != nil {
 			return err
 		}

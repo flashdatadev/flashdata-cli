@@ -261,7 +261,7 @@ flashdata account balance
 flashdata --help
 ```
 
-- **Scripts and AI agents:** use `--json --non-interactive`, [profiles and credentials](docs/security.md), and [stable run IDs](docs/runs.md). Store a key through `auth login --api-key-stdin` when integrating a secret manager. An explicitly set `FLASHDATA_API_KEY` overrides the saved key for that command; `.env` files are not loaded.
+- **Scripts and AI agents:** use `--json --non-interactive`, [profiles and credentials](docs/security.md), and [stable run IDs](docs/runs.md). Store a key through `auth login --api-key-stdin` when integrating a secret manager, or keep `FLASHDATA_API_KEY` set for each command to use a key without saving it. The environment key overrides any saved key; `.env` files are not loaded.
 - **Background queries and mixed batches:** see the [runnable inputs](examples/README.md) and [command reference](docs/commands.md).
 - **Trial setup and connecting your account:** see [onboarding](docs/onboarding.md) for `init`, browser approval and recovery.
 - **Use FlashData inside a Go application:** install the [Go SDK](https://github.com/flashdatadev/flashdata-go), which powers this CLI.
