@@ -297,6 +297,15 @@ For future terminals, add `%LOCALAPPDATA%\FlashData\bin` to your user PATH in Wi
 
 ## Next steps
 
-Run `flashdata auth login` to import an existing key from your [FlashData account](https://flashdata.dev). Terminal input is hidden. Automation can use a secret manager piped to `auth login --api-key-stdin --non-interactive`; never put a key in command arguments. See [onboarding](onboarding.md), [bulk workflows](bulk.md) and [run recovery](runs.md).
+Initialize the CLI and run your first search:
+
+```bash
+flashdata init --name "my-cli"
+flashdata search "battery recycling startups" --num 5 --json
+```
+
+`init` reuses configured access or creates temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. See [onboarding](onboarding.md) to choose other trial sources or connect your FlashData account for continued use.
+
+Already have an API key? Use `flashdata auth login` and paste it at the hidden prompt. Automation can pipe a key from a secret manager to `auth login --api-key-stdin --non-interactive`. See [bulk workflows](bulk.md) and [run recovery](runs.md) for larger jobs.
 
 The executable's `--version` reports 1.1.0 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.1.0.md).

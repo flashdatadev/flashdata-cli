@@ -24,13 +24,15 @@ and AI model calls.
 
 ## Get started
 
-On macOS or Linux with [Homebrew](https://brew.sh):
+### Install
+
+Choose one installation method. **[Homebrew](https://brew.sh)** works on macOS and Linux:
 
 ```bash
 brew install flashdatadev/tap/flashdata
 ```
 
-Or install from [PyPI](https://pypi.org/project/flashdata-cli/) with Python 3.10+. In an active virtual environment, choose **pip**:
+**pip** and **uv pip** work on Linux, macOS and Windows with Python 3.10+. In an active virtual environment, install from [PyPI](https://pypi.org/project/flashdata-cli/) using pip:
 
 ```bash
 python -m pip install --upgrade flashdata-cli
@@ -44,16 +46,20 @@ uv pip install --upgrade flashdata-cli
 
 Both install the `flashdata` command. See [Python installation](docs/installation.md#python-pip-and-uv) for virtual environment setup and supported platforms.
 
-For **Ubuntu/Debian**, **Fedora/RHEL** or **Windows**, follow the [installation guide](docs/installation.md), or download a [standalone executable](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0). Native installs need no Go, Python or Node.js. Linux and macOS support Intel/AMD and ARM64; Windows supports x64.
+Other options include [APT for Ubuntu/Debian](docs/installation.md#apt-ubuntu-and-debian), [RPM for Fedora/RHEL](docs/installation.md#rpm-fedora-and-rhel), and [standalone downloads for Linux, macOS and Windows](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0). These install the executable directly and need no Python, Go or Node.js.
 
-Get an API key from your [FlashData account](https://flashdata.dev). Run `auth login` and paste it at the hidden prompt, then make your first search:
+### Make your first search
+
+Initialize the CLI, then run a search:
 
 ```bash
-flashdata auth login
+flashdata init --name "my-cli"
 flashdata search "battery recycling startups" --num 5 --json
 ```
 
-The result includes structured Google search data such as page titles, links and snippets. Your key is saved for later commands using the platform credential store where available; see [credential storage](docs/security.md). Queries and jobs use your account's credits; see [pricing](https://flashdata.dev/pricing).
+`init` reuses configured access or creates and saves temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. To continue with your FlashData account or choose other trial sources, see [onboarding](docs/onboarding.md). If you already have an API key, use `flashdata auth login` instead and paste it at the hidden prompt.
+
+The search returns page titles, links and snippets. Queries use your available credits; see [pricing](https://flashdata.dev/pricing) and [credential storage](docs/security.md).
 
 ## JSON, plain text and Markdown
 
@@ -257,7 +263,7 @@ flashdata --help
 
 - **Scripts and AI agents:** use `--json --non-interactive`, [profiles and credentials](docs/security.md), and [stable run IDs](docs/runs.md). Store a key through `auth login --api-key-stdin` when integrating a secret manager. An explicitly set `FLASHDATA_API_KEY` overrides the saved key for that command; `.env` files are not loaded.
 - **Background queries and mixed batches:** see the [runnable inputs](examples/README.md) and [command reference](docs/commands.md).
-- **New agent setup and browser claiming:** see [onboarding](docs/onboarding.md). This optional flow depends on server availability; existing accounts can use `auth login` directly.
+- **Trial setup and connecting your account:** see [onboarding](docs/onboarding.md) for `init`, browser approval and recovery.
 - **Use FlashData inside a Go application:** install the [Go SDK](https://github.com/flashdatadev/flashdata-go), which powers this CLI.
 
 [Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.1.0.md) · [MIT license](LICENSE)

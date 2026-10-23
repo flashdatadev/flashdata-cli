@@ -23,13 +23,15 @@
 
 ## 快速开始
 
-在已安装 [Homebrew](https://brew.sh) 的 macOS 或 Linux 上运行：
+### 安装
+
+任选一种安装方式。**[Homebrew](https://brew.sh)** 适用于 macOS 和 Linux：
 
 ```bash
 brew install flashdatadev/tap/flashdata
 ```
 
-也可通过 [PyPI](https://pypi.org/project/flashdata-cli/) 安装，需要 Python 3.10+。在已激活的虚拟环境中使用 **pip**：
+**pip** 和 **uv pip** 适用于 Linux、macOS 和 Windows，需要 Python 3.10+。在已激活的虚拟环境中，通过 **pip** 从 [PyPI](https://pypi.org/project/flashdata-cli/) 安装：
 
 ```bash
 python -m pip install --upgrade flashdata-cli
@@ -43,16 +45,20 @@ uv pip install --upgrade flashdata-cli
 
 两种方式均安装 `flashdata` 命令。虚拟环境配置和支持平台见 [Python 安装指南](docs/installation.zh-CN.md#pythonpip-和-uv)。
 
-**Ubuntu/Debian**、**Fedora/RHEL** 和 **Windows** 用户请参阅[安装指南](docs/installation.zh-CN.md)，或下载[独立可执行文件](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0)。原生安装无需 Go、Python 或 Node.js。Linux 和 macOS 支持 Intel/AMD 与 ARM64，Windows 支持 x64。
+其他安装方式包括 [Ubuntu/Debian 的 APT](docs/installation.zh-CN.md#aptubuntu-和-debian)、[Fedora/RHEL 的 RPM](docs/installation.zh-CN.md#rpmfedora-和-rhel)，以及 [Linux、macOS 和 Windows 的独立下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0)。这些方式直接安装可执行文件，无需 Python、Go 或 Node.js。
 
-从 [FlashData 账户](https://flashdata.dev) 获取 API 密钥。运行 `auth login`，在隐藏输入提示中粘贴密钥，然后执行第一次搜索：
+### 执行第一次搜索
+
+初始化 CLI，然后运行搜索：
 
 ```bash
-flashdata auth login
+flashdata init --name "my-cli"
 flashdata search "battery recycling startups" --num 5 --json
 ```
 
-结果包含网页标题、链接和摘要等结构化 Google 搜索数据。密钥会保存供后续命令使用；平台凭据存储可用时会优先使用，详见[凭据存储](docs/security.md)。查询和任务会消耗账户额度，参见[价格](https://flashdata.dev/pricing)。
+`init` 会复用已配置的访问凭据，或为新配置创建并保存临时试用访问。默认试用范围为 Google 搜索和 YouTube 元数据。连接自己的 FlashData 账户或选择其他试用来源，参见[接入指南（英文）](docs/onboarding.md)。如果已有 API 密钥，也可使用 `flashdata auth login`，在隐藏输入提示中粘贴密钥。
+
+搜索结果包含网页标题、链接和摘要。查询会消耗可用额度；参见[价格](https://flashdata.dev/pricing)和[凭据存储](docs/security.md)。
 
 ## JSON、纯文本和 Markdown
 
@@ -256,7 +262,7 @@ flashdata --help
 
 - **脚本与 AI 代理：** 使用 `--json --non-interactive`、[配置和凭据管理](docs/security.md)，以及[稳定的运行 ID](docs/runs.md)。集成密钥管理器时可通过 `auth login --api-key-stdin` 保存密钥。显式设置的 `FLASHDATA_API_KEY` 会在当前命令中覆盖已保存密钥；不会自动加载 `.env` 文件。
 - **后台查询与混合批次：** 参阅[可运行输入示例](examples/README.md)及[命令参考](docs/commands.md)。
-- **新代理接入与浏览器认领：** 参阅[接入指南](docs/onboarding.md)。此可选流程取决于服务端是否启用；已有账户可直接使用 `auth login`。
+- **开始试用并连接账户：** 参阅[接入指南（英文）](docs/onboarding.md)，了解 `init`、浏览器授权及恢复操作。
 - **在 Go 应用中使用 FlashData：** 安装本 CLI 所使用的 [Go SDK](https://github.com/flashdatadev/flashdata-go)。
 
 [安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.1.0.md) · [MIT 许可](LICENSE)

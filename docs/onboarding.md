@@ -2,20 +2,63 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-Use `auth login` with hidden terminal input or `--api-key-stdin` for an existing account. Do not supply keys in arguments. An environment key overrides saved access for the current command and is never implicitly persisted by query/bulk operations. It does not replace stored candidate credentials during `auth finish`.
+## Start a trial
 
-Saving recovery metadata under an environment override preserves the original profile's credentials and onboarding phase. Re-importing the same saved key verifies and reuses the profile without removing claim proofs or upload capabilities. auth status also reports registering/logged_out/environment-required local phases without attempting registration; a pending registration points back to init with its saved proof. Scope-list whitespace is normalized consistently on an explicit registration retry.
+Initialize the CLI and make your first search:
 
-`init --name NAME` explicitly starts onboarding only for a genuinely new profile. It discovers protocol 2 and availability, generates a 256-bit proof, atomically saves the proof and exact registration request, then calls the SDK. Recovery reuses the saved request/proof without requiring flags again. Changing a pending request conflicts. A marker, corrupted/missing vault, logged-out profile or failed/expired existing key prevents a new automatic trial.
+```bash
+flashdata init --name "my-cli"
+flashdata search "battery recycling startups" --num 5 --json
+```
 
-Registration returns ordinary API-key credentials. Setup proof, registration proof and handoff proof are scoped to their control operations; they are never sent as Data API keys. Client labels and plan names convey no authorization. The public trial grant/request-equivalents are distinct from current account balance, and no retry refills a grant.
+`init` verifies and reuses configured access. For a new profile without credentials, it creates temporary trial access and saves it locally. The default trial scopes are `google_search` and `youtube_metadata`.
 
-`auth claim` stores the returned claim privately, constructs its URL from the pinned web origin and validated fixed claim path, and displays the confirmation code separately. No proof/key/code goes into the browser URL. The browser owns sign-in, code confirmation, scope review and funding approval; the CLI cannot impersonate a browser session. The CLI reports the URL rather than automatically opening a browser.
+Before your first `init`, you can add `--scopes youtube_search,youtube_metadata,youtube_transcript` to request different trial sources. Passing `--scopes` when reusing existing access does not expand its permissions.
 
-`auth finish --wait --timeout 10m` polls only recoverable statuses, honoring the server interval. After delivery it commits the candidate key, generation and original handoff proof in the protected vault. Its fresh child is the same absolute executable, supplied only a state directory/profile and a random verification challenge. The child does not inherit an environment API key, takes no API key in arguments, reads the vault without claiming the parent's writer lock, and verifies connection ID, generation, valid lifecycle, ready access and owned state. ACK follows only a matching challenge response. Installation is read back from the server before obsolete secrets are removed.
+The response shows approved sources, the starting allowance and available balance. Per-source request counts are alternative uses of one shared credit allowance. They are not separate quotas.
 
-A failed child sends no ACK. A lost ACK response retains the candidate/proof for explicit recovery. An expired or confirmed handoff without a locally installed key needs account reconnect/recovery, never a new anonymous trial. Read `auth status`; it can still display pending onboarding state when an old temporary key has been fenced/revoked during claiming.
+Run `flashdata discover --json` to check current trial availability and limits. If trial registration is unavailable, use an existing API key as described below.
 
-Imported-key ownership uses GET `/v2/api-access/identity`. A 404 permits ordinary one-off API-key use with ownership unknown, but blocks recurring mode. A known claimed connection can instead verify its current key through its authoritative connection identity endpoint; recurring requires owned, valid, ready and installed. Failures other than a missing endpoint are not guessed away. Revalidation happens before each execution and before cached result reads.
+## Connect your FlashData account
 
-The new general identity endpoint is a local backend patch awaiting deployment; onboarding is feature-gated. This project does not configure production flags, publish or deploy anything.
+To continue beyond the trial, connect this profile to your FlashData account:
+
+```bash
+flashdata auth claim
+```
+
+Open the displayed URL, sign in or create an account, confirm the displayed code and review the requested access. Complete the browser approval, then return to the terminal:
+
+```bash
+flashdata auth finish --wait --timeout 10m
+flashdata auth status
+```
+
+The CLI saves and verifies the approved credentials. If approval or installation is interrupted, keep the same profile and run `auth finish --wait` again. A timeout ends local waiting; it does not create a new trial or discard saved progress.
+
+## Use an existing API key
+
+If you already have an API key, import it instead of starting a trial:
+
+```bash
+flashdata auth login
+```
+
+Paste the key at the hidden prompt. You can manage keys in the [FlashData console](https://flashdata.dev/app/api-keys). For automation, pipe a secret manager's output to `flashdata auth login --api-key-stdin --non-interactive`.
+
+`FLASHDATA_API_KEY` overrides saved access for the current command. Query commands do not save it automatically. REST API keys and MCP OAuth tokens are not interchangeable. See [credential storage](security.md).
+
+## Check access and recover
+
+```bash
+flashdata auth status
+flashdata sources list
+flashdata account balance
+```
+
+These commands show access, permitted sources and the current shared balance without submitting a paid query.
+
+- If registration fails, rerun `init` with the same profile and unchanged input to recover the saved request.
+- If access expires or credits run out, follow the recovery guidance from `auth status` or import a valid key. `init` does not replace expired or unusable credentials with another trial.
+- Keep the same profile and state directory when recovering queries, downloads or browser approval. See [run recovery](runs.md).
+- `auth logout` removes local credentials and retains run history. Revoke a remote key in your account if needed; local logout does not revoke it.

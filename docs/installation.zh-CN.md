@@ -297,6 +297,15 @@ brew untap flashdatadev/tap
 
 ## 下一步
 
-运行 `flashdata auth login`，导入 [FlashData 账户](https://flashdata.dev)中的已有密钥，终端输入会隐藏。自动化可将密钥管理器的输出通过管道传给 `auth login --api-key-stdin --non-interactive`；不要将密钥放入命令行参数。详见[接入](onboarding.md)、[Bulk 流程](bulk.md)及[执行恢复](runs.md)。
+初始化 CLI 并执行第一次搜索：
+
+```bash
+flashdata init --name "my-cli"
+flashdata search "battery recycling startups" --num 5 --json
+```
+
+`init` 会复用已配置的访问凭据，或为新配置创建临时试用访问。默认试用范围为 Google 搜索和 YouTube 元数据。选择其他试用来源或连接自己的 FlashData 账户继续使用，参见[接入指南（英文）](onboarding.md)。
+
+如果已有 API 密钥，运行 `flashdata auth login`，在隐藏输入提示中粘贴密钥。自动化可将密钥管理器的输出通过管道传给 `auth login --api-key-stdin --non-interactive`。更大规模的任务见 [Bulk 流程](bulk.md)和[执行恢复](runs.md)。
 
 `--version` 显示 1.1.0 及 `build-report.json` 记录的准确源码提交。可执行文件和附带文档来自同一个源码标签。APT 元数据以及 RPM 软件包/元数据均有签名；独立归档使用 SHA-256 校验，macOS 可执行文件未经过公证。五个平台均运行原生归档验收；真实 Keychain/Secret Service 行为仍需按具体环境检查。详见[版本说明](release-notes-1.1.0.md)。
