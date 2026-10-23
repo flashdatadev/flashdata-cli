@@ -48,7 +48,7 @@ def source_digest(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--go", default="go")
-    parser.add_argument("--version", default="1.0.1")
+    parser.add_argument("--version", default="1.1.0")
     parser.add_argument("--commit", default="local", help="full source Git commit")
     args = parser.parse_args()
     if not re.fullmatch(r"\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?", args.version):

@@ -63,19 +63,19 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            archive: flashdata_1.0.1_linux_amd64.tar.gz
+            archive: flashdata_1.1.0_linux_amd64.tar.gz
             binary: flashdata
           - os: ubuntu-24.04-arm
-            archive: flashdata_1.0.1_linux_arm64.tar.gz
+            archive: flashdata_1.1.0_linux_arm64.tar.gz
             binary: flashdata
           - os: macos-15-intel
-            archive: flashdata_1.0.1_darwin_amd64.tar.gz
+            archive: flashdata_1.1.0_darwin_amd64.tar.gz
             binary: flashdata
           - os: macos-15
-            archive: flashdata_1.0.1_darwin_arm64.tar.gz
+            archive: flashdata_1.1.0_darwin_arm64.tar.gz
             binary: flashdata
           - os: windows-latest
-            archive: flashdata_1.0.1_windows_amd64.zip
+            archive: flashdata_1.1.0_windows_amd64.zip
             binary: flashdata.exe
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20

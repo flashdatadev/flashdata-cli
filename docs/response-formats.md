@@ -2,9 +2,9 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-Response-format flags are available in current `main` source. Published v1.0.1
-binaries do not include them yet. With Go 1.25+, build the current source using
-`go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@main`.
+Response-format flags are included in v1.1.0 standalone binaries. See the
+[installation guide](installation.md). With Go 1.25+, you can also use
+`go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.0`.
 
 `--accept` chooses the API response type. `--respond-with markdown` selects
 Markdown content. They are independent HTTP headers, outside query JSON and params.

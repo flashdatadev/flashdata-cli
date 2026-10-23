@@ -131,7 +131,7 @@ func TestStandaloneBinaryFreshProcessAcceptance(t *testing.T) {
 		t.Fatal("revoked cached data was served", err)
 	}
 	code, out, err = binaryCall(t, binary, root, "", "", "--version")
-	if code != 0 || !strings.Contains(out, "1.0.1") {
+	if code != 0 || !strings.Contains(out, "1.1.0") {
 		t.Fatal(out, err)
 	}
 }

@@ -2,24 +2,41 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-[The official source repository](https://github.com/flashdatadev/flashdata-cli) is public. The current release is [v1.0.1](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.1), including ready-to-run `discover plans` and `discover status` commands. See the [installation guide](installation.md), [简体中文](installation.zh-CN.md) or [release notes](release-notes-1.0.1.md). No source build is needed. Build from a normal clone with `go mod download` and `go build ./cmd/flashdata` if desired; no sibling SDK checkout is required.
+The current release is [v1.1.0](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0).
+It includes JSON, plain-text and Markdown response options, safe cached-result
+reformatting, and credential redaction for Markdown and cached exports. See the
+[release notes](release-notes-1.1.0.md) and [response formats](response-formats.md).
 
-The [official Homebrew tap](https://github.com/flashdatadev/homebrew-tap) distributes these same checked release binaries to Linux and macOS: `brew install flashdatadev/tap/flashdata`. The formula pins all four platform archive checksums. Publish and test a new stable CLI release first, then update the tap's version, URLs and SHA-256 values; its CI verifies every archive and tests native installation, offline commands, reinstall and uninstall. Users upgrade with `brew update` and `brew upgrade flashdatadev/tap/flashdata`. No Homebrew signup or separate package upload is needed. Keep released archives unchanged after a formula references them.
+## Install
 
-The [signed APT repository](https://github.com/flashdatadev/apt) serves `https://flashdatadev.github.io/apt/`, suite `stable`, component `main`, for Ubuntu 22.04/24.04 and Debian 12/13 on amd64/arm64. Debian package `1.0.1-1` preserves the v1.0.1 executable. Its main-only signing environment contains only the signing subkey and passphrase; the certification primary key stays out of CI. InRelease/Release.gpg authenticate the package indexes and checksums. See the [English setup](installation.md#apt-ubuntu-and-debian), [简体中文](installation.zh-CN.md#aptubuntu-和-debian), and [APT maintenance guide](https://github.com/flashdatadev/apt/blob/main/docs/maintaining.md). Publish new Debian revisions for packaging corrections and keep existing versioned packages unchanged. The APT workflow tests installation and actual v1.0.0 package upgrades on both architectures before deploying and against the published HTTPS endpoint, preserving user profiles and run history. Metadata expires after 30 days and is refreshed weekly; monitor workflow failures and key expiry.
+Standalone archives support Linux amd64/arm64, macOS Intel/Apple Silicon and
+Windows x64, without a separate runtime. The [installation guide](installation.md)
+and [简体中文](installation.zh-CN.md) cover direct downloads, Homebrew, signed APT
+and signed RPM installation and upgrades. Preserve profiles and execution history
+when updating. Existing release files and signed package versions remain immutable.
 
-The [signed RPM repository](https://github.com/flashdatadev/rpm) serves `https://flashdatadev.github.io/rpm/`, channel `stable`, for x86_64/aarch64. RPM `1.0.1-1` preserves the v1.0.1 executable. A dedicated RSA-4096 signing subkey signs each RPM and repository metadata with SHA-256; CI keeps the certification primary out of the main-only signing environment. Ten candidate tests cover Fedora 43/44 and RHEL 8/9/10 userspace (Red Hat UBI) on both CPUs before deployment, followed by ten public HTTPS tests of the exact documented installer. Tests upgrade the actual signed v1.0.0 package to v1.0.1 and also check a signed, test-only lower packaging revision; fixtures are never publicly indexed. See [English setup](installation.md#rpm-fedora-and-rhel), [简体中文](installation.zh-CN.md#rpmfedora-和-rhel) and [RPM maintenance](https://github.com/flashdatadev/rpm/blob/main/docs/maintaining.md). Keep published RPM bytes/signatures immutable; increment the packaging release for corrections. Rotate the two-year certificate before expiry, monitor weekly CI and preserve the protected primary-key backup. RPM metadata cache expiry is not a signed replay-prevention guarantee.
+The CLI pins Go SDK **v1.1.0**, with its recorded Go checksums and no local module
+replacement. Go 1.25+ users can also install
+`github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.0` with `go install`.
 
-Published v1.0.1 binaries pin SDK **v1.0.0**. Current main pins SDK commit **433815342d50** (`v1.0.1-0.20261023080654-433815342d50`) for the new response-format methods; see [response formats](response-formats.md). The new CLI flags are source changes awaiting the next release. Go validates the recorded go.sum checksums. CI checks out only this repository and tests the resolved dependency; it does not silently use the sibling SDK's current working tree. Local SDK changes can be tested intentionally with a go.work workspace, outside a release build.
+## Build and verify
 
-Run `python scripts/build_release.py --go /absolute/path/to/go --commit <full-40-character-Git-commit>` from a clean checkout of the intended tag to build five CGo-disabled executables and archives with reviewed docs, examples, license notices and metadata. The script resolves the exact SDK module into Go's module cache and rejects a local module replacement. Executables embed that exact commit in `--version`. Reports retain the commit, CLI/SDK runtime source hashes, SDK version/checksum and Go toolchain; archive paths are portable filenames relative to the report. The script copies the versioned release notes to `RELEASE_NOTES.md`, and `SHA256SUMS` covers all archives, the report and release notes. No upload, tag or release is created by this script.
+From a clean checkout of the intended tag, run
+`python scripts/build_release.py --go /path/to/go --commit FULL_SOURCE_COMMIT`.
+The script builds five CGo-disabled executables and archives with reviewed docs,
+examples, licenses and a build report. It creates no tag and uploads no files.
 
-`release-files.json` selects runtime package files. ZIP and tar metadata are normalized, and SHA256SUMS records archive checksums. Package-policy tests run with `python -m unittest discover -s scripts -p "test_*.py"`. Before distributing binaries, inspect the contents and verify the checksums. Place the matching executable in a user-controlled PATH directory and check --version/--help offline. Installed binaries require no separate runtime.
+The formal release contains the archives, both READMEs, `RELEASE_NOTES.md`,
+`build-report.json` and `SHA256SUMS`. Executable `--version` output and the build
+report record the exact tagged source commit. The report also records the pinned
+SDK, source fingerprints and toolchain. Verify the canonical tag and every asset
+checksum before publishing; keep existing tags and released bytes unchanged.
 
-[GitHub Actions](https://github.com/flashdatadev/flashdata-cli/actions) covers Linux, Windows and native Intel macOS with Go 1.25/1.27, Apple Silicon cross-builds on both Go versions, Linux race checks, package-policy regressions and five-platform archive builds. Native archive acceptance runs the extracted release executable against mock APIs on all five supported platforms, including Apple Silicon and Linux ARM64. Real Secret Service/Keychain behavior, production service availability and macOS notarization remain separate validation tasks. Superseded CI runs are cancelled automatically. SDK v1.0.0 remains the dependency for this tagged CLI version. The formal release includes packages, [release notes](release-notes-1.0.1.md), both READMEs, a build report and SHA256SUMS. Public source tags can also be resolved through Go tooling.
+[GitHub Actions](https://github.com/flashdatadev/flashdata-cli/actions) runs Linux,
+Windows and Intel macOS source checks on Go 1.25/1.27, Linux race checks, source
+and command generation checks, archive-policy tests and all five native archive
+acceptance jobs. Release checks use mock APIs and submit no paid queries.
 
-The v1.0.1 binaries and packaged documentation come from the same source tag and commit recorded in `build-report.json`; `--version` embeds that exact commit. The previous v1.0.0 release retains its original immutable assets and its separate historical `documentationCommit` record.
-
-Python installer support remains a separate, unpublished five-platform `flashdata-cli` 1.0.0 wheel candidate, preserving the exact published v1.0.0 executables. It does not include the new v1.0.1 discovery commands. Source and candidate-test workflows are on GitHub; no PyPI/TestPyPI or npm upload is part of this release. See [English wheel preparation](python-packaging.md) / [简体中文](python-packaging.zh-CN.md) for pinned assets, checksums, native pip/uv tests, compatibility and the native-host validation matrix.
-
-[Python wheel CI run 39747679122](https://github.com/flashdatadev/flashdata-cli/actions/runs/39747679122) passed all 30 pip/uv pip/uv tool combinations across five native platforms and Python 3.10/3.15, including install, reinstall, uninstall and preservation of executable hashes. The downloaded CI wheels match the previously tested local wheel bytes. The existing seven-job CLI workflow also passed. Candidate artifacts are retained for seven days and are not PyPI releases.
+The separate unpublished Python installer candidate remains pinned to historical
+v1.0.0 binaries. It is not the Python SDK and does not provide v1.1.0 CLI flags.
+Use the standalone distribution for this release. See [wheel preparation](python-packaging.md).

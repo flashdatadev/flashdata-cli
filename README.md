@@ -4,7 +4,7 @@
 
 **Google search and YouTube data, straight from your terminal.** [FlashData](https://flashdata.dev) gives you structured search results, video metadata and existing transcripts through one API. Use `flashdata` to research a topic, feed web results to an AI assistant, build a video dataset, or deliver audio to your cloud storage.
 
-No application code is required. Commands return JSON by default, with text and Markdown options in current source. Bulk jobs export JSONL, and saved run IDs let scripts recover accepted work after an interruption.
+No application code is required. Commands return JSON by default, with text and Markdown options. Bulk jobs export JSONL, and saved run IDs let scripts recover accepted work after an interruption.
 
 ## Choose a workflow
 
@@ -30,7 +30,7 @@ On macOS or Linux with [Homebrew](https://brew.sh):
 brew install flashdatadev/tap/flashdata
 ```
 
-For **Ubuntu/Debian**, **Fedora/RHEL** or **Windows**, follow the [installation guide](docs/installation.md), or download a [standalone executable](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.0.1). Native installs need no Go, Python or Node.js. Linux and macOS support Intel/AMD and ARM64; Windows supports x64.
+For **Ubuntu/Debian**, **Fedora/RHEL** or **Windows**, follow the [installation guide](docs/installation.md), or download a [standalone executable](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.0). Native installs need no Go, Python or Node.js. Linux and macOS support Intel/AMD and ARM64; Windows supports x64.
 
 Get an API key from your [FlashData account](https://flashdata.dev). Run `auth login` and paste it at the hidden prompt, then make your first search:
 
@@ -45,11 +45,11 @@ Looking for `pip` or `uv`? The Python installer package is **not published to Py
 
 ## JSON, plain text and Markdown
 
-Current `main` adds `--accept` and `--respond-with`; published v1.0.1 binaries do
-not include these flags yet. With Go 1.25+, install current source:
+Version 1.1.0 includes `--accept` and `--respond-with`. Install a standalone
+release binary, or use Go 1.25+:
 
 ```bash
-go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@main
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.0
 ```
 
 Choose plain text or Markdown for a search:
@@ -227,7 +227,7 @@ Use a new run ID only when you intend to create a new task. See [run history and
 | Public source catalog and health | `sources list`, `discover` |
 | Public plan catalog and status | `discover plans`, `discover status` |
 
-All commands above are included in the ready-to-run **v1.0.1** release. `discover plans` and `discover status` need no API key. Upgrade an existing installation with `brew update && brew upgrade flashdatadev/tap/flashdata`, `sudo apt-get update && sudo apt-get install --only-upgrade flashdata`, or `sudo dnf --refresh upgrade flashdata`; see the [installation guide](docs/installation.md) for repository setup and Windows upgrades. Your profiles and run history are preserved.
+All commands above are included in the ready-to-run **v1.1.0** release. `discover plans` and `discover status` need no API key. Upgrade an existing installation with `brew update && brew upgrade flashdatadev/tap/flashdata`, `sudo apt-get update && sudo apt-get install --only-upgrade flashdata`, or `sudo dnf --refresh upgrade flashdata`; see the [installation guide](docs/installation.md) for repository setup and Windows upgrades. Your profiles and run history are preserved.
 
 All 15 sources support background/batch execution; 14 support realtime. Downloads run in the background and require your cloud storage. Use `sources show SOURCE` for source schemas and a runnable JSON request. The single-video `youtube download` shortcut delivers audio; `query --mode async` and bulk expose the full media source options.
 
@@ -248,4 +248,4 @@ flashdata --help
 - **New agent setup and browser claiming:** see [onboarding](docs/onboarding.md). This optional flow depends on server availability; existing accounts can use `auth login` directly.
 - **Use FlashData inside a Go application:** install the [Go SDK](https://github.com/flashdatadev/flashdata-go), which powers this CLI.
 
-[Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.0.1.md) · [MIT license](LICENSE)
+[Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.1.0.md) · [MIT license](LICENSE)

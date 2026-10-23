@@ -2,7 +2,7 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-## Unreleased
+## 1.1.0 — 2026-10-23
 
 Redact credentials escaped by the API's Markdown renderer in JSON and plain-text
 responses, including saved results and file exports. Preserve the last saved
@@ -12,7 +12,7 @@ an interruption. Cover both async and batch recovery with write-failure regressi
 Add independent `--accept` and `--respond-with` flags for API responses, preserving
 JSON defaults and the CLI's `--json` envelope. Support plain-text receipts with
 durable job IDs, Markdown completed results, cached-format checks and safe
-background-result reformatting. Pin Go SDK commit `433815342d50`, update help and
+background-result reformatting. Pin Go SDK v1.1.0, update help and
 English/Chinese documentation, and test all sources against API-generated fixtures.
 
 ## 1.0.1

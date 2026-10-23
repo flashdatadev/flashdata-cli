@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/ebitengine/purego v0.9.0
-	github.com/flashdatadev/flashdata-go v1.0.1-0.20261023080654-433815342d50
+	github.com/flashdatadev/flashdata-go v1.1.0
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.9

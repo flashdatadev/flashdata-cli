@@ -3,6 +3,8 @@ github.com/ebitengine/purego v0.9.0 h1:mh0zpKBIXDceC63hpvPuGLiJ8ZAa3DfrFTudmfi8A
 github.com/ebitengine/purego v0.9.0/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
 github.com/flashdatadev/flashdata-go v1.0.1-0.20261023080654-433815342d50 h1:SMBVhAmBeT+Zg2Z3vwAcJCpV0CGQmeIMXpyfzdyUTbE=
 github.com/flashdatadev/flashdata-go v1.0.1-0.20261023080654-433815342d50/go.mod h1:NNOIl18Td0hCSfGWXKTfRKTNqGJEGVEQXpw2hLgmErE=
+github.com/flashdatadev/flashdata-go v1.1.0 h1:DbZX1gppghV93O0yz9UkwXzrizaqAL2nUoAvjT8EdHw=
+github.com/flashdatadev/flashdata-go v1.1.0/go.mod h1:NNOIl18Td0hCSfGWXKTfRKTNqGJEGVEQXpw2hLgmErE=
 github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
 github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
