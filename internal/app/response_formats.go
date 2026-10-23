@@ -67,14 +67,41 @@ func recordResponse(r *state.Run, f responseFlags) {
 // URL redaction used by structured output without removing provenance queries.
 var responseURL = regexp.MustCompile(`https?://[^\s<>"']+`)
 var responseSecretField = regexp.MustCompile(`(?im)^(\s*(?:\*\*)?(?:api key|access key|secret key|private key|sas token|authorization|setup credential|handoff proof|registration proof|callback url):(?:\*\*)?)[^\n]*`)
+var markdownSecretPattern = regexp.MustCompile(`(?i)\b(?:fd\\_|fda\\_setup\\_|fda\\_handoff\\_)(?:[A-Za-z0-9]|\\[_-])+`)
+
+// Match the API's escaped values without unescaping or otherwise rewriting the
+// returned document. Newlines in scalar values use Markdown hard line breaks.
+func markdownSecret(secret string) string {
+	var escaped strings.Builder
+	for _, char := range secret {
+		switch char {
+		case '&':
+			escaped.WriteString("&amp;")
+		case '<':
+			escaped.WriteString("&lt;")
+		case '>':
+			escaped.WriteString("&gt;")
+		default:
+			if strings.ContainsRune("\\`*_{}[]()#+!|.-", char) {
+				escaped.WriteByte('\\')
+			}
+			escaped.WriteRune(char)
+		}
+	}
+	text := strings.ReplaceAll(escaped.String(), "\r\n", "\n")
+	text = strings.ReplaceAll(text, "\r", "\n")
+	return strings.ReplaceAll(text, "\n", "  \n")
+}
 
 func (a *App) redactedResponseText(text string) string {
 	for _, secret := range a.knownSecrets {
 		if secret != "" {
+			text = strings.ReplaceAll(text, markdownSecret(secret), "[REDACTED]")
 			text = strings.ReplaceAll(text, secret, "[REDACTED]")
 		}
 	}
 	text = secretPattern.ReplaceAllString(text, "[REDACTED]")
+	text = markdownSecretPattern.ReplaceAllString(text, "[REDACTED]")
 	text = responseURL.ReplaceAllStringFunc(text, func(raw string) string {
 		u, err := url.Parse(raw)
 		if err != nil {
@@ -95,11 +122,6 @@ func (a *App) responseBytes(v *fd.FormattedResponse) ([]byte, string, error) {
 		return []byte(a.redactedResponseText(v.Text)), "text", nil
 	}
 	value := a.redacted(v.JSON)
-	if fields, ok := value.(map[string]any); ok {
-		if text, ok := fields["content"].(string); ok {
-			fields["content"] = a.redactedResponseText(text)
-		}
-	}
 	b, err := json.Marshal(value)
 	return b, "", err
 }
@@ -145,12 +167,17 @@ func (a *App) saveResponse(s *state.Store, r *state.Run, v *fd.FormattedResponse
 	if err != nil {
 		return nil, err
 	}
-	r.ResultFormat = format
-	recordResponse(r, f)
+	next := *r
+	next.ResultFormat = format
+	recordResponse(&next, f)
 	if usage := a.responseUsage(v); usage != nil {
-		r.Usage = usage
+		next.Usage = usage
 	}
-	return b, s.SaveResult(r, b)
+	if err := s.SaveResult(&next, b); err != nil {
+		return nil, err
+	}
+	*r = next
+	return b, nil
 }
 func (a *App) emitResponse(v *fd.FormattedResponse, output string) error {
 	b, format, err := a.responseBytes(v)
@@ -298,6 +325,7 @@ func (a *App) receiptResponse(r *state.Run, v *fd.FormattedResponse, queries []f
 }
 
 func (a *App) writeText(text string, run string, cached bool, usage json.RawMessage) error {
+	text = a.redactedResponseText(text)
 	if a.JSON {
 		return a.success(text, run, cached, usage)
 	}

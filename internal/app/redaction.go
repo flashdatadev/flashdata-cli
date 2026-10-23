@@ -59,7 +59,11 @@ func (a *App) redacted(value any) any {
 		switch v := v.(type) {
 		case map[string]any:
 			for k, x := range v {
-				v[k] = visit(x)
+				if content, ok := x.(string); k == "content" && ok {
+					v[k] = a.redactedResponseText(content)
+				} else {
+					v[k] = visit(x)
+				}
 			}
 		case []any:
 			for i, x := range v {

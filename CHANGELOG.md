@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+Redact credentials escaped by the API's Markdown renderer in JSON and plain-text
+responses, including saved results and file exports. Preserve the last saved
+response when a format change cannot be committed, and retain safe recovery after
+an interruption. Cover both async and batch recovery with write-failure regressions.
+
 Add independent `--accept` and `--respond-with` flags for API responses, preserving
 JSON defaults and the CLI's `--json` envelope. Support plain-text receipts with
 durable job IDs, Markdown completed results, cached-format checks and safe

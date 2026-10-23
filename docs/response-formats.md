@@ -72,6 +72,8 @@ The run journal remembers the saved response's format. Reusing a run ID without
 format flags returns that saved format after access verification. A different
 explicit format for a completed background job performs safe result reads, without
 another query or query-credit charge. The same applies to `jobs result`.
+If saving a different format fails, the previous saved response remains available.
+Retry recovery after correcting the local storage problem.
 
 A saved realtime response cannot be fetched again in another format. An explicit
 format change returns `run_response_format_conflict` without repeating the query.

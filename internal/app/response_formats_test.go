@@ -29,8 +29,12 @@ type responseSource struct {
 	Realtime, Stored, Submission, Status []responseCase
 }
 type responseFixtures struct {
-	Sources map[fd.Source]responseSource
-	Batch   struct {
+	Sources   map[fd.Source]responseSource
+	Redaction struct {
+		Secrets   []string
+		Responses []responseCase
+	}
+	Batch struct {
 		Queries   []fd.Query
 		Responses []responseCase
 	}

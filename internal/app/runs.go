@@ -301,15 +301,17 @@ func (a *App) recoverRun(ctx context.Context, s *state.Store, auth *access, r *s
 			}
 		}
 		b, _ := json.Marshal(results)
-		r.ResultFormat = ""
+		next := *r
+		next.ResultFormat = ""
 		if format.Accept == "text/plain" {
 			b = []byte(text.String())
-			r.ResultFormat = "text"
+			next.ResultFormat = "text"
 		}
-		recordResponse(r, format)
-		if err := s.SaveResult(r, b); err != nil {
+		recordResponse(&next, format)
+		if err := s.SaveResult(&next, b); err != nil {
 			return err
 		}
+		*r = next
 		return a.emitResult(r, b, output, false)
 	}
 	return a.existing(s, r, output)

@@ -27,6 +27,10 @@ The profile's kernel lock covers command mutation, including network submission 
 
 Run history has no automatic expiry or eviction. Profiles retain history on logout. Large results are separate from the credential vault. The host owns cron, Task Scheduler, Codex or other recurring invocation; the CLI writes no scheduler configuration and stores no key in scheduler text. This is local duplicate protection, not cross-machine exactly-once execution.
 
+Changing a saved response format retains earlier response versions. If saving fails
+or is interrupted, the last committed response remains available for reading and
+recovery.
+
 ## Response formats
 
 The journal retains the selected response format. Cached results reuse that format

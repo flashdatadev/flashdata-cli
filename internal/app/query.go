@@ -318,6 +318,19 @@ func (a *App) existing(s *state.Store, r *state.Run, output string) error {
 	return &Error{Code: "run_requires_recovery", Message: "The run is " + r.Status + "; no request was resubmitted.", RunID: r.ID, RemoteID: r.RemoteID, Next: "Inspect runs show " + r.ID + ". Reconcile candidate IDs with jobs get or bulk get; do not replay the whole submission.", Details: candidateDetails(r)}
 }
 func (a *App) emitResult(r *state.Run, b []byte, output string, cached bool) error {
+	// Earlier CLI versions could cache Markdown before recognizing escaped
+	// credentials. Sanitize again at export, including file outputs and batches.
+	if r.ResultFormat != "ndjson" {
+		response := &fd.FormattedResponse{JSON: b}
+		if r.ResultFormat == "text" {
+			response.JSON, response.Text = nil, string(b)
+		}
+		var err error
+		b, _, err = a.responseBytes(response)
+		if err != nil {
+			return err
+		}
+	}
 	if output != "" && output != "-" {
 		f, err := state.CreateOutput(output)
 		if err != nil {

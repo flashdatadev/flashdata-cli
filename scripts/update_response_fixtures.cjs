@@ -15,6 +15,18 @@ function cases(body, content) {
   return rows;
 }
 const fixture = { sources: {}, batch: {} };
+fixture.redaction = {
+  secrets: ['fd_credentialDummy_key', 'knownCredentialDummy_&<>*`-secret', 'multilineCredentialDummy\r\nsecond_line'],
+};
+fixture.redaction.responses = cases({
+  source: 'google_search', status: 'done', results: [{
+    searchParameters: { q: fixture.redaction.secrets[0] },
+    echoes: fixture.redaction.secrets.slice(1),
+    unknownKey: 'fd_unknownCredentialDummy-key',
+    link: 'https://example.com/article?q=provenance',
+    literal: 'Unrelated *_[] & <>',
+  }],
+}, true).filter(row => row.respondWith === 'markdown');
 for (const [source, example] of Object.entries(examples)) {
   const stored = {
     id: 'job_offline', source, status: 'completed',

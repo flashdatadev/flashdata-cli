@@ -2735,5 +2735,28 @@
         "response": "Queries:\n  1:\n    Id: \"job_offline\"\n    Source: \"google_search\"\n    Status: \"pending\"\n  2:\n    Id: \"job_offline1\"\n    Source: \"youtube_transcript\"\n    Status: \"pending\"\nUsage:\n  Credits: 0.04\n"
       }
     ]
+  },
+  "redaction": {
+    "secrets": [
+      "fd_credentialDummy_key",
+      "knownCredentialDummy_&<>*`-secret",
+      "multilineCredentialDummy\r\nsecond_line"
+    ],
+    "responses": [
+      {
+        "accept": "application/json",
+        "respondWith": "markdown",
+        "response": {
+          "source": "google_search",
+          "status": "done",
+          "content": "# Google search\n\n## Search Parameters\n\n**Q:** fd\\_credentialDummy\\_key\n\n## Echoes\n\n- knownCredentialDummy\\_&amp;&lt;&gt;\\*\\`\\-secret\n\n- multilineCredentialDummy  \nsecond\\_line\n\n**Unknown Key:** fd\\_unknownCredentialDummy\\-key\n\n**Link:** <https://example.com/article?q=provenance>\n\n**Literal:** Unrelated \\*\\_\\[\\] &amp; &lt;&gt;\n"
+        }
+      },
+      {
+        "accept": "text/plain",
+        "respondWith": "markdown",
+        "response": "Source: \"google_search\"\nStatus: \"done\"\n\nMarkdown Content:\n# Google search\n\n## Search Parameters\n\n**Q:** fd\\_credentialDummy\\_key\n\n## Echoes\n\n- knownCredentialDummy\\_&amp;&lt;&gt;\\*\\`\\-secret\n\n- multilineCredentialDummy  \nsecond\\_line\n\n**Unknown Key:** fd\\_unknownCredentialDummy\\-key\n\n**Link:** <https://example.com/article?q=provenance>\n\n**Literal:** Unrelated \\*\\_\\[\\] &amp; &lt;&gt;\n"
+      }
+    ]
   }
 }

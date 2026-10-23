@@ -29,6 +29,7 @@ var ErrVault = errors.New("credential_store_unavailable; unlock the OS store or 
 var ErrMissing = errors.New("credentials_missing; import a key with auth login")
 var validName = regexp.MustCompile(`^[a-z0-9][a-z0-9_.-]{0,63}$`)
 var validRun = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_.:@+-]{0,159}$`)
+var validResultHash = regexp.MustCompile(`^[a-f0-9]{64}$`)
 
 type Store struct {
 	Root, Dir, Profile, Mode string
@@ -448,6 +449,33 @@ func (s *Store) ResultPath(id string) string {
 	return filepath.Join(s.Dir, "results", Digest([]byte(id))+".json")
 }
 
+func (s *Store) resultVersionDir(id string) string {
+	return filepath.Join(s.Dir, "results", Digest([]byte(id)))
+}
+
+// The committed hash selects an immutable response version. Older journals and
+// bulk streams use ResultPath; a staged response must never replace that file.
+func (s *Store) savedResultPath(r *Run) (string, error) {
+	if !validResultHash.MatchString(r.ResultHash) {
+		return "", ErrCorrupt
+	}
+	dir := s.resultVersionDir(r.ID)
+	info, err := os.Lstat(dir)
+	if os.IsNotExist(err) {
+		return s.ResultPath(r.ID), nil
+	}
+	if err != nil || !info.IsDir() || privateDirectory(dir) != nil {
+		return "", ErrUnsafe
+	}
+	path := filepath.Join(dir, r.ResultHash+".json")
+	if _, err := os.Lstat(path); os.IsNotExist(err) {
+		return s.ResultPath(r.ID), nil
+	} else if err != nil {
+		return "", ErrUnsafe
+	}
+	return path, nil
+}
+
 const maxRunBytes = 64 << 20
 
 func (s *Store) ReadRun(id string) (*Run, error) {
@@ -457,6 +485,9 @@ func (s *Store) ReadRun(id string) (*Run, error) {
 	b, err := safeFile(s.RunPath(id), maxRunBytes)
 	if os.IsNotExist(err) {
 		if _, e := os.Lstat(s.ResultPath(id)); !os.IsNotExist(e) {
+			return nil, ErrCorrupt
+		}
+		if _, e := os.Lstat(s.resultVersionDir(id)); !os.IsNotExist(e) {
 			return nil, ErrCorrupt
 		}
 		return nil, nil
@@ -489,16 +520,34 @@ func (s *Store) SaveRun(r *Run) error {
 	return AtomicWrite(s.RunPath(r.ID), b)
 }
 func (s *Store) SaveResult(r *Run, b []byte) error {
-	if err := AtomicWrite(s.ResultPath(r.ID), b); err != nil {
+	if !ValidRunID(r.ID) {
+		return errors.New("invalid_run_id")
+	}
+	next := *r
+	next.ResultHash = Digest(b)
+	next.Status = "succeeded"
+	next.ErrorCode = ""
+	path := filepath.Join(s.resultVersionDir(r.ID), next.ResultHash+".json")
+	if err := AtomicWrite(path, b); err != nil {
 		return err
 	}
-	r.ResultHash = Digest(b)
-	r.Status = "succeeded"
-	r.ErrorCode = ""
-	return s.SaveRun(r)
+	if err := syncDirectory(filepath.Dir(s.resultVersionDir(r.ID))); err != nil {
+		return err
+	}
+	// Keep staged and previous versions if the journal commit is interrupted.
+	// Even an error after replacing the journal can mean it references next.
+	if err := s.SaveRun(&next); err != nil {
+		return err
+	}
+	*r = next
+	return nil
 }
 func (s *Store) ReadResult(r *Run) (json.RawMessage, error) {
-	b, err := safeFile(s.ResultPath(r.ID), 256<<20)
+	path, err := s.savedResultPath(r)
+	if err != nil {
+		return nil, err
+	}
+	b, err := safeFile(path, 256<<20)
 	if err != nil {
 		return nil, errors.New("saved_result_unavailable; preserve the run record")
 	}
@@ -554,7 +603,10 @@ func (s *Store) SaveStream(r *Run, produce func(io.Writer) error) error {
 	return productionErr
 }
 func (s *Store) OpenResult(r *Run) (*os.File, error) {
-	path := s.ResultPath(r.ID)
+	path, err := s.savedResultPath(r)
+	if err != nil {
+		return nil, err
+	}
 	info, err := os.Lstat(path)
 	if err != nil || !info.Mode().IsRegular() || privateCheck(path, info) != nil {
 		return nil, ErrUnsafe
