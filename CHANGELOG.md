@@ -2,6 +2,13 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+## Unreleased
+
+Make default login and initialization work on fresh headless Linux profiles even
+when a session bus is configured but the desktop keyring is unavailable. Use
+owner-only file storage in that case, and reuse it on later commands. Existing
+keyring profiles and explicit `--credential-store os` still require the keyring.
+
 ## 1.1.1 — 2026-10-23
 
 Fix consecutive commands with `FLASHDATA_API_KEY` on a new profile. Save profile

@@ -44,6 +44,8 @@ For offline installation, download the wheel for your platform and install its l
 
 Get a key from your [FlashData account](https://flashdata.dev), then use `flashdata auth login` (hidden terminal input). See [English onboarding and installation](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.md), [简体中文](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.zh-CN.md) and the [complete bulk workflow](https://github.com/flashdatadev/flashdata-cli#complete-bulk-workflow). Native arguments, stdin/stdout/stderr, signals and exit status pass through the launcher; no API credentials belong in installation commands.
 
+For headless Linux with CLI 1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. The key is saved in a private file with owner-only permissions, without encryption. Later commands reuse the saved storage automatically.
+
 To upgrade, use `--upgrade` with pip/uv pip or `uv tool install --reinstall` with uv tool. An exact `==1.1.1` constraint stays pinned; change it intentionally for a newer version. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching the installer you used. Removing the package preserves per-user CLI profiles and run history; use `flashdata auth logout` first if you want to remove a saved credential.
 
 Build, validation and publication prerequisites are in the checkout's `docs/python-packaging.md`. Nothing in the packaging or test scripts uploads packages. Support: [support@flashdata.dev](mailto:support@flashdata.dev).

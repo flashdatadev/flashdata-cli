@@ -59,7 +59,9 @@ flashdata search "battery recycling startups" --num 5 --json
 
 `init` reuses configured access or creates and saves temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. To continue with your FlashData account or choose other trial sources, see [onboarding](docs/onboarding.md). If you already have an API key, use `flashdata auth login` instead and paste it at the hidden prompt.
 
-The search returns page titles, links and snippets. Queries use your available credits; see [pricing](https://flashdata.dev/pricing) and [credential storage](docs/security.md).
+On headless Linux with v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. Later commands reuse the private file automatically; see [credential storage](docs/security.md). Automatic fallback for fresh profiles is included in the next release.
+
+The search returns page titles, links and snippets. Queries use your available credits; see [pricing](https://flashdata.dev/pricing).
 
 ## JSON, plain text and Markdown
 

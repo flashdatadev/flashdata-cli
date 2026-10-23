@@ -12,8 +12,8 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
-// Secret Service calls intentionally never invoke Unlock or Prompt. Locked
-// keyrings fail closed, including in noninteractive scheduled tasks.
+// Secret Service calls intentionally never invoke Unlock or Prompt. Existing
+// keyring vaults fail closed; Save may select file storage for a new auto profile.
 func chooseProtection(mode string) string {
 	if mode == "file" {
 		return "file"

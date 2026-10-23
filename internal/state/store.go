@@ -343,11 +343,14 @@ func (s *Store) Save(ctx context.Context, v *Vault) error {
 		return errors.New("credential_state_full")
 	}
 	var previous envelope
+	newVault := false
 	if existing, err := safeFile(filepath.Join(s.Dir, "vault.json"), 8<<20); err == nil {
 		if json.Unmarshal(existing, &previous) != nil || previous.Version != 1 {
 			return ErrCorrupt
 		}
-	} else if !os.IsNotExist(err) {
+	} else if os.IsNotExist(err) {
+		newVault = true
+	} else {
 		return err
 	}
 	mode := previous.Protection
@@ -357,6 +360,12 @@ func (s *Store) Save(ctx context.Context, v *Vault) error {
 		return errors.New("credential_store_change_requires_migration")
 	}
 	e, err := s.protect(ctx, b, mode, previous.Protection == "")
+	if errors.Is(err, ErrVault) && runtime.GOOS == "linux" && s.Mode == "auto" && newVault && !s.Exists() && ctx.Err() == nil {
+		// A session bus can exist without a usable Secret Service on servers.
+		// Only a new profile may choose file storage after a keyring failure;
+		// existing vaults and recovery history keep their original protection.
+		e, err = s.protect(ctx, b, "file", false)
+	}
 	if err != nil {
 		return err
 	}

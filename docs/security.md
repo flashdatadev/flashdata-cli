@@ -2,13 +2,17 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+The expanded Linux automatic fallback below is unreleased. With v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable; later commands reuse the saved storage automatically.
+
 | Platform | Automatic OS protection | Headless fallback |
 | --- | --- | --- |
 | Windows amd64 | Native current-user DPAPI, private owner/SYSTEM DACLs | DPAPI requires the same user profile; explicit file mode is available |
 | macOS amd64/arm64 | Native Security.framework Keychain key with UI disabled, AES-256-GCM vault | Use an unlocked accessible keychain or explicitly choose private file mode |
-| Linux amd64/arm64 | Unlocked Secret Service over session D-Bus, AES-256-GCM vault; never calls Unlock/Prompt | New profiles automatically use private files when no session bus is configured; explicit file mode is available |
+| Linux amd64/arm64 | Unlocked Secret Service over session D-Bus, AES-256-GCM vault; never calls Unlock/Prompt | New profiles automatically use private files when the session bus or keyring is unavailable, even if a D-Bus address is set |
 
 OS failures never silently downgrade an existing store. macOS uses pure-Go native bindings without CGo or a `security` subprocess; Windows uses native DPAPI calls without PowerShell. Secrets do not enter subprocess arguments or shell commands. Linux keyring calls do not ask for GUI unlock. The master key is distinct from the API key and bound to the canonical state-root/profile identity; copying an OS-protected vault to another user/location may require explicit migration/key import.
+
+On a fresh Linux profile, `auth login` and `init` work without storage flags on headless servers. Automatic mode tries the configured keyring and uses a private file if it cannot save there. The selected storage is reported as `credentialProtection` and reused by later commands. `--credential-store os` requires the keyring and disables this fallback. Existing keyring profiles, missing vaults with recovery history, and canceled operations do not fall back to file storage.
 
 `--credential-store file` is a documented protected plaintext mode: JSON is base64-encoded inside a versioned envelope, not encrypted. Use persistent storage owned by the scheduled account. Unix requires private directories (0700), private regular files (0600) and current-user ownership; symlink state paths are refused. Windows checks ACLs/ownership and writes private output ACLs. State writes use a synced temporary file, atomic replacement and directory synchronization where supported. Existing unsafe/corrupt state is never reset.
 

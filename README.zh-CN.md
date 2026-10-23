@@ -58,7 +58,9 @@ flashdata search "battery recycling startups" --num 5 --json
 
 `init` 会复用已配置的访问凭据，或为新配置创建并保存临时试用访问。默认试用范围为 Google 搜索和 YouTube 元数据。连接自己的 FlashData 账户或选择其他试用来源，参见[接入指南（英文）](docs/onboarding.md)。如果已有 API 密钥，也可使用 `flashdata auth login`，在隐藏输入提示中粘贴密钥。
 
-搜索结果包含网页标题、链接和摘要。查询会消耗可用额度；参见[价格](https://flashdata.dev/pricing)和[凭据存储](docs/security.md)。
+在无桌面的 Linux 服务器上使用 v1.1.1 时，若桌面密钥环不可用，请运行 `flashdata --credential-store file auth login`。后续命令会自动复用该私有文件；详见[凭据存储](docs/security.md)。新配置自动回退到文件存储的改进将随下一版本发布。
+
+搜索结果包含网页标题、链接和摘要。查询会消耗可用额度；参见[价格](https://flashdata.dev/pricing)。
 
 ## JSON、纯文本和 Markdown
 

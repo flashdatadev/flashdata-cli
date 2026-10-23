@@ -308,4 +308,6 @@ flashdata search "battery recycling startups" --num 5 --json
 
 Already have an API key? Use `flashdata auth login` and paste it at the hidden prompt. Automation can pipe a key from a secret manager to `auth login --api-key-stdin --non-interactive`. See [bulk workflows](bulk.md) and [run recovery](runs.md) for larger jobs.
 
+On headless Linux with v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. Later commands reuse it without additional flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md). Automatic fallback for fresh profiles is included in the next release.
+
 The executable's `--version` reports 1.1.1 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.1.1.md).

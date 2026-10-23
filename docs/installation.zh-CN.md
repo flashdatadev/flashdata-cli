@@ -308,4 +308,6 @@ flashdata search "battery recycling startups" --num 5 --json
 
 如果已有 API 密钥，运行 `flashdata auth login`，在隐藏输入提示中粘贴密钥。自动化可将密钥管理器的输出通过管道传给 `auth login --api-key-stdin --non-interactive`。更大规模的任务见 [Bulk 流程](bulk.md)和[执行恢复](runs.md)。
 
+在无桌面的 Linux 服务器上使用 v1.1.1 时，若桌面密钥环不可用，请运行 `flashdata --credential-store file auth login`。后续命令会复用该文件，无需额外参数。该文件仅允许当前用户访问，不做加密；详见[凭据存储](security.md)。新配置自动回退到文件存储的改进将随下一版本发布。
+
 `--version` 显示 1.1.1 及 `build-report.json` 记录的准确源码提交。可执行文件和附带文档来自同一个源码标签。APT 元数据以及 RPM 软件包/元数据均有签名；独立归档使用 SHA-256 校验，macOS 可执行文件未经过公证。五个平台均运行原生归档验收；真实 Keychain/Secret Service 行为仍需按具体环境检查。详见[版本说明](release-notes-1.1.1.md)。
