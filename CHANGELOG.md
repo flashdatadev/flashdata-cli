@@ -2,7 +2,7 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-## Unreleased
+## 1.1.2 — 2026-10-24
 
 Make default login and initialization work on fresh headless Linux profiles even
 when a session bus is configured but the desktop keyring is unavailable. Use

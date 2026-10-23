@@ -2,8 +2,6 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-The expanded Linux automatic fallback below is unreleased. With v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable; later commands reuse the saved storage automatically.
-
 | Platform | Automatic OS protection | Headless fallback |
 | --- | --- | --- |
 | Windows amd64 | Native current-user DPAPI, private owner/SYSTEM DACLs | DPAPI requires the same user profile; explicit file mode is available |

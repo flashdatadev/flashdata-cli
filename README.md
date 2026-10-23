@@ -46,7 +46,7 @@ uv pip install --upgrade flashdata-cli
 
 Both install the `flashdata` command. See [Python installation](docs/installation.md#python-pip-and-uv) for virtual environment setup and supported platforms.
 
-Other options include [APT for Ubuntu/Debian](docs/installation.md#apt-ubuntu-and-debian), [RPM for Fedora/RHEL](docs/installation.md#rpm-fedora-and-rhel), and [standalone downloads for Linux, macOS and Windows](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.1). These install the executable directly and need no Python, Go or Node.js.
+Other options include [APT for Ubuntu/Debian](docs/installation.md#apt-ubuntu-and-debian), [RPM for Fedora/RHEL](docs/installation.md#rpm-fedora-and-rhel), and [standalone downloads for Linux, macOS and Windows](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.2). These install the executable directly and need no Python, Go or Node.js.
 
 ### Make your first search
 
@@ -59,17 +59,17 @@ flashdata search "battery recycling startups" --num 5 --json
 
 `init` reuses configured access or creates and saves temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. To continue with your FlashData account or choose other trial sources, see [onboarding](docs/onboarding.md). If you already have an API key, use `flashdata auth login` instead and paste it at the hidden prompt.
 
-On headless Linux with v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. Later commands reuse the private file automatically; see [credential storage](docs/security.md). Automatic fallback for fresh profiles is included in the next release.
+On a fresh headless Linux setup, `flashdata auth login` automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](docs/security.md).
 
 The search returns page titles, links and snippets. Queries use your available credits; see [pricing](https://flashdata.dev/pricing).
 
 ## JSON, plain text and Markdown
 
-Version 1.1.1 includes `--accept` and `--respond-with` with every installation
+Version 1.1.2 includes `--accept` and `--respond-with` with every installation
 method above. To install from source with Go 1.25+:
 
 ```bash
-go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.1
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.2
 ```
 
 Choose plain text or Markdown for a search:
@@ -247,7 +247,7 @@ Use a new run ID only when you intend to create a new task. See [run history and
 | Public source catalog and health | `sources list`, `discover` |
 | Public plan catalog and status | `discover plans`, `discover status` |
 
-All commands above are included in the ready-to-run **v1.1.1** release. `discover plans` and `discover status` need no API key. Upgrade an existing installation with `brew update && brew upgrade flashdatadev/tap/flashdata`, `sudo apt-get update && sudo apt-get install --only-upgrade flashdata`, or `sudo dnf --refresh upgrade flashdata`; see the [installation guide](docs/installation.md) for repository setup and Windows upgrades. Your profiles and run history are preserved.
+All commands above are included in the ready-to-run **v1.1.2** release. `discover plans` and `discover status` need no API key. Upgrade an existing installation with `brew update && brew upgrade flashdatadev/tap/flashdata`, `sudo apt-get update && sudo apt-get install --only-upgrade flashdata`, or `sudo dnf --refresh upgrade flashdata`; see the [installation guide](docs/installation.md) for repository setup and Windows upgrades. Your profiles and run history are preserved.
 
 All 15 sources support background/batch execution; 14 support realtime. Downloads run in the background and require your cloud storage. Use `sources show SOURCE` for source schemas and a runnable JSON request. The single-video `youtube download` shortcut delivers audio; `query --mode async` and bulk expose the full media source options.
 
@@ -268,4 +268,4 @@ flashdata --help
 - **Trial setup and connecting your account:** see [onboarding](docs/onboarding.md) for `init`, browser approval and recovery.
 - **Use FlashData inside a Go application:** install the [Go SDK](https://github.com/flashdatadev/flashdata-go), which powers this CLI.
 
-[Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.1.1.md) · [MIT license](LICENSE)
+[Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.1.2.md) · [MIT license](LICENSE)

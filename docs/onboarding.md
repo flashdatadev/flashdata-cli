@@ -46,7 +46,7 @@ flashdata auth login
 
 Paste the key at the hidden prompt. You can manage keys in the [FlashData console](https://flashdata.dev/app/api-keys). For automation, pipe a secret manager's output to `flashdata auth login --api-key-stdin --non-interactive`.
 
-On headless Linux with v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. The file has owner-only permissions and is not encrypted; see [credential storage](security.md). Automatic fallback for fresh profiles is included in the next release.
+On a fresh headless Linux setup, login automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md).
 
 `FLASHDATA_API_KEY` overrides saved access for the current command. Query commands do not save it automatically. REST API keys and MCP OAuth tokens are not interchangeable. See [credential storage](security.md).
 

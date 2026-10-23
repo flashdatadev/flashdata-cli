@@ -1,6 +1,6 @@
-# Install FlashData CLI v1.1.1
+# Install FlashData CLI v1.1.2
 
-[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.1)
+[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.2)
 
 Choose an installation method below. Standalone archives and OS packages need no Go, Node.js, Python or Docker; pip and uv installation requires Python 3.10+. Downloading and offline version/help checks need no API key.
 
@@ -34,11 +34,11 @@ flashdata --help
 
 If uv reports that its executable directory is not on PATH, run `uv tool update-shell` and restart the shell. A previous Homebrew/APT/RPM/manual installation can shadow this command; check `command -v flashdata` on Bash or `Get-Command flashdata` on PowerShell. Avoid using multiple managers for the same PATH entry.
 
-Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.1.1`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
+Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.1.2`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
 
 ## APT (Ubuntu and Debian)
 
-Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.1.1-1** contains the same CLI **1.1.1** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
+Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.1.2-1** contains the same CLI **1.1.2** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
 
 Run this one-time Bash setup with sudo access. It checks the public key fingerprint, uses a repository-scoped `Signed-By` keyring and permits only the `flashdata` package from this source:
 
@@ -118,7 +118,7 @@ When switching from Homebrew or a manual archive, check `command -v flashdata`; 
 
 ## RPM (Fedora and RHEL)
 
-Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.1.1-1** contains the exact official CLI **1.1.1** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
+Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.1.2-1** contains the exact official CLI **1.1.2** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
 
 Run this one-time setup in Bash with sudo access. It verifies the full certificate fingerprint, imports the verified certificate and enables both metadata and package signature checks:
 
@@ -226,7 +226,7 @@ The following Bash commands select Linux/macOS and amd64/arm64 automatically, do
 ```bash
 (
   set -eu
-  version=1.1.1
+  version=1.1.2
   case "$(uname -s)" in
     Linux) platform=linux ;;
     Darwin) platform=darwin ;;
@@ -267,7 +267,7 @@ These commands verify the ZIP before extraction, install into `%LOCALAPPDATA%\Fl
 ```powershell
 & {
     $ErrorActionPreference = 'Stop'
-    $version = '1.1.1'
+    $version = '1.1.2'
     $archive = "flashdata_${version}_windows_amd64.zip"
     $releaseUrl = "https://github.com/flashdatadev/flashdata-cli/releases/download/v$version"
     $workDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
@@ -308,6 +308,6 @@ flashdata search "battery recycling startups" --num 5 --json
 
 Already have an API key? Use `flashdata auth login` and paste it at the hidden prompt. Automation can pipe a key from a secret manager to `auth login --api-key-stdin --non-interactive`. See [bulk workflows](bulk.md) and [run recovery](runs.md) for larger jobs.
 
-On headless Linux with v1.1.1, use `flashdata --credential-store file auth login` if the desktop keyring is unavailable. Later commands reuse it without additional flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md). Automatic fallback for fresh profiles is included in the next release.
+On a fresh headless Linux setup, `flashdata auth login` automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md).
 
-The executable's `--version` reports 1.1.1 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.1.1.md).
+The executable's `--version` reports 1.1.2 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.1.2.md).
