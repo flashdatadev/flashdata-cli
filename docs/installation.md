@@ -13,7 +13,7 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-Setup selects your agent, installs the bundled skills and verifies access without a paid query. See [agent setup](agent-setup.md) for global installation or an existing API key. For an existing uv installation, run `uv tool upgrade flashdata-cli`, then rerun setup.
+Setup selects your agent, installs the bundled skills and verifies access without a paid query. You can try it before signing up: a new profile without credentials requests temporary access, subject to trial availability and eligibility. Existing access is reused. See [onboarding](onboarding.md) for trial limits and signing up later, or [agent setup](agent-setup.md) for installation options. For an existing uv installation, run `uv tool upgrade flashdata-cli`, then rerun setup.
 
 ## Python (pip and uv)
 
@@ -315,7 +315,9 @@ flashdata setup
 flashdata search "battery recycling startups" --num 5 --json
 ```
 
-`setup` installs skills and reuses configured access or creates temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. See [onboarding](onboarding.md) to choose other trial sources or connect your FlashData account for continued use.
+No account or API key of your own is needed to request a trial. The default trial sources are Google Search and YouTube metadata, with a limited shared credit allowance. Use `flashdata auth status` to check access and `flashdata account balance` for remaining Credits. When ready to sign up, run `flashdata auth claim`, approve access in your browser, then run `flashdata auth finish --wait`. See [onboarding](onboarding.md) for details and other trial sources.
+
+For terminal-only use, run `flashdata init --name "My CLI"` instead of setup; you do not need both. `setup --skip-auth` only installs skills offline and leaves credentials unchanged. Queries still need configured access.
 
 Already have an API key? Use `flashdata auth login` and paste it at the hidden prompt. Automation can pipe a key from a secret manager to `auth login --api-key-stdin --non-interactive`. See [bulk workflows](bulk.md) and [run recovery](runs.md) for larger jobs.
 

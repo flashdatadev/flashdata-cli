@@ -11,7 +11,11 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-选择 Codex、Claude Code 或 Cursor，并确认项目目录。设置会安装随附的 16 个 CLI 技能并验证访问，不执行付费查询。它会复用已有访问，或为新配置保存临时访问。默认试用范围为 Google 搜索和 YouTube 元数据。已有密钥时，设置前运行 `flashdata auth login` 并在隐藏提示中输入。
+选择 Codex、Claude Code 或 Cursor，并确认项目目录。设置会安装随附的 16 个 CLI 技能并验证访问，不执行付费查询。
+
+**注册前即可试用。** 尚无凭据的新配置可申请临时访问，取决于试用可用性和资格，无需先注册账户或自行提供 API key。试用使用有限的共享 Credits，默认申请 Google 搜索和 YouTube 元数据。运行 `flashdata discover` 查看当前试用限制，`flashdata auth status` 检查访问。设置会复用已有凭据；已有密钥时可先运行 `flashdata auth login`，在隐藏提示中输入。
+
+准备注册时，运行 `flashdata auth claim`，在浏览器中批准访问，再运行 `flashdata auth finish --wait`。重复设置不会替换已过期或耗尽额度的试用。
 
 无需 Node.js 或独立技能安装器。技能默认使用纯文本，Markdown 与 MCP 可选。全局安装、选择技能及离线安装见[设置指南](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/agent-setup.zh-CN.md)；账户访问与其他试用范围见[接入指南](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/onboarding.md)。
 
@@ -21,7 +25,9 @@ flashdata setup
 flashdata search "battery recycling research" --num 5 --accept text/plain --json=false
 ```
 
-查询消耗 Credits。普通 CLI 查询和 API 仍默认使用 JSON，详见[响应格式](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md)。
+查询消耗 Credits，通过 `flashdata account balance` 查看余额。只需终端命令时，改用 `flashdata init --name "My CLI"`，无需两个命令都运行。`setup --skip-auth` 仅离线安装技能，不修改凭据；查询仍需要已配置的访问。
+
+普通 CLI 查询和 API 仍默认使用 JSON，详见[响应格式](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md)。
 
 ## 其他安装方式
 

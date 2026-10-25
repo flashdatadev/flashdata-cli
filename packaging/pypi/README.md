@@ -11,7 +11,11 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-Choose Codex, Claude Code or Cursor and confirm the project directories. Setup installs 16 bundled CLI skills and verifies access without a paid query. It reuses existing access or saves temporary access for a new profile. Default trial scopes are Google Search and YouTube metadata. Existing key owners can run `flashdata auth login` before setup and paste the key at its hidden prompt.
+Choose Codex, Claude Code or Cursor and confirm the project directories. Setup installs 16 bundled CLI skills and verifies access without a paid query.
+
+**Try before signing up.** A new profile without credentials can request temporary access, subject to trial availability and eligibility. You do not need an account or an API key of your own. The trial uses limited shared Credits and requests Google Search and YouTube metadata by default. Run `flashdata discover` for current trial limits and `flashdata auth status` to check access. Setup reuses existing credentials; key owners can run `flashdata auth login` first and paste the key at its hidden prompt.
+
+When ready to sign up, run `flashdata auth claim`, approve access in your browser, then run `flashdata auth finish --wait`. Rerunning setup does not replace an expired or exhausted trial.
 
 No Node.js or separate skills installer is needed. Agent skills use plain text by default; Markdown and MCP are optional. See [setup options](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/agent-setup.md) for global installation, individual skills and offline setup, or [onboarding](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/onboarding.md) for account access and other trial scopes.
 
@@ -21,7 +25,9 @@ Try a search:
 flashdata search "battery recycling research" --num 5 --accept text/plain --json=false
 ```
 
-Queries use Credits. Ordinary CLI queries and the API still default to JSON. See [response formats](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md).
+Queries use Credits; check what remains with `flashdata account balance`. For terminal-only use, run `flashdata init --name "My CLI"` instead of setup; you do not need both. `setup --skip-auth` only installs skills offline, leaving credentials unchanged; queries still need configured access.
+
+Ordinary CLI queries and the API still default to JSON. See [response formats](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md).
 
 ## Other installers
 

@@ -24,7 +24,7 @@ and AI model calls.
 
 ## Get started
 
-Install with [uv](https://docs.astral.sh/uv/), then set up your agent:
+**Try FlashData before signing up.** Install with [uv](https://docs.astral.sh/uv/), then set up your agent:
 
 ```sh
 uv tool install flashdata-cli
@@ -35,7 +35,9 @@ Setup requires CLI 1.2.0 or newer. While the PyPI update is pending, use a [nati
 
 Select Codex, Claude Code or Cursor and confirm the project directories. Setup installs 16 bundled skills and verifies access without a paid query. No Node.js or separate skills installer is needed. Agent skills request plain-text results by default; MCP is optional.
 
-Setup reuses configured access or saves temporary access for a new profile. Default trial scopes are Google Search and YouTube metadata. To choose other trial sources or connect an account, see [onboarding](docs/onboarding.md). If you already have an API key, run `flashdata auth login` before setup and paste it at the hidden prompt.
+For a new profile without credentials, setup requests temporary trial access and saves it locally. You do not need an account or an API key of your own. Trials depend on availability and eligibility, with limited shared Credits and access to Google Search and YouTube metadata by default. Run `flashdata discover` for current trial limits and `flashdata auth status` to check your access.
+
+Setup reuses existing credentials. If you already have an API key, run `flashdata auth login` before setup and paste it at the hidden prompt. When ready to sign up, run `flashdata auth claim`, approve access in your browser, then run `flashdata auth finish --wait`. See [onboarding](docs/onboarding.md) for details and other trial sources.
 
 Now ask your agent to search for a topic, or try:
 
@@ -43,7 +45,7 @@ Now ask your agent to search for a topic, or try:
 flashdata search "battery recycling startups" --num 5 --accept text/plain --json=false
 ```
 
-Queries use Credits; setup itself runs no paid search. For global installation, individual skills or offline setup, see the [setup guide](docs/agent-setup.md). If you only need terminal commands, `flashdata init` configures access without installing skills.
+Queries use Credits; setup itself runs no paid search. Check remaining Credits with `flashdata account balance`. Expired or exhausted trials are not replaced by rerunning setup. For terminal-only use, run `flashdata init --name "My CLI"` instead; you do not need both commands. See the [setup guide](docs/agent-setup.md) for global installation, individual skills or `--skip-auth` to install skills offline without setting up access.
 
 ### Upgrade or choose another installer
 

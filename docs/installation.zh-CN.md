@@ -13,7 +13,7 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-设置会选择 agent、安装随附技能并验证访问，不执行付费查询。全局安装或使用已有 API key，见[设置指南](agent-setup.zh-CN.md)。已有 uv 用户先运行 `uv tool upgrade flashdata-cli`，再重新设置。
+设置会选择 agent、安装随附技能并验证访问，不执行付费查询。注册前即可试用：尚无凭据的新配置会申请临时访问，取决于试用可用性和资格；已有访问会被复用。试用限制及后续注册见[接入指南](onboarding.md)，安装选项见[设置指南](agent-setup.zh-CN.md)。已有 uv 用户先运行 `uv tool upgrade flashdata-cli`，再重新设置。
 
 ## Python（pip 和 uv）
 
@@ -315,7 +315,9 @@ flashdata setup
 flashdata search "battery recycling startups" --num 5 --json
 ```
 
-`setup` 安装技能并复用已配置的访问凭据，或为新配置创建临时试用访问。默认试用范围为 Google 搜索和 YouTube 元数据。选择其他试用来源或连接自己的 FlashData 账户继续使用，参见[接入指南（英文）](onboarding.md)。
+申请试用无需账户或自行提供 API key。默认试用来源为 Google 搜索和 YouTube 元数据，使用有限的共享额度。通过 `flashdata auth status` 检查访问，`flashdata account balance` 查看剩余 Credits。准备注册时，运行 `flashdata auth claim`，在浏览器中批准访问，再运行 `flashdata auth finish --wait`。详细步骤及其他试用来源见[接入指南（英文）](onboarding.md)。
+
+只需终端命令时，使用 `flashdata init --name "My CLI"` 代替设置，无需两个命令都运行。`setup --skip-auth` 仅离线安装技能，不修改凭据；查询仍需要已配置的访问。
 
 如果已有 API 密钥，运行 `flashdata auth login`，在隐藏输入提示中粘贴密钥。自动化可将密钥管理器的输出通过管道传给 `auth login --api-key-stdin --non-interactive`。更大规模的任务见 [Bulk 流程](bulk.md)和[执行恢复](runs.md)。
 

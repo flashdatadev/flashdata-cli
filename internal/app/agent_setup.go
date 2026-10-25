@@ -59,13 +59,40 @@ func (a *App) addAgentSetup() {
 	flags := &skillFlags{}
 	var name, audience, client, scopes string
 	var skipAuth bool
-	setup := &cobra.Command{Use: "setup", Short: "Select agents, install skills and verify FlashData access", Args: cobra.NoArgs}
+	setup := &cobra.Command{
+		Use:   "setup",
+		Short: "Install agent skills and set up access; try before signing up",
+		Long: `Select Codex, Claude Code or Cursor, install bundled skills and verify access.
+
+You can try FlashData before signing up. For a new profile with no configured
+credentials, setup requests temporary trial access and saves it locally, subject
+to trial availability and eligibility. You do not need to supply an API key.
+Existing credentials are reused. Setup makes no paid query.
+
+The default trial sources are Google Search and YouTube metadata. Queries use
+the shared trial Credits; run "flashdata discover" for current trial limits,
+"flashdata auth status" for access details and "flashdata account balance"
+for remaining Credits. Setup does not replace expired or exhausted trials.
+
+When ready to sign up, run "flashdata auth claim", approve access in your browser,
+then run "flashdata auth finish --wait". Already have a key? Import it first with
+"flashdata auth login".
+
+Setup includes access initialization; you do not also need init. For terminal-only
+use, run "flashdata init --name NAME" instead. --skip-auth only installs and checks
+skills offline; it creates no trial and leaves credentials unchanged. Queries
+still need configured access.`,
+		Example: `  flashdata setup
+  flashdata setup --agent codex --global --non-interactive
+  flashdata setup --agent codex --skip-auth`,
+		Args: cobra.NoArgs,
+	}
 	bindSkills(setup, flags)
 	setup.Flags().StringVar(&name, "name", "FlashData agent", "name for new temporary access")
 	setup.Flags().StringVar(&audience, "audience", "coding", "coding or personal")
 	setup.Flags().StringVar(&client, "client", "flashdata-cli", "self-reported client label")
-	setup.Flags().StringVar(&scopes, "scopes", "google_search,youtube_metadata", "comma-separated trial source names")
-	setup.Flags().BoolVar(&skipAuth, "skip-auth", false, "install and verify skills without contacting FlashData")
+	setup.Flags().StringVar(&scopes, "scopes", "google_search,youtube_metadata", "sources to request for a new trial; does not expand existing access")
+	setup.Flags().BoolVar(&skipAuth, "skip-auth", false, "install and check skills offline; no trial or credential changes")
 	setup.RunE = func(cmd *cobra.Command, args []string) error {
 		roots, names, err := a.skillTargets(cmd, *flags)
 		if err != nil {

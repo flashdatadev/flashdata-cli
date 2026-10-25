@@ -36,7 +36,9 @@ def main():
         "",
         "Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.",
         "",
-        "CLI 1.2.0 includes guided `setup` and `skills` commands; see [agent setup](agent-setup.md). See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.",
+        "Start with `flashdata setup` for an agent, or `flashdata init --name NAME` for terminal-only use. A new profile without credentials can request temporary access before signup, subject to trial availability and eligibility; existing access is reused. You do not need both commands. See [onboarding](onboarding.md) for trial limits and connecting an account, and [agent setup](agent-setup.md) for offline installation with `--skip-auth`.",
+        "",
+        "See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.",
         "",
     ]
 

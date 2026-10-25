@@ -11,7 +11,13 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-Select Codex, Claude Code or Cursor. The CLI suggests detected agents and asks you to confirm the target directories. It reuses existing access or initializes temporary access, installs the bundled CLI skills and verifies access and file contents. Verification makes no paid query. A new profile requests Google Search and YouTube metadata by default; use `--scopes` before initialization to choose other trial sources.
+Select Codex, Claude Code or Cursor and confirm the suggested directories. Setup installs the bundled CLI skills and verifies access without a paid query.
+
+**You can try it before signing up.** For a new profile without credentials, setup requests temporary trial access and saves it locally; you do not need to supply an API key. Trials depend on availability and eligibility. Existing credentials are reused. The default trial sources are Google Search and YouTube metadata; use `--scopes` on the first setup to request other sources. Installing skills does not grant access to additional sources.
+
+Queries use a limited shared trial allowance. Run `flashdata discover` for current trial limits, `flashdata auth status` for access details and `flashdata account balance` for remaining Credits. To sign up later, run `flashdata auth claim`, approve access in your browser, then run `flashdata auth finish --wait`. See [onboarding](onboarding.md) for the full flow and recovery options. Rerunning setup does not replace an expired or exhausted trial.
+
+Setup includes the access step from `init`; you do not need both commands. For terminal-only use without agent skills, run `flashdata init --name "My CLI"` instead. Already have an API key? Import it with `flashdata auth login` before setup.
 
 To choose the agent explicitly and install for your user account:
 
@@ -19,7 +25,15 @@ To choose the agent explicitly and install for your user account:
 flashdata setup --agent codex --global --non-interactive
 ```
 
-An existing key can be imported first with `flashdata auth login`. `--non-interactive` requires an explicit `--agent`; it never guesses where to install. `--skip-auth` installs and checks skills entirely offline, without creating or checking access.
+`--non-interactive` requires an explicit `--agent`; it never guesses where to install.
+
+### Install skills without setting up access
+
+```sh
+flashdata setup --agent codex --skip-auth
+```
+
+`--skip-auth` installs and checks skills entirely offline. It creates no trial, does not verify access and leaves credentials unchanged. Queries still need configured access. Rerun setup without this flag when ready, or import an existing key with `flashdata auth login`.
 
 ## Install or verify skills separately
 

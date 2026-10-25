@@ -71,7 +71,7 @@ func New(streams IO, version, commit string) *App {
 	if f, ok := streams.In.(*os.File); ok {
 		a.interactive = term.IsTerminal(int(f.Fd()))
 	}
-	root := &cobra.Command{Use: "flashdata", Short: "FlashData search, YouTube and bulk data workflows", Long: "FlashData CLI — https://flashdata.dev\nStandalone API-key access with secure profiles and durable local run recovery.", SilenceUsage: true, SilenceErrors: true, Args: cobra.NoArgs, CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true}}
+	root := &cobra.Command{Use: "flashdata", Short: "FlashData search, YouTube and bulk data workflows", Long: "FlashData CLI — https://flashdata.dev\nGoogle Search and YouTube data for your terminal and AI agent.\n\nStart with flashdata setup, or flashdata init --name NAME for terminal-only use.\nNew users can try temporary access before signing up, subject to trial availability\nand eligibility. Existing credentials are reused. See setup --help for details.", SilenceUsage: true, SilenceErrors: true, Args: cobra.NoArgs, CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true}}
 	a.Root = root
 	root.SetIn(streams.In)
 	root.SetOut(streams.Out)

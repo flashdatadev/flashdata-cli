@@ -11,7 +11,13 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-选择 Codex、Claude Code 或 Cursor。CLI 会提示检测到的 agent，并请你确认目标目录。它复用已有访问或初始化临时访问，安装随附 CLI 技能，并验证访问和文件内容。验证不执行付费查询。新配置默认请求 Google 搜索和 YouTube 元数据；首次初始化前可通过 `--scopes` 选择其他试用来源。
+选择 Codex、Claude Code 或 Cursor，并确认建议的目录。设置会安装随附 CLI 技能并验证访问，不执行付费查询。
+
+**注册前即可试用。** 对于尚无凭据的新配置，设置会申请临时试用访问并保存在本地，无需自行提供 API key。试用取决于可用性和资格，已有凭据会被复用。默认试用来源为 Google 搜索和 YouTube 元数据；首次设置时可通过 `--scopes` 申请其他来源。安装技能不会增加数据来源的访问权限。
+
+查询消耗有限的共享试用额度。运行 `flashdata discover` 查看当前试用限制，`flashdata auth status` 查看访问详情，`flashdata account balance` 查看剩余 Credits。准备注册时，运行 `flashdata auth claim`，在浏览器中批准访问，再运行 `flashdata auth finish --wait`。完整流程及恢复选项见[接入指南](onboarding.md)。重复设置不会替换已过期或耗尽额度的试用。
+
+设置已包含 `init` 的访问配置步骤，无需两个命令都运行。只需终端命令、不安装 agent 技能时，改用 `flashdata init --name "My CLI"`。已有 API key 时，设置前通过 `flashdata auth login` 导入。
 
 明确选择 agent 并安装到用户全局目录：
 
@@ -19,7 +25,15 @@ flashdata setup
 flashdata setup --agent codex --global --non-interactive
 ```
 
-已有密钥可先通过 `flashdata auth login` 导入。`--non-interactive` 必须指定 `--agent`，不会猜测安装位置。`--skip-auth` 完全离线安装和检查技能，不创建或检查访问凭据。
+`--non-interactive` 必须指定 `--agent`，不会猜测安装位置。
+
+### 仅安装技能，暂不配置访问
+
+```sh
+flashdata setup --agent codex --skip-auth
+```
+
+`--skip-auth` 完全离线安装和检查技能，不创建试用、不验证访问，也不修改凭据。查询仍需要已配置的访问。准备好后重新运行不带此参数的设置命令，或通过 `flashdata auth login` 导入已有密钥。
 
 ## 单独安装或验证技能
 

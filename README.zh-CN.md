@@ -23,7 +23,7 @@
 
 ## 快速开始
 
-通过 [uv](https://docs.astral.sh/uv/) 安装，然后设置 agent：
+**注册前即可试用 FlashData。** 通过 [uv](https://docs.astral.sh/uv/) 安装，然后设置 agent：
 
 ```sh
 uv tool install flashdata-cli
@@ -34,7 +34,9 @@ flashdata setup
 
 选择 Codex、Claude Code 或 Cursor，并确认项目目录。设置会安装随附的 16 个技能并验证访问，不执行付费查询。无需 Node.js 或独立技能安装器。Agent 技能默认请求纯文本结果，MCP 可选。
 
-设置会复用已有访问凭据，或为新配置保存临时访问。默认试用范围为 Google 搜索和 YouTube 元数据。选择其他试用来源或连接账户，参见[接入指南](docs/onboarding.md)。已有 API key 时，设置前运行 `flashdata auth login` 并在隐藏提示中输入。
+对于尚无凭据的新配置，设置会申请临时试用访问并保存在本地，无需先注册账户或自行提供 API key。试用取决于可用性和资格，提供有限的共享 Credits，默认可用 Google 搜索和 YouTube 元数据。运行 `flashdata discover` 查看当前试用限制，通过 `flashdata auth status` 检查访问状态。
+
+设置会复用已有凭据。已有 API key 时，设置前运行 `flashdata auth login` 并在隐藏提示中输入。准备注册时，运行 `flashdata auth claim`，在浏览器中批准访问，再运行 `flashdata auth finish --wait`。详细步骤及其他试用来源见[接入指南](docs/onboarding.md)。
 
 现在可以让 agent 搜索主题，或运行：
 
@@ -42,7 +44,7 @@ flashdata setup
 flashdata search "battery recycling startups" --num 5 --accept text/plain --json=false
 ```
 
-查询消耗 Credits；设置本身不执行付费搜索。全局安装、选择技能或离线设置见[设置指南](docs/agent-setup.zh-CN.md)。只需终端命令时，`flashdata init` 配置访问但不安装技能。
+查询消耗 Credits；设置本身不执行付费搜索。通过 `flashdata account balance` 查看剩余额度。重复设置不会替换已过期或耗尽额度的试用。只需终端命令时，改用 `flashdata init --name "My CLI"`，无需两个命令都运行。全局安装、选择技能，以及通过 `--skip-auth` 离线安装技能而不配置访问，见[设置指南](docs/agent-setup.zh-CN.md)。
 
 ### 升级与其他安装方式
 

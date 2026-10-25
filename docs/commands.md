@@ -4,7 +4,9 @@
 
 Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.
 
-CLI 1.2.0 includes guided `setup` and `skills` commands; see [agent setup](agent-setup.md). See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.
+Start with `flashdata setup` for an agent, or `flashdata init --name NAME` for terminal-only use. A new profile without credentials can request temporary access before signup, subject to trial availability and eligibility; existing access is reused. You do not need both commands. See [onboarding](onboarding.md) for trial limits and connecting an account, and [agent setup](agent-setup.md) for offline installation with `--skip-auth`.
+
+See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.
 
 ## flashdata
 
@@ -68,19 +70,19 @@ Usage: `usage`
 
 ## flashdata auth
 
-Manage API-key profiles and browser claiming
+Check access, import a key or connect your FlashData account
 
 Usage: `auth`
 
 ## flashdata auth claim
 
-Create the browser approval URL and separate confirmation code
+Connect temporary access to your FlashData account
 
 Usage: `claim`
 
 ## flashdata auth finish
 
-Save, independently verify and acknowledge the approved owner key
+Save and verify account access after browser approval
 
 Usage: `finish`
 
@@ -306,7 +308,7 @@ Usage: `help [command]`
 
 ## flashdata init
 
-Reuse saved access or durably register one temporary connection
+Set up CLI access; try before signing up
 
 Usage: `init`
 
@@ -315,7 +317,7 @@ Usage: `init`
 | `--audience` | string | `coding` | coding or personal |
 | `--client` | string | `flashdata-cli` | self-reported client label |
 | `--name` | string | `` | connection name; required to start a new trial |
-| `--scopes` | string | `google_search,youtube_metadata` | comma-separated trial source names |
+| `--scopes` | string | `google_search,youtube_metadata` | sources to request for a new trial; does not expand existing access |
 
 ## flashdata jobs
 
@@ -435,7 +437,7 @@ Usage: `search QUERY`
 
 ## flashdata setup
 
-Select agents, install skills and verify FlashData access
+Install agent skills and set up access; try before signing up
 
 Usage: `setup`
 
@@ -447,9 +449,9 @@ Usage: `setup`
 | `--directory` | string | `` | project directory; defaults to the working directory |
 | `--global` | bool | `false` | install for the current user instead of this project |
 | `--name` | string | `FlashData agent` | name for new temporary access |
-| `--scopes` | string | `google_search,youtube_metadata` | comma-separated trial source names |
+| `--scopes` | string | `google_search,youtube_metadata` | sources to request for a new trial; does not expand existing access |
 | `--skill` | stringSlice | `[]` | selected skill names; default: all 16 CLI skills |
-| `--skip-auth` | bool | `false` | install and verify skills without contacting FlashData |
+| `--skip-auth` | bool | `false` | install and check skills offline; no trial or credential changes |
 
 ## flashdata skills
 

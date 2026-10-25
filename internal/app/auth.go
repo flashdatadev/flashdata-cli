@@ -21,11 +21,38 @@ import (
 
 func (a *App) addAuth() {
 	var name, audience, client, scopes string
-	init := &cobra.Command{Use: "init", Short: "Reuse saved access or durably register one temporary connection", Args: cobra.NoArgs}
+	init := &cobra.Command{
+		Use:   "init",
+		Short: "Set up CLI access; try before signing up",
+		Long: `Set up access for terminal commands without installing agent skills.
+
+For a new profile with no configured credentials, init requests temporary trial
+access and saves it locally. No signup or API key is required from you; trials
+are subject to availability and eligibility. --name is required for a new trial.
+Existing credentials are verified and reused. No paid query is made.
+
+The default trial sources are Google Search and YouTube metadata. Queries share
+one trial credit allowance. Use --scopes on the first initialization to request
+other sources; it does not expand existing access. Run "flashdata discover" for
+current trial limits, "flashdata auth status" for access details and
+"flashdata account balance" for remaining Credits.
+
+To connect an account later, run "flashdata auth claim", sign up or sign in and
+approve access in your browser, then run "flashdata auth finish --wait".
+Init does not replace expired or exhausted trials. To recover an interrupted
+registration, rerun it with the same profile and unchanged input.
+
+Use "flashdata setup" instead if you also want agent skills; it includes this
+access step, so you do not need to run both commands.`,
+		Example: `  flashdata init --name "My CLI"
+  flashdata search "battery recycling startups" --num 5 --accept text/plain --json=false
+  flashdata auth status`,
+		Args: cobra.NoArgs,
+	}
 	init.Flags().StringVar(&name, "name", "", "connection name; required to start a new trial")
 	init.Flags().StringVar(&audience, "audience", "coding", "coding or personal")
 	init.Flags().StringVar(&client, "client", "flashdata-cli", "self-reported client label")
-	init.Flags().StringVar(&scopes, "scopes", "google_search,youtube_metadata", "comma-separated trial source names")
+	init.Flags().StringVar(&scopes, "scopes", "google_search,youtube_metadata", "sources to request for a new trial; does not expand existing access")
 	init.RunE = func(cmd *cobra.Command, args []string) error {
 		data, err := a.initializeAccess(cmd, name, audience, client, scopes)
 		if err != nil {
@@ -34,7 +61,7 @@ func (a *App) addAuth() {
 		return a.success(data, "", false, nil)
 	}
 	a.Root.AddCommand(init)
-	auth := &cobra.Command{Use: "auth", Short: "Manage API-key profiles and browser claiming"}
+	auth := &cobra.Command{Use: "auth", Short: "Check access, import a key or connect your FlashData account"}
 	a.Root.AddCommand(auth)
 	var stdin, replace bool
 	login := &cobra.Command{Use: "login", Short: "Import and verify an API key using hidden input or stdin", Args: cobra.NoArgs}
@@ -166,7 +193,20 @@ func (a *App) addAuth() {
 		return a.success(map[string]any{"profile": s.Profile, "phase": v.Phase, "identity": publicIdentity(access), "accessVerified": verifyErr == nil, "claim": claim, "credentialProtection": protection}, "", false, nil)
 	}
 	auth.AddCommand(status)
-	claim := &cobra.Command{Use: "claim", Short: "Create the browser approval URL and separate confirmation code", Args: cobra.NoArgs}
+	claim := &cobra.Command{
+		Use:   "claim",
+		Short: "Connect temporary access to your FlashData account",
+		Long: `Connect this profile's temporary access to a FlashData account.
+
+Run setup or init first to obtain temporary access. This command displays an
+approval URL and confirmation code. Open the URL, sign up or sign in, confirm
+the code and review the requested access. After browser approval, return here
+and run "flashdata auth finish --wait" using the same profile.
+
+To replace temporary access with an existing API key, use
+"flashdata auth login --replace" instead.`,
+		Args: cobra.NoArgs,
+	}
 	claim.RunE = func(cmd *cobra.Command, args []string) error {
 		ctx, cancel := a.context(cmd)
 		defer cancel()
@@ -202,7 +242,18 @@ func (a *App) addAuth() {
 	}
 	auth.AddCommand(claim)
 	var wait bool
-	finish := &cobra.Command{Use: "finish", Short: "Save, independently verify and acknowledge the approved owner key", Args: cobra.NoArgs}
+	finish := &cobra.Command{
+		Use:   "finish",
+		Short: "Save and verify account access after browser approval",
+		Long: `Complete the account connection started by "flashdata auth claim".
+
+After signing up or signing in and approving access in the browser, run this
+command using the same profile to save and verify your account credentials.
+Use --wait to wait for approval until --timeout. If interrupted or timed out,
+rerun with the same profile; saved progress is retained.`,
+		Example: "  flashdata auth finish --wait --timeout 10m",
+		Args:    cobra.NoArgs,
+	}
 	finish.Flags().BoolVar(&wait, "wait", false, "wait for browser approval within --timeout")
 	finish.RunE = func(cmd *cobra.Command, args []string) error { return a.finish(cmd, wait) }
 	auth.AddCommand(finish)

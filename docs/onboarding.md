@@ -2,35 +2,55 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-For agent setup, start with:
+## Try before signing up
+
+You can start with temporary trial access without a FlashData account or an API key of your own. For a new profile without configured credentials, the CLI requests trial access and saves it locally. Trials are subject to availability and eligibility; existing access is reused.
+
+For an AI agent, install the CLI and run setup:
 
 ```sh
 uv tool install flashdata-cli
 flashdata setup
 ```
 
-Setup installs skills and reuses or initializes access. See [agent setup](agent-setup.md) for global and offline options. The `init` workflow below configures access without installing skills.
+Setup requires CLI 1.2.0 or newer. While the PyPI update is pending, use a [native installer or release download](installation.md#homebrew-linux-and-macos).
 
-## Start a trial
+Choose Codex, Claude Code or Cursor and confirm the directories. `setup` installs skills and configures access in one step. You do not also need to run `init`.
 
-Initialize the CLI and make your first search:
+For terminal-only use, run this **instead of setup**:
 
 ```bash
 flashdata init --name "my-cli"
-flashdata search "battery recycling startups" --num 5 --json
 ```
 
-`init` verifies and reuses configured access. For a new profile without credentials, it creates temporary trial access and saves it locally. The default trial scopes are `google_search` and `youtube_metadata`.
+After either command, try your first search:
 
-Before your first `init`, you can add `--scopes youtube_search,youtube_metadata,youtube_transcript` to request different trial sources. Passing `--scopes` when reusing existing access does not expand its permissions.
+```bash
+flashdata search "battery recycling startups" --num 5 --accept text/plain --json=false
+```
 
-The response shows approved sources, the starting allowance and available balance. Per-source request counts are alternative uses of one shared credit allowance. They are not separate quotas.
+Setup and init make no paid queries. Searches use trial Credits. The default trial sources are Google Search (`google_search`) and YouTube metadata (`youtube_metadata`). Installing a skill does not grant access to its data source.
 
-Run `flashdata discover --json` to check current trial availability and limits. If trial registration is unavailable, use an existing API key as described below.
+Before your first `setup` or `init`, you can add `--scopes youtube_search,youtube_metadata,youtube_transcript` to request different trial sources. The service decides which sources are approved. Passing `--scopes` when reusing existing access does not expand its permissions.
+
+`setup --skip-auth` only installs and checks skills offline. It does not create a trial, check access or change credentials. Queries still need configured access; rerun setup without `--skip-auth` when ready. See [agent setup](agent-setup.md) for more options.
+
+## Check trial limits
+
+```bash
+flashdata discover --json
+flashdata auth status
+flashdata sources list
+flashdata account balance
+```
+
+These commands show current trial availability and limits, your access and expiry, permitted sources and remaining Credits without submitting a paid query. Trials have a limited shared credit allowance. Per-source request counts are alternative uses of that same allowance, not separate quotas.
+
+If trial registration is unavailable or you are ineligible, sign up and import an API key with `flashdata auth login`. If temporary access expires or Credits run out, check `auth status` and connect your account below. Rerunning setup or init does not create a replacement trial.
 
 ## Connect your FlashData account
 
-To continue beyond the trial, connect this profile to your FlashData account:
+You can sign up later, when you are ready to continue beyond the trial. Keep the same CLI profile and start the account connection:
 
 ```bash
 flashdata auth claim
@@ -55,19 +75,13 @@ flashdata auth login
 
 Paste the key at the hidden prompt. You can manage keys in the [FlashData console](https://flashdata.dev/app/api-keys). For automation, pipe a secret manager's output to `flashdata auth login --api-key-stdin --non-interactive`.
 
+If this profile already has trial access or a saved registration attempt, use `flashdata auth login --replace` to replace it with your key. To connect the trial through browser approval instead, use `auth claim` and `auth finish` as described above.
+
 On a fresh headless Linux setup, login automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md).
 
 `FLASHDATA_API_KEY` overrides saved access for the current command. Query commands do not save it automatically. REST API keys and MCP OAuth tokens are not interchangeable. See [credential storage](security.md).
 
-## Check access and recover
-
-```bash
-flashdata auth status
-flashdata sources list
-flashdata account balance
-```
-
-These commands show access, permitted sources and the current shared balance without submitting a paid query.
+## Recover access
 
 - If registration fails, rerun `init` with the same profile and unchanged input to recover the saved request.
 - If access expires or credits run out, follow the recovery guidance from `auth status` or import a valid key. `init` does not replace expired or unusable credentials with another trial.
