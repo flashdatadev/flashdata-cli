@@ -2,10 +2,10 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-The current release is [v1.2.0](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0).
+The current release is [v1.2.1](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.1).
 Install with `uv tool install flashdata-cli`, then run `flashdata setup` to choose
 your agent, install bundled skills and verify access without a paid query. Agent
-skills use plain-text output by default; MCP remains optional. See the [release notes](release-notes-1.2.0.md) and
+skills use plain-text output by default; MCP remains optional. See the [release notes](release-notes-1.2.1.md) and
 [response formats](response-formats.md).
 
 ## Install
@@ -18,7 +18,7 @@ when updating. Existing release files and signed package versions remain immutab
 
 The CLI pins Go SDK **v1.1.0**, with its recorded Go checksums and no local module
 replacement. Go 1.25+ users can also install
-`github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.0` with `go install`.
+`github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.1` with `go install`.
 
 ## Build and verify
 
@@ -38,7 +38,7 @@ Windows and Intel macOS source checks on Go 1.25/1.27, Linux race checks, source
 and command generation checks, archive-policy tests and all five native archive
 acceptance jobs. Release checks use mock APIs and submit no paid queries.
 
-The v1.2.0 wheels for [PyPI](https://pypi.org/project/flashdata-cli/) are prepared for
+The v1.2.1 wheels for [PyPI](https://pypi.org/project/flashdata-cli/) are prepared for
 manual publication. Until they are uploaded, use a native installer for guided setup.
 The CLI installer is separate from the Python SDK. See
 [Python installation](installation.md#python-pip-and-uv) and

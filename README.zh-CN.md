@@ -30,7 +30,7 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-引导设置需要 CLI 1.2.0 或更新版本。PyPI 更新发布前，请使用[原生安装器](docs/installation.zh-CN.md#homebrewlinux-和-macos)或[版本下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0)。
+引导设置需要 CLI 1.2.0 或更新版本。PyPI 更新发布前，请使用[原生安装器](docs/installation.zh-CN.md#homebrewlinux-和-macos)或[版本下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.1)。
 
 选择 Codex、Claude Code 或 Cursor，并确认项目目录。设置会安装随附的 16 个技能并验证访问，不执行付费查询。无需 Node.js 或独立技能安装器。Agent 技能默认请求纯文本结果，MCP 可选。
 
@@ -50,15 +50,15 @@ flashdata search "battery recycling startups" --num 5 --accept text/plain --json
 
 已有 uv 用户运行 `uv tool upgrade flashdata-cli`，再运行 `flashdata setup` 更新随附技能。设置会保留本地修改并报告冲突。
 
-也可使用 [pip 和 uv pip](docs/installation.zh-CN.md#pythonpip-和-uv)、[Homebrew](docs/installation.zh-CN.md#homebrewlinux-和-macos)、[APT](docs/installation.zh-CN.md#aptubuntu-和-debian)、[RPM](docs/installation.zh-CN.md#rpmfedora-和-rhel) 或[独立下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0)。原生包无需 Python、Go 或 Node.js。平台要求与 PATH 设置见[安装指南](docs/installation.zh-CN.md)。
+也可使用 [pip 和 uv pip](docs/installation.zh-CN.md#pythonpip-和-uv)、[Homebrew](docs/installation.zh-CN.md#homebrewlinux-和-macos)、[APT](docs/installation.zh-CN.md#aptubuntu-和-debian)、[RPM](docs/installation.zh-CN.md#rpmfedora-和-rhel) 或[独立下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.1)。原生包无需 Python、Go 或 Node.js。平台要求与 PATH 设置见[安装指南](docs/installation.zh-CN.md)。
 
 ## JSON、纯文本和 Markdown
 
-上述所有安装方式均提供 1.2.0 正式版的 `--accept` 和 `--respond-with`。
+CLI 支持使用 `--accept` 和 `--respond-with` 选择内容响应格式。
 也可使用 Go 1.25+ 从源码安装：
 
 ```bash
-go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.0
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.1
 ```
 
 为搜索选择纯文本或 Markdown：
@@ -141,7 +141,7 @@ flashdata bulk run --source youtube_metadata --input ids.txt --run-id video-data
 
 此命令会创建任务、上传 ID、启动处理、等待完成，并写入 `videos.jsonl`。每行记录一个视频的处理状态和数据。将 `--source` 改为 `youtube_transcript`、`youtube_captions` 或 `youtube_trainability`，即可构建其他类型的批量数据集。选项和逐项状态说明见[批量处理指南](docs/bulk.md)。
 
-随附的 `flashdata` 和五个 YouTube 批量技能提供 ID 文件准备、选项、任务控制和恢复指南。批量导出保持 JSONL 格式，包括下载交付回执；批量命令不添加 `--accept` 或 `--respond-with`。新的技能指南将在下一次 CLI 版本中发布。
+随附的 `flashdata` 和五个 YouTube 批量技能提供 ID 文件准备、选项、任务控制和恢复指南。批量导出保持 JSONL 格式，包括下载交付回执；批量命令不添加 `--accept` 或 `--respond-with`。CLI v1.2.1 已包含这些指南；升级后重新运行 `flashdata setup`，即可更新未修改的技能。
 
 ## 完整批量工作流
 
@@ -237,7 +237,7 @@ flashdata runs recover audio-bulk-001 --timeout 1h --output recovered-receipts.j
 | 公共来源目录和健康状态 | `sources list`、`discover` |
 | 公共套餐目录和服务状态 | `discover plans`、`discover status` |
 
-上述所有命令均包含在开箱即用的 **v1.2.0** 正式版中。`discover plans` 和 `discover status` 无需 API 密钥。已有安装可执行 `brew update && brew upgrade flashdatadev/tap/flashdata`、`sudo apt-get update && sudo apt-get install --only-upgrade flashdata` 或 `sudo dnf --refresh upgrade flashdata` 升级；软件源配置及 Windows 升级见[安装指南](docs/installation.zh-CN.md)。升级保留用户配置和执行历史。
+上述所有命令均包含在开箱即用的 **v1.2.1** 正式版中。`discover plans` 和 `discover status` 无需 API 密钥。已有安装可执行 `brew update && brew upgrade flashdatadev/tap/flashdata`、`sudo apt-get update && sudo apt-get install --only-upgrade flashdata` 或 `sudo dnf --refresh upgrade flashdata` 升级；软件源配置及 Windows 升级见[安装指南](docs/installation.zh-CN.md)。升级保留用户配置和执行历史。
 
 全部 15 个来源支持后台/批次执行，其中 14 个支持实时请求。下载在后台运行，需要自己的云存储。
 通过 `sources show SOURCE` 查看来源模式和可运行 JSON 请求。单视频 `youtube download` 快捷命令面向音频；`query --mode async` 和批量任务支持完整的媒体来源选项。
@@ -259,4 +259,4 @@ flashdata --help
 - **开始试用并连接账户：** 参阅[接入指南（英文）](docs/onboarding.md)，了解 `init`、浏览器授权及恢复操作。
 - **在 Go 应用中使用 FlashData：** 安装本 CLI 所使用的 [Go SDK](https://github.com/flashdatadev/flashdata-go)。
 
-[安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.2.0.md) · [MIT 许可](LICENSE)
+[安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.2.1.md) · [MIT 许可](LICENSE)

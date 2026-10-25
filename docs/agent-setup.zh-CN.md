@@ -53,7 +53,7 @@ flashdata skills verify --agent codex --skill google-search --skill youtube-tran
 
 `--directory PATH` 指定项目目录，不能与 `--global` 同用。Codex 和 Cursor 在同一项目共用一份安装。其他 agent 可使用独立的 `npx skills` 安装器。
 
-当前源码随附包中的主 FlashData 技能，以及元数据、转录、字幕、许可标签和下载技能均包含批量指南。批量导出保持 JSONL，普通技能内容查询默认使用纯文本。详见[批量工作流](bulk.md)。已发布的二进制文件将在下一次 CLI 发布时获得更新后的指南。
+CLI v1.2.1 随附包中的主 FlashData 技能，以及元数据、转录、字幕、许可标签和下载技能均包含批量指南。批量导出保持 JSONL，普通技能内容查询默认使用纯文本。详见[批量工作流](bulk.md)。升级后重新运行 `flashdata setup`，即可更新未修改的技能。
 
 ## 更新与恢复
 

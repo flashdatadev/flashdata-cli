@@ -1,12 +1,12 @@
-# 安装 FlashData CLI v1.2.0
+# 安装 FlashData CLI v1.2.1
 
-[FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [English](installation.md) · [正式版下载](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0)
+[FlashData 官网](https://flashdata.dev) · [API 文档](https://flashdata.dev/docs) · [English](installation.md) · [正式版下载](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.1)
 
 选择下方任一种安装方式。独立归档和系统包无需 Go、Node.js、Python 或 Docker；pip 和 uv 安装需要 Python 3.10+。下载及离线版本/帮助检查无需 API 密钥。
 
 ## 推荐设置
 
-CLI 1.2.0 wheel 尚待手动发布到 PyPI。在此之前，请选择下方 Homebrew、APT、RPM 或独立下载包使用引导设置。
+CLI 1.2.1 wheel 尚待手动发布到 PyPI。在此之前，请选择下方 Homebrew、APT、RPM 或独立下载包使用引导设置。
 
 ```sh
 uv tool install flashdata-cli
@@ -45,11 +45,11 @@ flashdata --help
 
 若 uv 提示可执行文件目录不在 PATH，请运行 `uv tool update-shell` 并重新打开终端。旧的 Homebrew/APT/RPM/手动安装可能遮蔽新命令；Bash 用 `command -v flashdata`，PowerShell 用 `Get-Command flashdata` 检查。避免多个管理器同时管理同一个 PATH 条目。
 
-升级时重复上方 pip 或 uv pip 命令，或执行 `uv tool upgrade flashdata-cli`。如需固定版本，使用 `flashdata-cli==1.2.0`。卸载时按原安装方式运行 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli`。卸载保留用户配置和执行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。离线安装或本地构建见 [wheel 打包指南](python-packaging.zh-CN.md)。
+升级时重复上方 pip 或 uv pip 命令，或执行 `uv tool upgrade flashdata-cli`。如需固定版本，使用 `flashdata-cli==1.2.1`。卸载时按原安装方式运行 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli`。卸载保留用户配置和执行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。离线安装或本地构建见 [wheel 打包指南](python-packaging.zh-CN.md)。
 
 ## APT（Ubuntu 和 Debian）
 
-在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.2.0-1** 包含与发布归档一致的 CLI **1.2.0** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
+在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.2.1-1** 包含与发布归档一致的 CLI **1.2.1** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
 
 使用 sudo 权限在 Bash 中执行一次以下配置。命令会核对公钥指纹，通过专用 `Signed-By` 密钥环限制信任范围，并只允许从该软件源选择 `flashdata` 软件包：
 
@@ -129,7 +129,7 @@ sudo apt-get update
 
 ## RPM（Fedora 和 RHEL）
 
-[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.2.0-1** 包含与官方发布文件逐字节一致的 CLI **1.2.0**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
+[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.2.1-1** 包含与官方发布文件逐字节一致的 CLI **1.2.1**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
 
 使用 sudo 权限在 Bash 中执行一次以下配置。命令核对证书完整指纹、导入已验证证书，并同时启用元数据和软件包签名检查：
 
@@ -237,7 +237,7 @@ brew untap flashdatadev/tap
 ```bash
 (
   set -eu
-  version=1.2.0
+  version=1.2.1
   case "$(uname -s)" in
     Linux) platform=linux ;;
     Darwin) platform=darwin ;;
@@ -278,7 +278,7 @@ brew untap flashdatadev/tap
 ```powershell
 & {
     $ErrorActionPreference = 'Stop'
-    $version = '1.2.0'
+    $version = '1.2.1'
     $archive = "flashdata_${version}_windows_amd64.zip"
     $releaseUrl = "https://github.com/flashdatadev/flashdata-cli/releases/download/v$version"
     $workDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
@@ -323,4 +323,4 @@ flashdata search "battery recycling startups" --num 5 --json
 
 首次在无桌面的 Linux 服务器上使用时，若桌面密钥环不可用，`flashdata auth login` 会自动使用私有凭据文件。后续命令会复用该文件，无需额外参数。文件仅允许当前用户访问，不做加密；详见[凭据存储](security.md)。
 
-`--version` 显示 1.2.0 及 `build-report.json` 记录的准确源码提交。可执行文件和附带文档来自同一个源码标签。APT 元数据以及 RPM 软件包/元数据均有签名；独立归档使用 SHA-256 校验，macOS 可执行文件未经过公证。五个平台均运行原生归档验收；真实 Keychain/Secret Service 行为仍需按具体环境检查。详见[版本说明](release-notes-1.2.0.md)。
+`--version` 显示 1.2.1 及 `build-report.json` 记录的准确源码提交。可执行文件和附带文档来自同一个源码标签。APT 元数据以及 RPM 软件包/元数据均有签名；独立归档使用 SHA-256 校验，macOS 可执行文件未经过公证。五个平台均运行原生归档验收；真实 Keychain/Secret Service 行为仍需按具体环境检查。详见[版本说明](release-notes-1.2.1.md)。

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 — 2026-10-25
+
+- Bundle bulk workflow guides and option examples in the main FlashData skill and five YouTube skills; bulk exports remain JSONL.
+- Explain temporary access before signup in README, onboarding docs and CLI help, including setup/init and `--skip-auth`.
+- Exercise installed bulk examples against mock APIs, including failed items and interrupted transfers without duplicate submissions.
+
 ## 1.2.0 — 2026-10-25
 
 - Add guided `setup`, offline `skills install/list/verify`, and a pinned skill bundle.
