@@ -4,9 +4,11 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -134,7 +136,17 @@ func TestStandaloneBinaryFreshProcessAcceptance(t *testing.T) {
 		t.Fatal("revoked cached data was served", err)
 	}
 	code, out, err = binaryCall(t, binary, root, "", "", "--version")
-	if code != 0 || !strings.Contains(out, "1.2.0") {
+	var version struct {
+		OK   bool `json:"ok"`
+		Data struct {
+			Version string `json:"version"`
+			Commit  string `json:"commit"`
+		} `json:"data"`
+	}
+	// Archive acceptance separately matches the exact version and source commit
+	// against its build report. This workflow also runs with local source builds.
+	if code != 0 || json.Unmarshal([]byte(out), &version) != nil || !version.OK ||
+		!regexp.MustCompile(`^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$`).MatchString(version.Data.Version) || version.Data.Commit == "" {
 		t.Fatal(out, err)
 	}
 }
