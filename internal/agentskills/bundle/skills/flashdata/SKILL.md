@@ -12,14 +12,14 @@ Use the standalone `flashdata` command for Google search, YouTube data and deliv
 Install with `uv tool install flashdata-cli`, or choose a native package from the [installation guide](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.md).
 
 ```sh
-flashdata --version
-flashdata init --name "My agent"
+uv tool install flashdata-cli
+flashdata setup
 flashdata search "battery recycling research" --num 5 --accept text/plain --json=false
 ```
 
-`init` reuses saved access or creates temporary access for a new profile. Default trial scopes cover Google Search and YouTube metadata. For a user with an API key, use `flashdata auth login` with hidden input instead. Check access with `flashdata auth status`; never ask for a key in chat.
+`setup` reuses saved access or creates temporary access for a new profile. Default trial scopes cover Google Search and YouTube metadata. For a user with an API key, use `flashdata auth login` with hidden input before setup. Check access with `flashdata auth status`; never ask for a key in chat.
 
-The current source adds `flashdata setup`: select agents, install bundled skills and verify access without a paid query. It is not in published v1.1.2. For that release, install skills with `npx skills add flashdatadev/flashdata-skills`, then use `init` or `auth login` above.
+Setup requires CLI 1.2.0 or newer. Upgrade an existing uv installation with `uv tool upgrade flashdata-cli`. Select Codex, Claude Code or Cursor and confirm the displayed directories; setup installs the bundled skills and verifies access without a paid query. For an explicit noninteractive installation, use `flashdata setup --agent codex --non-interactive`.
 
 ## Choose a command
 

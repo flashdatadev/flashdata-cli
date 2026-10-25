@@ -2,11 +2,12 @@
 
 [FlashData](https://flashdata.dev) · [简体中文](agent-setup.zh-CN.md)
 
-These commands are available in the current source and the next CLI release. Published v1.1.2 users can install skills with `npx skills add flashdatadev/flashdata-skills` and configure access with `init` or `auth login`.
+CLI 1.2.0 includes guided setup and the bundled skills. No Node.js or separate skills installer is needed. The PyPI update is pending; use a [native installer](installation.md#homebrew-linux-and-macos) in the meantime.
 
 ## Set up your agent
 
 ```sh
+uv tool install flashdata-cli
 flashdata setup
 ```
 

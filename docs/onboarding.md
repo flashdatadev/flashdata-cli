@@ -2,7 +2,14 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-For agent skill installation and the new guided workflow, see [agent setup](agent-setup.md). `init` continues to manage access only.
+For agent setup, start with:
+
+```sh
+uv tool install flashdata-cli
+flashdata setup
+```
+
+Setup installs skills and reuses or initializes access. See [agent setup](agent-setup.md) for global and offline options. The `init` workflow below configures access without installing skills.
 
 ## Start a trial
 

@@ -1,8 +1,19 @@
-# Install FlashData CLI v1.1.2
+# Install FlashData CLI v1.2.0
 
-[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.2)
+[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0)
 
 Choose an installation method below. Standalone archives and OS packages need no Go, Node.js, Python or Docker; pip and uv installation requires Python 3.10+. Downloading and offline version/help checks need no API key.
+
+## Recommended setup
+
+CLI 1.2.0 wheels await manual PyPI publication. Until then, choose Homebrew, APT, RPM or a standalone download below to use guided setup.
+
+```sh
+uv tool install flashdata-cli
+flashdata setup
+```
+
+Setup selects your agent, installs the bundled skills and verifies access without a paid query. See [agent setup](agent-setup.md) for global installation or an existing API key. For an existing uv installation, run `uv tool upgrade flashdata-cli`, then rerun setup.
 
 ## Python (pip and uv)
 
@@ -34,11 +45,11 @@ flashdata --help
 
 If uv reports that its executable directory is not on PATH, run `uv tool update-shell` and restart the shell. A previous Homebrew/APT/RPM/manual installation can shadow this command; check `command -v flashdata` on Bash or `Get-Command flashdata` on PowerShell. Avoid using multiple managers for the same PATH entry.
 
-Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.1.2`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
+Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.2.0`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
 
 ## APT (Ubuntu and Debian)
 
-Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.1.2-1** contains the same CLI **1.1.2** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
+Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.2.0-1** contains the same CLI **1.2.0** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
 
 Run this one-time Bash setup with sudo access. It checks the public key fingerprint, uses a repository-scoped `Signed-By` keyring and permits only the `flashdata` package from this source:
 
@@ -118,7 +129,7 @@ When switching from Homebrew or a manual archive, check `command -v flashdata`; 
 
 ## RPM (Fedora and RHEL)
 
-Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.1.2-1** contains the exact official CLI **1.1.2** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
+Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.2.0-1** contains the exact official CLI **1.2.0** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
 
 Run this one-time setup in Bash with sudo access. It verifies the full certificate fingerprint, imports the verified certificate and enables both metadata and package signature checks:
 
@@ -226,7 +237,7 @@ The following Bash commands select Linux/macOS and amd64/arm64 automatically, do
 ```bash
 (
   set -eu
-  version=1.1.2
+  version=1.2.0
   case "$(uname -s)" in
     Linux) platform=linux ;;
     Darwin) platform=darwin ;;
@@ -267,7 +278,7 @@ These commands verify the ZIP before extraction, install into `%LOCALAPPDATA%\Fl
 ```powershell
 & {
     $ErrorActionPreference = 'Stop'
-    $version = '1.1.2'
+    $version = '1.2.0'
     $archive = "flashdata_${version}_windows_amd64.zip"
     $releaseUrl = "https://github.com/flashdatadev/flashdata-cli/releases/download/v$version"
     $workDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
@@ -297,17 +308,17 @@ For future terminals, add `%LOCALAPPDATA%\FlashData\bin` to your user PATH in Wi
 
 ## Next steps
 
-Initialize the CLI and run your first search:
+After installing with any method, set up your agent and run your first search:
 
 ```bash
-flashdata init --name "my-cli"
+flashdata setup
 flashdata search "battery recycling startups" --num 5 --json
 ```
 
-`init` reuses configured access or creates temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. See [onboarding](onboarding.md) to choose other trial sources or connect your FlashData account for continued use.
+`setup` installs skills and reuses configured access or creates temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. See [onboarding](onboarding.md) to choose other trial sources or connect your FlashData account for continued use.
 
 Already have an API key? Use `flashdata auth login` and paste it at the hidden prompt. Automation can pipe a key from a secret manager to `auth login --api-key-stdin --non-interactive`. See [bulk workflows](bulk.md) and [run recovery](runs.md) for larger jobs.
 
 On a fresh headless Linux setup, `flashdata auth login` automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md).
 
-The executable's `--version` reports 1.1.2 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.1.2.md).
+The executable's `--version` reports 1.2.0 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.2.0.md).

@@ -4,7 +4,7 @@
 
 Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.
 
-This reference describes the current source. Guided `setup` and `skills` commands are new and are not in published v1.1.2; see [agent setup](agent-setup.md). See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.
+CLI 1.2.0 includes guided `setup` and `skills` commands; see [agent setup](agent-setup.md). See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.
 
 ## flashdata
 

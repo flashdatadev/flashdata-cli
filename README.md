@@ -24,56 +24,40 @@ and AI model calls.
 
 ## Get started
 
-### Install
+Install with [uv](https://docs.astral.sh/uv/), then set up your agent:
 
-Choose one installation method. **[Homebrew](https://brew.sh)** works on macOS and Linux:
-
-```bash
-brew install flashdatadev/tap/flashdata
+```sh
+uv tool install flashdata-cli
+flashdata setup
 ```
 
-**pip** and **uv pip** work on Linux, macOS and Windows with Python 3.10+. In an active virtual environment, install from [PyPI](https://pypi.org/project/flashdata-cli/) using pip:
+Setup requires CLI 1.2.0 or newer. While the PyPI update is pending, use a [native installer](docs/installation.md#homebrew-linux-and-macos) or [release download](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0).
 
-```bash
-python -m pip install --upgrade flashdata-cli
+Select Codex, Claude Code or Cursor and confirm the project directories. Setup installs 16 bundled skills and verifies access without a paid query. No Node.js or separate skills installer is needed. Agent skills request plain-text results by default; MCP is optional.
+
+Setup reuses configured access or saves temporary access for a new profile. Default trial scopes are Google Search and YouTube metadata. To choose other trial sources or connect an account, see [onboarding](docs/onboarding.md). If you already have an API key, run `flashdata auth login` before setup and paste it at the hidden prompt.
+
+Now ask your agent to search for a topic, or try:
+
+```sh
+flashdata search "battery recycling startups" --num 5 --accept text/plain --json=false
 ```
 
-Or **uv pip**:
+Queries use Credits; setup itself runs no paid search. For global installation, individual skills or offline setup, see the [setup guide](docs/agent-setup.md). If you only need terminal commands, `flashdata init` configures access without installing skills.
 
-```bash
-uv pip install --upgrade flashdata-cli
-```
+### Upgrade or choose another installer
 
-Both install the `flashdata` command. See [Python installation](docs/installation.md#python-pip-and-uv) for virtual environment setup and supported platforms.
+For an existing uv installation, run `uv tool upgrade flashdata-cli`, then `flashdata setup` to refresh bundled skills. Setup preserves local edits and reports conflicts.
 
-Other options include [APT for Ubuntu/Debian](docs/installation.md#apt-ubuntu-and-debian), [RPM for Fedora/RHEL](docs/installation.md#rpm-fedora-and-rhel), and [standalone downloads for Linux, macOS and Windows](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.2). These install the executable directly and need no Python, Go or Node.js.
-
-### Make your first search
-
-Initialize the CLI, then run a search:
-
-```bash
-flashdata init --name "my-cli"
-flashdata search "battery recycling startups" --num 5 --json
-```
-
-`init` reuses configured access or creates and saves temporary trial access for a new profile. The default trial scopes are Google Search and YouTube metadata. To continue with your FlashData account or choose other trial sources, see [onboarding](docs/onboarding.md). If you already have an API key, use `flashdata auth login` instead and paste it at the hidden prompt.
-
-On a fresh headless Linux setup, `flashdata auth login` automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](docs/security.md).
-
-The search returns page titles, links and snippets. Queries use your available credits; see [pricing](https://flashdata.dev/pricing).
-
-## Agent skills and guided setup
-
-Use the [FlashData skills](https://github.com/flashdatadev/flashdata-skills) for CLI-based agent workflows with plain-text results. MCP is optional. The current source adds `flashdata setup` to select agents, install bundled skills and verify access without a paid query. Published v1.1.2 does not include setup yet; see the [setup guide](docs/agent-setup.md) for both installation paths.
+[pip and uv pip](docs/installation.md#python-pip-and-uv), [Homebrew](docs/installation.md#homebrew-linux-and-macos), [APT](docs/installation.md#apt-ubuntu-and-debian), [RPM](docs/installation.md#rpm-fedora-and-rhel) and [standalone downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0) are also available. Native packages need no Python, Go or Node.js. See [installation](docs/installation.md) for platform requirements and PATH setup.
 
 ## JSON, plain text and Markdown
 
-Version 1.1.2 includes `--accept` and `--respond-with` with every installation
+Version 1.2.0 includes `--accept` and `--respond-with` with every installation
 method above. To install from source with Go 1.25+:
 
 ```bash
-go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.2
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.0
 ```
 
 Choose plain text or Markdown for a search:
@@ -251,7 +235,7 @@ Use a new run ID only when you intend to create a new task. See [run history and
 | Public source catalog and health | `sources list`, `discover` |
 | Public plan catalog and status | `discover plans`, `discover status` |
 
-All commands above are included in the ready-to-run **v1.1.2** release. `discover plans` and `discover status` need no API key. Upgrade an existing installation with `brew update && brew upgrade flashdatadev/tap/flashdata`, `sudo apt-get update && sudo apt-get install --only-upgrade flashdata`, or `sudo dnf --refresh upgrade flashdata`; see the [installation guide](docs/installation.md) for repository setup and Windows upgrades. Your profiles and run history are preserved.
+All commands above are included in the ready-to-run **v1.2.0** release. `discover plans` and `discover status` need no API key. Upgrade an existing installation with `brew update && brew upgrade flashdatadev/tap/flashdata`, `sudo apt-get update && sudo apt-get install --only-upgrade flashdata`, or `sudo dnf --refresh upgrade flashdata`; see the [installation guide](docs/installation.md) for repository setup and Windows upgrades. Your profiles and run history are preserved.
 
 All 15 sources support background/batch execution; 14 support realtime. Downloads run in the background and require your cloud storage. Use `sources show SOURCE` for source schemas and a runnable JSON request. The single-video `youtube download` shortcut delivers audio; `query --mode async` and bulk expose the full media source options.
 
@@ -272,4 +256,4 @@ flashdata --help
 - **Trial setup and connecting your account:** see [onboarding](docs/onboarding.md) for `init`, browser approval and recovery.
 - **Use FlashData inside a Go application:** install the [Go SDK](https://github.com/flashdatadev/flashdata-go), which powers this CLI.
 
-[Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.1.2.md) · [MIT license](LICENSE)
+[Installation and upgrades](docs/installation.md) · [API documentation](https://flashdata.dev/docs) · [Troubleshooting](docs/security.md) · [Contributing and source builds](CONTRIBUTING.md) · [Release notes](docs/release-notes-1.2.0.md) · [MIT license](LICENSE)

@@ -33,7 +33,7 @@ https://api.flashdata.dev/v2/agent-connections/capabilities:
 `requiresStorageDestination`. Request only sources the task needs. Owner permission
 and trial eligibility differ; `sources list` checks the current key's usable sources.
 
-**Published-client boundary:** CLI v1.1.2 and Go SDK v1.1.0 registration still require
+**Published-client boundary:** CLI v1.2.0 and Go SDK v1.1.0 registration still require
 at least one of `google_search`, `youtube_search`, `youtube_metadata`,
 `youtube_transcript` or `youtube_captions`. Their typed capabilities do not expose
 the permission catalog; read that metadata through HTTP. Mixed requests can include

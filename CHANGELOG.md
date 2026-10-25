@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — CLI agent setup
+## 1.2.0 — 2026-10-25
 
 - Add guided `setup`, offline `skills install/list/verify`, and a pinned skill bundle.
 - Preserve edited skills and existing access; verify setup without paid queries.

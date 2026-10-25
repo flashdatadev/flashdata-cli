@@ -23,56 +23,40 @@
 
 ## 快速开始
 
-### 安装
+通过 [uv](https://docs.astral.sh/uv/) 安装，然后设置 agent：
 
-任选一种安装方式。**[Homebrew](https://brew.sh)** 适用于 macOS 和 Linux：
-
-```bash
-brew install flashdatadev/tap/flashdata
+```sh
+uv tool install flashdata-cli
+flashdata setup
 ```
 
-**pip** 和 **uv pip** 适用于 Linux、macOS 和 Windows，需要 Python 3.10+。在已激活的虚拟环境中，通过 **pip** 从 [PyPI](https://pypi.org/project/flashdata-cli/) 安装：
+引导设置需要 CLI 1.2.0 或更新版本。PyPI 更新发布前，请使用[原生安装器](docs/installation.zh-CN.md#homebrewlinux-和-macos)或[版本下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0)。
 
-```bash
-python -m pip install --upgrade flashdata-cli
+选择 Codex、Claude Code 或 Cursor，并确认项目目录。设置会安装随附的 16 个技能并验证访问，不执行付费查询。无需 Node.js 或独立技能安装器。Agent 技能默认请求纯文本结果，MCP 可选。
+
+设置会复用已有访问凭据，或为新配置保存临时访问。默认试用范围为 Google 搜索和 YouTube 元数据。选择其他试用来源或连接账户，参见[接入指南](docs/onboarding.md)。已有 API key 时，设置前运行 `flashdata auth login` 并在隐藏提示中输入。
+
+现在可以让 agent 搜索主题，或运行：
+
+```sh
+flashdata search "battery recycling startups" --num 5 --accept text/plain --json=false
 ```
 
-或使用 **uv pip**：
+查询消耗 Credits；设置本身不执行付费搜索。全局安装、选择技能或离线设置见[设置指南](docs/agent-setup.zh-CN.md)。只需终端命令时，`flashdata init` 配置访问但不安装技能。
 
-```bash
-uv pip install --upgrade flashdata-cli
-```
+### 升级与其他安装方式
 
-两种方式均安装 `flashdata` 命令。虚拟环境配置和支持平台见 [Python 安装指南](docs/installation.zh-CN.md#pythonpip-和-uv)。
+已有 uv 用户运行 `uv tool upgrade flashdata-cli`，再运行 `flashdata setup` 更新随附技能。设置会保留本地修改并报告冲突。
 
-其他安装方式包括 [Ubuntu/Debian 的 APT](docs/installation.zh-CN.md#aptubuntu-和-debian)、[Fedora/RHEL 的 RPM](docs/installation.zh-CN.md#rpmfedora-和-rhel)，以及 [Linux、macOS 和 Windows 的独立下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.1.2)。这些方式直接安装可执行文件，无需 Python、Go 或 Node.js。
-
-### 执行第一次搜索
-
-初始化 CLI，然后运行搜索：
-
-```bash
-flashdata init --name "my-cli"
-flashdata search "battery recycling startups" --num 5 --json
-```
-
-`init` 会复用已配置的访问凭据，或为新配置创建并保存临时试用访问。默认试用范围为 Google 搜索和 YouTube 元数据。连接自己的 FlashData 账户或选择其他试用来源，参见[接入指南（英文）](docs/onboarding.md)。如果已有 API 密钥，也可使用 `flashdata auth login`，在隐藏输入提示中粘贴密钥。
-
-首次在无桌面的 Linux 服务器上使用时，若桌面密钥环不可用，`flashdata auth login` 会自动使用私有凭据文件。后续命令会复用该文件，无需额外参数。文件仅允许当前用户访问，不做加密；详见[凭据存储](docs/security.md)。
-
-搜索结果包含网页标题、链接和摘要。查询会消耗可用额度；参见[价格](https://flashdata.dev/pricing)。
-
-## Agent 技能和引导设置
-
-[FlashData 技能](https://github.com/flashdatadev/flashdata-skills)通过 CLI 提供默认纯文本的 agent 工作流，MCP 可选。当前源码新增 `flashdata setup`，用于选择 agent、安装随附技能并验证访问，不执行付费查询。已发布的 v1.1.2 尚不包含引导设置；两种安装方式见[设置指南](docs/agent-setup.zh-CN.md)。
+也可使用 [pip 和 uv pip](docs/installation.zh-CN.md#pythonpip-和-uv)、[Homebrew](docs/installation.zh-CN.md#homebrewlinux-和-macos)、[APT](docs/installation.zh-CN.md#aptubuntu-和-debian)、[RPM](docs/installation.zh-CN.md#rpmfedora-和-rhel) 或[独立下载包](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.0)。原生包无需 Python、Go 或 Node.js。平台要求与 PATH 设置见[安装指南](docs/installation.zh-CN.md)。
 
 ## JSON、纯文本和 Markdown
 
-上述所有安装方式均提供 1.1.2 正式版的 `--accept` 和 `--respond-with`。
+上述所有安装方式均提供 1.2.0 正式版的 `--accept` 和 `--respond-with`。
 也可使用 Go 1.25+ 从源码安装：
 
 ```bash
-go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.1.2
+go install github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.0
 ```
 
 为搜索选择纯文本或 Markdown：
@@ -249,7 +233,7 @@ flashdata runs recover audio-bulk-001 --timeout 1h --output recovered-receipts.j
 | 公共来源目录和健康状态 | `sources list`、`discover` |
 | 公共套餐目录和服务状态 | `discover plans`、`discover status` |
 
-上述所有命令均包含在开箱即用的 **v1.1.2** 正式版中。`discover plans` 和 `discover status` 无需 API 密钥。已有安装可执行 `brew update && brew upgrade flashdatadev/tap/flashdata`、`sudo apt-get update && sudo apt-get install --only-upgrade flashdata` 或 `sudo dnf --refresh upgrade flashdata` 升级；软件源配置及 Windows 升级见[安装指南](docs/installation.zh-CN.md)。升级保留用户配置和执行历史。
+上述所有命令均包含在开箱即用的 **v1.2.0** 正式版中。`discover plans` 和 `discover status` 无需 API 密钥。已有安装可执行 `brew update && brew upgrade flashdatadev/tap/flashdata`、`sudo apt-get update && sudo apt-get install --only-upgrade flashdata` 或 `sudo dnf --refresh upgrade flashdata` 升级；软件源配置及 Windows 升级见[安装指南](docs/installation.zh-CN.md)。升级保留用户配置和执行历史。
 
 全部 15 个来源支持后台/批次执行，其中 14 个支持实时请求。下载在后台运行，需要自己的云存储。
 通过 `sources show SOURCE` 查看来源模式和可运行 JSON 请求。单视频 `youtube download` 快捷命令面向音频；`query --mode async` 和批量任务支持完整的媒体来源选项。
@@ -271,4 +255,4 @@ flashdata --help
 - **开始试用并连接账户：** 参阅[接入指南（英文）](docs/onboarding.md)，了解 `init`、浏览器授权及恢复操作。
 - **在 Go 应用中使用 FlashData：** 安装本 CLI 所使用的 [Go SDK](https://github.com/flashdatadev/flashdata-go)。
 
-[安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.1.2.md) · [MIT 许可](LICENSE)
+[安装与升级](docs/installation.zh-CN.md) · [API 文档](https://flashdata.dev/docs) · [故障排查](docs/security.md) · [参与贡献与源码构建](CONTRIBUTING.md) · [版本说明](docs/release-notes-1.2.0.md) · [MIT 许可](LICENSE)
