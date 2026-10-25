@@ -58,7 +58,7 @@ If uv's executable directory is missing from PATH, run `uv tool update-shell` an
 
 ## Platforms and package contents
 
-Version **1.2.0** bundles the official CLI v1.2.0 executable. The launcher requires Python 3.10+, has no Python runtime dependencies and downloads no executable during installation or startup. Native arguments, streams and exit status pass through unchanged.
+Version **1.2.1** bundles the official CLI v1.2.1 executable. The launcher requires Python 3.10+, has no Python runtime dependencies and downloads no executable during installation or startup. Native arguments, streams and exit status pass through unchanged.
 
 Wheels support Linux glibc 2.17+ x86_64/ARM64, macOS 13+ Intel/Apple Silicon, and Windows x64. No wheels are available for Linux musl/Alpine, Windows ARM64 or 32-bit systems. For offline installation, install the matching wheel from a local path.
 

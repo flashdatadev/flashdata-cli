@@ -58,7 +58,7 @@ pip 或 uv pip 使用 `--upgrade`。设置会更新未修改的技能，并保�
 
 ## 平台与包内容
 
-版本 **1.2.0** 随附官方 CLI v1.2.0 可执行文件。启动器需要 Python 3.10+，没有 Python 运行时依赖，安装或启动时均不下载可执行文件。原生参数、输入输出及退出状态保持不变。
+版本 **1.2.1** 随附官方 CLI v1.2.1 可执行文件。启动器需要 Python 3.10+，没有 Python 运行时依赖，安装或启动时均不下载可执行文件。原生参数、输入输出及退出状态保持不变。
 
 Wheel 支持 Linux glibc 2.17+ x86_64/ARM64、macOS 13+ Intel/Apple Silicon 以及 Windows x64。不提供 Linux musl/Alpine、Windows ARM64 或 32 位 wheel。离线安装可指定匹配平台的本地 wheel 文件。
 
