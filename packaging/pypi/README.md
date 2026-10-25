@@ -29,6 +29,8 @@ Queries use Credits; check what remains with `flashdata account balance`. For te
 
 Ordinary CLI queries and the API still default to JSON. See [response formats](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md).
 
+For video-ID lists, `flashdata bulk run` supports metadata, transcripts, captions, license classifications and media downloads. Bulk exports stay JSONL; omit `--accept` and `--respond-with`. Downloads deliver media to your cloud storage and export delivery receipts. See [bulk workflows](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/bulk.md) for setup, options and recovery.
+
 ## Other installers
 
 With Python 3.10+ in an active virtual environment, use pip or uv pip:

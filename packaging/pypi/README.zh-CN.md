@@ -29,6 +29,8 @@ flashdata search "battery recycling research" --num 5 --accept text/plain --json
 
 普通 CLI 查询和 API 仍默认使用 JSON，详见[响应格式](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md)。
 
+对于视频 ID 列表，`flashdata bulk run` 支持元数据、转录、字幕、许可标签和媒体下载。批量导出保持 JSONL，不添加 `--accept` 或 `--respond-with`。下载将媒体交付到你的云存储，并导出交付回执。配置、选项和恢复步骤见[批量工作流](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/bulk.md)。
+
 ## 其他安装方式
 
 在已激活的 Python 3.10+ 虚拟环境中，选择 pip 或 uv pip：

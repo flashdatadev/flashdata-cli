@@ -143,6 +143,8 @@ flashdata bulk run --source youtube_metadata --input ids.txt --run-id video-data
 
 This command creates the job, uploads your IDs, starts processing, waits and writes `videos.jsonl`. Each line records one video's outcome and data. Change `--source` to `youtube_transcript`, `youtube_captions` or `youtube_trainability` for other bulk datasets. See the [bulk guide](docs/bulk.md) for options and item statuses.
 
+The bundled `flashdata` and five YouTube bulk skills guide agents through ID-file preparation, options, job controls and recovery. Bulk exports remain JSONL, including download delivery receipts; do not append `--accept` or `--respond-with` to bulk commands. The new skill guidance ships with the next CLI release.
+
 ## Complete bulk workflow
 
 ### Deliver audio files to your cloud bucket

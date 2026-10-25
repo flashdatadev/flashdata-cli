@@ -1,11 +1,11 @@
 ---
 name: flashdata
-description: Set up and use the standalone FlashData CLI for Google search and YouTube data. Use for CLI installation, access, source discovery, research and recurring data workflows. MCP is optional.
+description: Set up and use the standalone FlashData CLI for Google search and YouTube data. Use for CLI installation, access, source discovery, research, bulk video datasets, bulk media delivery and recurring data workflows. MCP is optional.
 ---
 
 # FlashData
 
-Use the standalone `flashdata` command for Google search, YouTube data and delivery to customer storage. Reuse configured access and return plain text unless another format is requested.
+Use the standalone `flashdata` command for Google search, YouTube data and delivery to customer storage. Reuse configured access. Individual query content defaults to plain text; bulk dataset exports stay JSONL.
 
 ## Get started
 
@@ -31,9 +31,14 @@ Setup requires CLI 1.2.0 or newer. Upgrade an existing uv installation with `uv 
 | Existing automatic transcript | `flashdata youtube transcript VIDEO_ID --language en` |
 | Existing uploader captions | `flashdata youtube captions VIDEO_ID --language en` |
 | Other source or full options | `flashdata sources show SOURCE`, then `flashdata query --input /absolute/path/query.json` |
+| Process a list of video IDs | `flashdata bulk run --source SOURCE --input /absolute/path/ids.txt`; see [bulk workflows](references/bulk.md) |
 | Read an existing job | `flashdata jobs get JOB_ID`, then `flashdata jobs result JOB_ID` |
 
-Append `--accept text/plain --json=false` to content commands. Add `--respond-with markdown` only for Markdown. Use `--accept application/json --json` for structured processing. Auth, discovery and run metadata retain their JSON output. For asynchronous content, use `--wait` or read the completed job result.
+Append `--accept text/plain --json=false` to individual query content commands. Add `--respond-with markdown` only for Markdown. Use `--accept application/json --json` for structured processing. Auth, discovery and run metadata retain their JSON output. For asynchronous content, use `--wait` or read the completed job result.
+
+## Bulk datasets and media
+
+For a supplied video-ID list with shared options, use `bulk run` for metadata, transcripts, captions, license classifications or downloads. Read [bulk workflows](references/bulk.md) before submitting: it covers source selection, JSONL exports, storage, job controls and recovery. Bulk exports remain JSONL; do not append `--accept` or `--respond-with` to bulk commands. A mixed-source request list uses `batch submit`, which is a different workflow from bulk video-ID processing.
 
 ## Reliable use
 

@@ -59,7 +59,9 @@ and polling use JSON regardless of the selected final response format.
 
 YouTube Download supports text receipts and Markdown result manifests. Media bytes
 keep their original format. Bulk exports remain JSONL; account, discovery and
-onboarding commands keep their existing formats.
+onboarding commands keep their existing formats. `bulk run` and `bulk results`
+do not accept `--accept` or `--respond-with`. Recover bulk runs without those
+format flags as well. See [bulk workflows](bulk.md) for examples and partial results.
 
 ## Saved runs and recovery
 

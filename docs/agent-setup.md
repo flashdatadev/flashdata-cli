@@ -53,6 +53,8 @@ The default selection contains 16 CLI skills. The MCP research skill is optional
 
 Use `--directory PATH` to select a project without changing directories. It cannot be combined with `--global`. Codex and Cursor share one project installation when selected together. Other agents can use the independent `npx skills` installer.
 
+The main FlashData skill and the metadata, transcript, captions, license-check and download skills include bulk guidance in the current source bundle. Bulk exports stay JSONL; ordinary skill content queries default to plain text. See [bulk workflows](bulk.md). Released binaries receive the updated guides with the next CLI release.
+
 ## Updates and recovery
 
 Skills are bundled with the executable and pinned to the source revision reported by `skills list`. Upgrade the CLI, then rerun the same setup or install command. Installation uses no runtime download and requires no Node.js or Python.

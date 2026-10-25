@@ -4,7 +4,7 @@
 
 ## Amazon S3 example
 
-Save this structure in a private local JSON file. Replace the placeholder values through your normal secret-management process, then set `FLASHDATA_STORAGE_FILE` to the file path for the Skill's terminal example. Do not commit the filled file or paste its credentials into chat.
+Save this structure in a private local JSON file. Replace the placeholder values through your normal secret-management process. For CLI commands, pass its path with `--storage-config`; the optional Python example reads the path from `FLASHDATA_STORAGE_FILE`. Do not commit the filled file or paste its credentials into chat.
 
 ```json
 {

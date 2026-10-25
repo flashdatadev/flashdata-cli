@@ -141,6 +141,8 @@ flashdata bulk run --source youtube_metadata --input ids.txt --run-id video-data
 
 此命令会创建任务、上传 ID、启动处理、等待完成，并写入 `videos.jsonl`。每行记录一个视频的处理状态和数据。将 `--source` 改为 `youtube_transcript`、`youtube_captions` 或 `youtube_trainability`，即可构建其他类型的批量数据集。选项和逐项状态说明见[批量处理指南](docs/bulk.md)。
 
+随附的 `flashdata` 和五个 YouTube 批量技能提供 ID 文件准备、选项、任务控制和恢复指南。批量导出保持 JSONL 格式，包括下载交付回执；批量命令不添加 `--accept` 或 `--respond-with`。新的技能指南将在下一次 CLI 版本中发布。
+
 ## 完整批量工作流
 
 ### 将音频文件交付到云存储桶

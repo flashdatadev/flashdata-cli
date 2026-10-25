@@ -2,28 +2,100 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-See the complete commands in the [English README](../README.md#complete-bulk-workflow) or [简体中文](../README.zh-CN.md). Supported sources are youtube_metadata, youtube_transcript, youtube_captions, youtube_trainability and youtube_download. Options are validated through the Go SDK before job creation.
+Process a video-ID list with one source and shared options. `bulk run` creates the job, uploads your IDs, starts processing, waits and exports results. Use individual query commands for one video, or `batch submit` for a JSON list of mixed-source queries.
 
-`bulk run` checks the ID file, private option/storage files, output path, scopes and recurring requirements, then commits intent. It creates one job, atomically stores the signed upload descriptor and run-to-job link in the protected vault, commits the remote ID in the journal, uploads once, starts and waits. A crash between vault and journal commits can recover the remote ID from the private link. The public receipt never includes the upload URL.
+| Task | `--source` | Example shared options |
+| --- | --- | --- |
+| Video metadata | `youtube_metadata` | `{"include_formats":false,"include_chapters":true}` |
+| Existing automatic transcripts | `youtube_transcript` | `{"language":"en","auto":true}` |
+| Existing uploader captions | `youtube_captions` | `{"language":"en","auto":false}` |
+| License classifications | `youtube_trainability` | `{}` |
+| Audio/video delivery | `youtube_download` | `{"download_type":"audio","output_format":"mp3"}` |
 
-A repeated existing run never uploads or creates another task. `runs recover` performs safe status/result reads only. If input/start is missing, it returns explicit instructions for `bulk upload` and `bulk start`. Upload binds to the SHA-256 of the original file; another file conflicts. Explicit same-file PUT retry is only permitted while the same draft awaits input and the original URL remains valid. A lost start response is resolved by Get; an already-started job is not started again.
+Check `flashdata auth status`, `flashdata sources list` and `flashdata account balance` for your access, permitted sources and remaining Credits. Downloads require owner access and your own writable storage destination. Installing skills does not grant additional permissions. Recurring automation also requires verified owner access; see [onboarding](onboarding.md).
 
-Bulk control commands operate on existing IDs: get/list/start/pause/resume/cancel/wait/results/update. `resume` requires a paused job and an explicit command after correcting its cause. `update --input` accepts a private JSON object containing partial options and callback_url (string or null to remove). Data result copies use options.result_storage; media download destination uses options.storage. Server-side credential merging and provider rules remain authoritative.
+## Export a video dataset
 
-Manual metadata inputs are provided as examples/bulk-create.json and examples/bulk-update.json. Both create and update accept --input -; pipe these non-secret examples directly on PowerShell or redirect them on Bash as described in the command reference and source inputs. Apply the metadata options example before upload/start. Once a scan is complete, the backend permits only the documented credential-only result_storage patch on a paused customer-delivery job; a generic options patch is not valid in that state. A paused coordinator may need time to release its lease before updates are allowed. Control commands refresh local stages, and signed upload capabilities are discarded after the job leaves awaiting_upload.
+Create `ids.txt` with one 11-character video ID per line:
 
-ID files contain one 11-character video ID per line, from 1 byte through 2 GiB. Upload capability expires after 15 minutes; internal results remain for 24 hours. Customer buckets follow their own retention. SDK limits bound each compressed/decompressed part to 64 MiB and each row to 16 MiB by default. CLI result export streams across parts without assembling the whole dataset in memory.
+```text
+dQw4w9WgXcQ
+jNQXAC9IVRw
+```
 
-Validation streams the IDs into a private temporary snapshot. The hash, byte count and upload all use that snapshot, so editing or appending to the original file during API calls cannot change the validated upload. Temporary disk space up to the input size is required, including for a dry-run. Snapshots are removed when the command returns; a forcibly killed process may leave a private flashdata-ids-*.tmp file in the OS temporary directory. Preserve active snapshots until the owning process exits before any manual cleanup.
+Run a metadata job:
 
-S3, S3-compatible, OSS, GCS, Azure, COS, BOS and TOS shapes are supported. storage_url is a bucket/container name. GCS requires a service account; Azure needs account_name and a write-capable SAS; provider endpoint/region/permissions must be valid. No example invents real credentials. Media files are delivered into your cloud destination; JSONL reports outcomes, not video bytes.
+```bash
+flashdata bulk run --source youtube_metadata --input ids.txt --run-id metadata-001 --timeout 1h --output metadata.jsonl
+```
 
-Check each row's status, even for a completed job. The CLI preserves invalid/failed rows and exits nonzero for item failures. A malformed/interrupted stream leaves a partial export; inspect/recover by run ID using a fresh output filename. Disk failures preserve the original intent/remote ID wherever possible, and never authorize replaying creation. An expired upload capability is not renewed by creating another job automatically.
+For transcripts, captions or license classifications, change the source, run ID and output filename. To apply shared options, save the options object in a private JSON file and add `--options options.json`. Do not include a `source`, `video_id` or `params` wrapper. All videos in the job use those options. See the [bulk API guide](https://flashdata.dev/docs/guides/bulk) for supported fields.
 
-## Lost responses and partial receipts
+On Linux/macOS, protect option and storage files with `chmod 600`; on Windows, restrict their ACLs to your user, SYSTEM and optionally Administrators. The [metadata options example](../examples/bulk-options.json) can be copied into a private working directory. See [private-file requirements](security.md).
 
-A lost start response keeps the original bulk ID and input fingerprint. `runs recover` first reads current remote state; after observing that input upload is no longer permitted it removes spent upload capabilities, then fetches results without another create, upload or start. Partial gzip/result transfers remain partial during cached exports, retain available rows and exit nonzero. Corrected safe result reads can complete the original journal.
+Add `--dry-run` to the planned command to validate inputs and access and read pricing without creating a job. It does not guarantee a total-cost quote. Use a stable `--run-id` for one intended job; reserve new IDs for new work.
 
-MP3 audio and MP4 video use the same lifecycle; choose the matching private options file
-shown in the README. See the [SDK and CLI comparison](sdk-parity.md) for all source
-coverage, media examples and recovery differences.
+## Deliver audio or video
+
+Prepare a private `storage.json` containing your destination and credentials, plus a private options file for the media format. Use the complete [MP3 and MP4 examples](../README.md#complete-bulk-workflow), including configuration and file permissions.
+
+For MP3 audio with `{"download_type":"audio","output_format":"mp3"}` in `audio-options.json`:
+
+```bash
+flashdata bulk run --source youtube_download --input ids.txt --storage-config storage.json --options audio-options.json --run-id audio-001 --timeout 1h --output audio-receipts.jsonl
+```
+
+For MP4 video, use `{"download_type":"audio_video","video_quality":"<=720","output_format":"mp4"}` in a separate options file, with a different run ID and output path. Choose the format needed for your task. Media goes to your cloud bucket/container; the local JSONL file contains delivery receipts. Download charges depend on delivered bytes.
+
+S3, S3-compatible storage, OSS, GCS, Azure, COS, BOS and TOS are supported. `storage_url` is the bucket/container name. Supply the provider's required endpoint, region and credentials; GCS needs a service account and Azure needs an account name and write-capable SAS. Keep credentials out of chat and source control. Your bucket's retention and access settings apply.
+
+For downloads, `--storage-config` sets the media destination (`options.storage`). For data sources, it optionally requests result copies in customer storage (`options.result_storage`). Supply a destination in only one place: the storage file or the options file.
+
+## JSONL results and failed items
+
+Bulk exports remain **JSONL**: one JSON object per line, preserving each video's index, ID, status, data and errors. `--json` controls the command's status envelope, not the export. `bulk run` and `bulk results` do not accept `--accept` or `--respond-with`; omit those flags when recovering a bulk run too.
+
+A completed job may still contain failed or invalid items. Inspect each row. The CLI preserves those rows and exits nonzero when items fail. Missing transcript/caption tracks are not generated or translated, and license classifications do not establish reuse permission.
+
+An interrupted or malformed result transfer can leave a partial export. Preserve it for inspection and use a new output filename when recovering. Recovery retrieves existing results; it does not rerun failed videos.
+
+## Monitor and control a job
+
+The remote bulk ID identifies the server job. Your local run ID, such as `metadata-001`, identifies the CLI's saved execution. Use the appropriate ID for each command:
+
+| Task | Command |
+| --- | --- |
+| Find the remote ID for a saved run | `flashdata runs show metadata-001` |
+| List existing jobs | `flashdata bulk list` |
+| Inspect a job | `flashdata bulk get BULK_ID` |
+| Wait for completion | `flashdata bulk wait BULK_ID --timeout 1h` |
+| Export existing results | `flashdata bulk results BULK_ID --output results-copy.jsonl` |
+| Pause processing | `flashdata bulk pause BULK_ID` |
+| Resume a paused job after fixing its cause | `flashdata bulk resume BULK_ID` |
+| Cancel a job | `flashdata bulk cancel BULK_ID` |
+
+These are separate operations to use when needed. Use `bulk` commands for bulk IDs; `jobs get` and `jobs result` handle individual async query jobs.
+
+## Recover interrupted work
+
+Keep the same profile and state directory, then recover into a fresh file:
+
+```bash
+flashdata runs recover metadata-001 --timeout 1h --output recovered-metadata.jsonl
+```
+
+Substitute `audio-001` for the download example. A timeout stops local waiting; accepted server work continues. Recovery reads the existing job without creating, uploading or starting replacement work. If a submission outcome is unknown and no remote ID is available, inspect `runs show` and follow its guidance; do not create a new run ID to repeat the submission.
+
+If the original upload or start is incomplete, recovery tells you which explicit step is needed. Use `bulk upload BULK_ID --input ids.txt` only with the original file while the same draft still accepts input and its upload URL is valid. Then use `bulk start BULK_ID` if needed. A lost start response is checked against the existing job before another start is attempted. An expired upload URL does not trigger a replacement job.
+
+## Manual creation and updates
+
+For separate steps, use `bulk create --input FILE`, `bulk upload` and `bulk start`. Copy [bulk-create.json](../examples/bulk-create.json) into a private file and edit it before creating the job. Create/update also accept `--input -` for JSON on stdin. Keep the created job ID and original ID file for upload and recovery.
+
+`bulk update BULK_ID --input FILE` accepts partial `options` and `callback_url`; use `null` to remove the callback. See [bulk-update.json](../examples/bulk-update.json). Apply ordinary option changes before upload/start. After scanning, a paused customer-delivery job only accepts the documented credential-only `result_storage` update; it may take time to become ready for that update. Fix the cause, then explicitly resume the paused job.
+
+## Large files and retention
+
+ID files are UTF-8 text from 1 byte through 2 GiB. Validation needs temporary disk space up to the input size, including during a dry run. The CLI uploads a validated snapshot, so later edits to the original file do not change the submitted IDs. Normal completion removes the snapshot; a forcibly terminated process may leave a private `flashdata-ids-*.tmp` file in the OS temporary directory. Remove it only after the owning process has exited.
+
+Upload URLs expire after 15 minutes; internal results remain for 24 hours. Save results promptly. Customer storage follows its own retention. Exports stream across result parts; the SDK defaults limit each compressed/decompressed part to 64 MiB and each row to 16 MiB.
