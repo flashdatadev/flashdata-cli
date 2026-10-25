@@ -154,7 +154,7 @@ func TestReadmeWorkflows(t *testing.T) {
 	words := regexp.MustCompile(`"[^"]*"|[^\s"]+`)
 	commands, outputs := 0, 0
 	for _, block := range blocks {
-		if block[1] != "bash" {
+		if block[1] != "bash" && block[1] != "sh" {
 			continue
 		}
 		for _, line := range strings.Split(block[2], "\n") {
@@ -169,6 +169,11 @@ func TestReadmeWorkflows(t *testing.T) {
 				args[i] = strings.Trim(args[i], `"`)
 			}
 			input := ""
+			if line == "flashdata setup" {
+				// Select the documented agent explicitly in this noninteractive
+				// test; still execute setup's access and skill installation flow.
+				args = append(args, "--agent", "codex", "--directory", dir)
+			}
 			if line == "flashdata auth login" {
 				// The test has no terminal. Import the same dummy key through
 				// the documented stdin route instead of the hidden prompt.
