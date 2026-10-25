@@ -1,51 +1,59 @@
-# 通过 Python 包安装器使用 FlashData CLI
+# FlashData CLI
 
-[English](README.md) | 简体中文
+[English](https://github.com/flashdatadev/flashdata-cli/blob/main/packaging/pypi/README.md) | 简体中文
 
-[FlashData](https://flashdata.dev) 提供结构化 Google 搜索、YouTube 数据、转录/字幕、后台任务和批量交付。本包安装官方 [FlashData CLI](https://github.com/flashdatadev/flashdata-cli)，支持安全配置、初始化和可恢复批量任务。命令名为 `flashdata`；Python SDK 是独立的 `flashdata` 发行包。
+[FlashData](https://flashdata.dev) 为终端和 AI agent 提供 Google 搜索与 YouTube 数据。本包安装官方 [CLI](https://github.com/flashdatadev/flashdata-cli)，命令为 `flashdata`。Python SDK 是独立的 `flashdata` 软件包。
 
-版本 **1.1.2** 封装官方 v1.1.2 可执行文件，支持 JSON、纯文本和 Markdown 响应选项。轻量启动器需要 Python 3.10+，无需 Go 编译器或运行时，没有 Python 运行时依赖，安装和启动时均不下载可执行文件。
+## 快速开始
 
-提供以下 wheel：Linux glibc 2.17+ x86_64/aarch64、macOS 13+ Intel/Apple Silicon、Windows x86_64。不提供 Linux musl/Alpine、Windows ARM64 或 32 位 wheel。不支持的平台会解析失败，不会安装其他架构的程序。
-
-1.1.2 修复无桌面 Linux 服务器的默认登录：新配置在桌面密钥环不可用时会自动使用私有文件保存凭据。已有配置和执行历史会保留。
-
-无桌面 Linux 服务器上，新配置可直接使用 `flashdata auth login`。密钥环不可用时会自动使用私有文件，权限仅限当前用户、内容不加密；后续命令会自动复用。
-
-## 安装
-
-任选一种安装方式：pip/uv pip 使用独立 Python 环境，`uv tool` 管理独立 CLI 环境。安装后的命令仍为 `flashdata`。
-
-```bash
-python -m venv .venv-cli
+```sh
+uv tool install flashdata-cli
+flashdata setup
 ```
 
-Bash 通过 `source .venv-cli/bin/activate` 激活，PowerShell 使用 `.venv-cli\Scripts\Activate.ps1`。然后任选 pip 或 uv pip：
+选择 Codex、Claude Code 或 Cursor，并确认项目目录。设置会安装随附的 16 个 CLI 技能并验证访问，不执行付费查询。它会复用已有访问，或为新配置保存临时访问。默认试用范围为 Google 搜索和 YouTube 元数据。已有密钥时，设置前运行 `flashdata auth login` 并在隐藏提示中输入。
 
-```bash
-python -m pip install flashdata-cli==1.1.2
+无需 Node.js 或独立技能安装器。技能默认使用纯文本，Markdown 与 MCP 可选。全局安装、选择技能及离线安装见[设置指南](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/agent-setup.zh-CN.md)；账户访问与其他试用范围见[接入指南](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/onboarding.md)。
+
+试一次搜索：
+
+```sh
+flashdata search "battery recycling research" --num 5 --accept text/plain --json=false
 ```
 
-```bash
-uv pip install flashdata-cli==1.1.2
+查询消耗 Credits。普通 CLI 查询和 API 仍默认使用 JSON，详见[响应格式](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/response-formats.md)。
+
+## 其他安装方式
+
+在已激活的 Python 3.10+ 虚拟环境中，选择 pip 或 uv pip：
+
+```sh
+python -m pip install --upgrade flashdata-cli
 ```
 
-也可在虚拟环境之外使用：
-
-```bash
-uv tool install flashdata-cli==1.1.2
-flashdata --version
-flashdata --help
+```sh
+uv pip install --upgrade flashdata-cli
 ```
 
-若 uv 提示可执行文件目录不在 PATH，请运行 `uv tool update-shell` 并重新打开终端。旧的 Homebrew/APT/RPM/手动安装可能遮蔽新命令；Bash 用 `command -v flashdata`，PowerShell 用 `Get-Command flashdata` 检查。避免多个管理器同时管理同一个 PATH 条目。
+然后运行 `flashdata setup`。也可使用无需 Python 的原生 [Homebrew、APT、RPM 或独立下载包](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.zh-CN.md)。
 
-离线安装时，下载适用于当前平台的 wheel，并通过本地文件路径安装。
+## 升级
 
-## 使用与维护
+```sh
+uv tool upgrade flashdata-cli
+flashdata setup
+```
 
-从 [FlashData 账户](https://flashdata.dev) 获取密钥，再运行 `flashdata auth login`，终端输入隐藏。参阅[英文初始化与安装](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.md)、[简体中文](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/installation.zh-CN.md)及[完整批量流程](https://github.com/flashdatadev/flashdata-cli/blob/main/README.zh-CN.md)。启动器传递原生参数、标准输入/输出、信号和退出状态；安装命令不应包含 API 凭据。
+pip 或 uv pip 使用 `--upgrade`。设置会更新未修改的技能，并保留本地修改。旧安装固定了精确版本时，可运行 `uv tool install --upgrade flashdata-cli` 替换版本约束。
 
-升级时，pip/uv pip 使用 `--upgrade`；uv tool 使用 `uv tool install --reinstall`。`==1.1.2` 会固定版本，需要升级时明确修改约束。按原安装方式分别使用 `python -m pip uninstall flashdata-cli`、`uv pip uninstall flashdata-cli` 或 `uv tool uninstall flashdata-cli` 卸载。卸载保留用户配置及运行历史；如需移除保存的凭据，请先执行 `flashdata auth logout`。
+若 uv 可执行目录不在 PATH 中，运行 `uv tool update-shell` 并重启终端。其他安装优先时，Bash 使用 `command -v flashdata`，PowerShell 使用 `Get-Command flashdata` 检查。
 
-构建、验证及发布前提见仓库中的 `docs/python-packaging.zh-CN.md`。打包和测试脚本均不上传软件包。支持：[support@flashdata.dev](mailto:support@flashdata.dev)。
+## 平台与包内容
+
+版本 **1.2.0** 随附官方 CLI v1.2.0 可执行文件。启动器需要 Python 3.10+，没有 Python 运行时依赖，安装或启动时均不下载可执行文件。原生参数、输入输出及退出状态保持不变。
+
+Wheel 支持 Linux glibc 2.17+ x86_64/ARM64、macOS 13+ Intel/Apple Silicon 以及 Windows x64。不提供 Linux musl/Alpine、Windows ARM64 或 32 位 wheel。离线安装可指定匹配平台的本地 wheel 文件。
+
+按原安装方式使用 `uv tool uninstall flashdata-cli`、`python -m pip uninstall flashdata-cli` 或 `uv pip uninstall flashdata-cli` 卸载。卸载保留配置和执行历史；移除已保存凭据前请运行 `flashdata auth logout`。见[凭据存储](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/security.md)，包括无桌面 Linux 文件存储说明。
+
+支持：[GitHub Issues](https://github.com/flashdatadev/flashdata-cli/issues) · [support@flashdata.dev](mailto:support@flashdata.dev)。

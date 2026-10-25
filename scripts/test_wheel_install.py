@@ -74,7 +74,7 @@ def main():
         assert version["ok"] and version["data"]["version"] == ledger["version"] and version["data"]["commit"] == ledger["source_commit"]
         assert "bulk" in run([executable, "--help"]).stdout
         commands = json.loads(run([executable, "commands", "--json"]).stdout)
-        assert {"auth", "bulk", "query", "runs"} <= {c["name"] for c in commands["data"]["commands"]}
+        assert {"auth", "bulk", "query", "runs", "setup", "skills"} <= {c["name"] for c in commands["data"]["commands"]}
         assert run([interpreter, "-m", "flashdata_cli", "--version", "--json"]).stdout == run([binary, "--version", "--json"]).stdout
         for native_args, stdin in [(["unknown-command-中文;literal", "--json"], None), (["query", "--input", "-", "--non-interactive", "--state-dir", str(folder / "isolated-state")], "{invalid-json\n")]:
             native = run([binary, *native_args], check=False, data=stdin)
@@ -88,13 +88,20 @@ def main():
             previous = {name: env.get(name) for name in ("FLASHDATA_TEST_BINARY", "GOWORK")}
             env.update({"FLASHDATA_TEST_BINARY": str(executable.resolve()), "GOWORK": "off"})
             try:
-                run([args.go, "test", "-mod=readonly", "-count=1", "./internal/app", "-run", "^(TestStandaloneEnvironmentKeyWorksAcrossProcesses|TestDefaultLinuxLoginOnHeadlessHost)$"], cwd=ROOT)
+                run([args.go, "test", "-mod=readonly", "-count=1", "./internal/app", "-run", "^(TestStandaloneEnvironmentKeyWorksAcrossProcesses|TestDefaultLinuxLoginOnHeadlessHost|TestStandaloneBinaryCarriesCompleteSkillBundle)$"], cwd=ROOT)
             finally:
                 for name, value in previous.items():
                     if value is None:
                         env.pop(name, None)
                     else:
                         env[name] = value
+        project = folder / "agent-project"
+        project.mkdir()
+        setup = json.loads(run([executable, "setup", "--skip-auth", "--agent", "codex", "--directory", project, "--non-interactive"]).stdout)
+        assert setup["ok"] and setup["data"]["skillsVerified"] and not setup["data"]["accessVerified"]
+        run([executable, "skills", "verify", "--agent", "codex", "--directory", project, "--non-interactive"])
+        assert (project / ".agents/skills/flashdata/SKILL.md").is_file()
+        assert (project / ".agents/skills/youtube-transcript/SKILL.md").is_file()
         # Reinstall the same candidate using the same manager; no global PATH edits.
         reinstall = command + (["--reinstall"] if method != "pip" else ["--force-reinstall"])
         run(reinstall)
@@ -106,7 +113,7 @@ def main():
         else:
             run([uv, "pip", "uninstall", "--python", interpreter, "flashdata-cli"])
         assert not executable.exists() and marker.read_text(encoding="utf-8") == "preserved profile/run state\n"
-        reports.append({"method": method, "install": True, "reinstall": True, "uninstall": True, "offlineVersionHelpCommands": True, "streamsArgumentsExitCode": True, "exactNativeBinary": True, "environmentKeyReuse": bool(args.go), "userStatePreserved": True})
+        reports.append({"method": method, "install": True, "reinstall": True, "uninstall": True, "offlineVersionHelpCommands": True, "streamsArgumentsExitCode": True, "exactNativeBinary": True, "offlineAgentSetup": True, "environmentKeyReuse": bool(args.go), "userStatePreserved": True})
         print("PASS: " + method, flush=True)
     report = {"target": target, "python": run([python, "--version"]).stdout.strip(), "uv": uv_version, "publishes": False, "methods": reports}
     (work / "report.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
