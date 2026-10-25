@@ -2,7 +2,7 @@
 
 [FlashData](https://flashdata.dev) · [English](agent-setup.md)
 
-CLI 1.2.0 已包含引导设置与随附技能，无需 Node.js 或独立技能安装器。PyPI 更新发布前，请先使用[原生安装器](installation.zh-CN.md#homebrewlinux-和-macos)。
+CLI 提供引导设置及随附技能，支持 Codex、Claude Code 和 Cursor。
 
 ## 设置 agent
 

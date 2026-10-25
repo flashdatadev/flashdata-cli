@@ -38,8 +38,7 @@ Windows and Intel macOS source checks on Go 1.25/1.27, Linux race checks, source
 and command generation checks, archive-policy tests and all five native archive
 acceptance jobs. Release checks use mock APIs and submit no paid queries.
 
-The v1.2.1 wheels for [PyPI](https://pypi.org/project/flashdata-cli/) are prepared for
-manual publication. Until they are uploaded, use a native installer for guided setup.
+Install the CLI from [PyPI](https://pypi.org/project/flashdata-cli/) with uv or pip.
 The CLI installer is separate from the Python SDK. See
 [Python installation](installation.md#python-pip-and-uv) and
 [wheel preparation](python-packaging.md).

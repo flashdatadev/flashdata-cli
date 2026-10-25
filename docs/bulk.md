@@ -37,15 +37,75 @@ Add `--dry-run` to the planned command to validate inputs and access and read pr
 
 ## Deliver audio or video
 
-Prepare a private `storage.json` containing your destination and credentials, plus a private options file for the media format. Use the complete [MP3 and MP4 examples](../README.md#complete-bulk-workflow), including configuration and file permissions.
+Downloads require owner access and a writable cloud destination. Use the `ids.txt` created above.
 
-For MP3 audio with `{"download_type":"audio","output_format":"mp3"}` in `audio-options.json`:
+### MP3 audio
 
-```bash
-flashdata bulk run --source youtube_download --input ids.txt --storage-config storage.json --options audio-options.json --run-id audio-001 --timeout 1h --output audio-receipts.jsonl
+Use the same `ids.txt` to request MP3 audio for multiple videos. Media files are delivered **to your bucket**; the local JSONL file contains delivery receipts.
+
+**1. Configure your destination.** In a private working directory outside source control, create `storage.json` and replace every placeholder with your own S3 bucket and credentials:
+
+```json
+{
+  "storage_type": "s3",
+  "storage_url": "YOUR_BUCKET_NAME",
+  "region": "us-east-1",
+  "access_key": "YOUR_STORAGE_ACCESS_KEY",
+  "secret_key": "YOUR_STORAGE_SECRET_KEY",
+  "object_prefix": "flashdata/audio"
+}
 ```
 
-For MP4 video, use `{"download_type":"audio_video","video_quality":"<=720","output_format":"mp4"}` in a separate options file, with a different run ID and output path. Choose the format needed for your task. Media goes to your cloud bucket/container; the local JSONL file contains delivery receipts. Download charges depend on delivered bytes.
+Create `audio-options.json` in the same directory:
+
+```json
+{"download_type":"audio","output_format":"mp3"}
+```
+
+On Linux/macOS, make both files private before running the command:
+
+```bash
+chmod 600 storage.json audio-options.json
+```
+
+On Windows, restrict both files' ACLs to your user, SYSTEM and optionally Administrators; see [private-file requirements](security.md). Other supported destinations include S3-compatible storage, OSS, GCS, Azure, COS, BOS and TOS; see [storage options](#supported-destinations).
+
+**2. Run the complete task.** Run from the directory containing those files and `ids.txt`:
+
+```bash
+flashdata bulk run --source youtube_download --input ids.txt --storage-config storage.json --options audio-options.json --run-id audio-bulk-001 --timeout 1h --output audio-receipts.jsonl
+```
+
+The command creates, uploads, starts, waits and exports. Check `audio-receipts.jsonl` for each video's delivery status and destination. A completed job can still contain failed items; those receipts are saved and the command exits with a nonzero status.
+
+**For one video**, use the same storage configuration:
+
+```bash
+flashdata youtube download dQw4w9WgXcQ --storage-config storage.json --format mp3 --wait --timeout 30m --output audio-delivery.json
+```
+
+### MP4 video
+
+Use the same `ids.txt` and private `storage.json`, and create `video-options.json`:
+
+```json
+{"download_type":"audio_video","video_quality":"<=720","output_format":"mp4"}
+```
+
+On Linux/macOS, restrict the options file first:
+
+```bash
+chmod 600 video-options.json
+```
+
+```bash
+flashdata bulk run --source youtube_download --input ids.txt --storage-config storage.json --options video-options.json --run-id video-bulk-001 --timeout 1h --output video-receipts.jsonl
+```
+
+Video files go to the bucket; per-video delivery outcomes go to `video-receipts.jsonl`.
+On Windows, apply the same private ACL requirements as for the audio options file.
+
+### Supported destinations
 
 S3, S3-compatible storage, OSS, GCS, Azure, COS, BOS and TOS are supported. `storage_url` is the bucket/container name. Supply the provider's required endpoint, region and credentials; GCS needs a service account and Azure needs an account name and write-capable SAS. Keep credentials out of chat and source control. Your bucket's retention and access settings apply.
 
@@ -84,7 +144,7 @@ Keep the same profile and state directory, then recover into a fresh file:
 flashdata runs recover metadata-001 --timeout 1h --output recovered-metadata.jsonl
 ```
 
-Substitute `audio-001` for the download example. A timeout stops local waiting; accepted server work continues. Recovery reads the existing job without creating, uploading or starting replacement work. If a submission outcome is unknown and no remote ID is available, inspect `runs show` and follow its guidance; do not create a new run ID to repeat the submission.
+Substitute `audio-bulk-001` or `video-bulk-001` for the download examples. A timeout stops local waiting; accepted server work continues. Recovery reads the existing job without creating, uploading or starting replacement work. If a submission outcome is unknown and no remote ID is available, inspect `runs show` and follow its guidance; do not create a new run ID to repeat the submission.
 
 If the original upload or start is incomplete, recovery tells you which explicit step is needed. Use `bulk upload BULK_ID --input ids.txt` only with the original file while the same draft still accepts input and its upload URL is valid. Then use `bulk start BULK_ID` if needed. A lost start response is checked against the existing job before another start is attempted. An expired upload URL does not trigger a replacement job.
 

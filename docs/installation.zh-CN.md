@@ -6,8 +6,6 @@
 
 ## 推荐设置
 
-CLI 1.2.1 wheel 尚待手动发布到 PyPI。在此之前，请选择下方 Homebrew、APT、RPM 或独立下载包使用引导设置。
-
 ```sh
 uv tool install flashdata-cli
 flashdata setup

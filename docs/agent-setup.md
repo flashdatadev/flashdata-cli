@@ -2,7 +2,7 @@
 
 [FlashData](https://flashdata.dev) · [简体中文](agent-setup.zh-CN.md)
 
-CLI 1.2.0 includes guided setup and the bundled skills. No Node.js or separate skills installer is needed. The PyPI update is pending; use a [native installer](installation.md#homebrew-linux-and-macos) in the meantime.
+The CLI includes guided setup and bundled skills for Codex, Claude Code and Cursor.
 
 ## Set up your agent
 

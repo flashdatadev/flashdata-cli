@@ -6,8 +6,6 @@ Choose an installation method below. Standalone archives and OS packages need no
 
 ## Recommended setup
 
-CLI 1.2.1 wheels await manual PyPI publication. Until then, choose Homebrew, APT, RPM or a standalone download below to use guided setup.
-
 ```sh
 uv tool install flashdata-cli
 flashdata setup

@@ -13,7 +13,7 @@ uv tool install flashdata-cli
 flashdata setup
 ```
 
-Setup requires CLI 1.2.0 or newer. While the PyPI update is pending, use a [native installer or release download](installation.md#homebrew-linux-and-macos).
+See [installation](installation.md) for pip, uv pip and native package options.
 
 Choose Codex, Claude Code or Cursor and confirm the directories. `setup` installs skills and configures access in one step. You do not also need to run `init`.
 

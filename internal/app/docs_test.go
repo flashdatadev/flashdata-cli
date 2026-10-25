@@ -100,11 +100,26 @@ func TestDocumentationLanguagesLinksAndExamples(t *testing.T) {
 	}
 }
 
-// Execute the README's actual workflow commands and JSON inputs, rather than
-// maintaining a second list of examples that could drift from the public docs.
+// Execute the public examples directly, including full media workflows moved
+// from the README into the bulk guide.
 func TestReadmeWorkflows(t *testing.T) {
+	for _, doc := range []struct {
+		path     string
+		bulkJobs int
+	}{
+		{"README.md", 1},
+		{"docs/bulk.md", 3},
+	} {
+		t.Run(doc.path, func(t *testing.T) {
+			testDocumentWorkflows(t, doc.path, doc.bulkJobs)
+		})
+	}
+}
+
+func testDocumentWorkflows(t *testing.T, document string, bulkJobs int) {
+	t.Helper()
 	t.Setenv("FLASHDATA_API_KEY", "")
-	raw, err := os.ReadFile(filepath.Join("..", "..", "README.md"))
+	raw, err := os.ReadFile(filepath.Join("..", "..", document))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -149,6 +164,12 @@ func TestReadmeWorkflows(t *testing.T) {
 	t.Chdir(dir)
 	mock, server, _ := formatFixture(t)
 	root := filepath.Join(dir, "state")
+	if document != "README.md" {
+		// The bulk guide starts after account setup; configure mock access only.
+		if code, _, stderr := invoke(t, root, server.URL, "", "init", "--name", "Documentation test"); code != 0 {
+			t.Fatal(stderr)
+		}
+	}
 	// README examples use only literal words and double-quoted query strings;
 	// reject shell syntax rather than ever executing a reader-provided shell.
 	words := regexp.MustCompile(`"[^"]*"|[^\s"]+`)
@@ -206,7 +227,7 @@ func TestReadmeWorkflows(t *testing.T) {
 		}
 	}
 	stats := mock.stats()
-	if commands == 0 || outputs == 0 || stats.CreateCount != 3 || stats.UploadCount != 3 || stats.StartCount != 3 {
-		t.Fatalf("README did not exercise metadata, MP3, MP4 and recovery: commands=%d outputs=%d stats=%+v", commands, outputs, stats)
+	if commands == 0 || outputs == 0 || stats.CreateCount != bulkJobs || stats.UploadCount != bulkJobs || stats.StartCount != bulkJobs {
+		t.Fatalf("document workflows did not submit the expected %d jobs: commands=%d outputs=%d stats=%+v", bulkJobs, commands, outputs, stats)
 	}
 }
