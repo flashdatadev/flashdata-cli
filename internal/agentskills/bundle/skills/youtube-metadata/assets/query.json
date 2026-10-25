@@ -1,0 +1,8 @@
+{
+  "source": "youtube_metadata",
+  "video_id": "aircAruvnKk",
+  "params": {
+    "include_formats": false,
+    "include_chapters": true
+  }
+}

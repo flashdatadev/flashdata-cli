@@ -16,3 +16,5 @@ License and notice texts copied from the dependencies pinned by current go.mod. 
 | `github.com/inconshreveable/mousetrap` | v1.1.0 | [LICENSE](licenses/github.com_inconshreveable_mousetrap_v1.1.0_LICENSE.txt) |
 | `github.com/santhosh-tekuri/jsonschema/v5` | v5.3.1 | [LICENSE](licenses/github.com_santhosh-tekuri_jsonschema_v5_v5.3.1_LICENSE.txt) |
 | `Go standard library` | 1.27.3 | [LICENSE](licenses/Go_standard_library_1.27.3_LICENSE.txt) |
+
+Agent skills are bundled from [flashdata-skills](https://github.com/flashdatadev/flashdata-skills), under its [MIT license](licenses/flashdata-skills_LICENSE.txt). `flashdata skills list` reports the pinned source commit.

@@ -62,6 +62,10 @@ flashdata search "battery recycling startups" --num 5 --json
 
 搜索结果包含网页标题、链接和摘要。查询会消耗可用额度；参见[价格](https://flashdata.dev/pricing)。
 
+## Agent 技能和引导设置
+
+[FlashData 技能](https://github.com/flashdatadev/flashdata-skills)通过 CLI 提供默认纯文本的 agent 工作流，MCP 可选。当前源码新增 `flashdata setup`，用于选择 agent、安装随附技能并验证访问，不执行付费查询。已发布的 v1.1.2 尚不包含引导设置；两种安装方式见[设置指南](docs/agent-setup.zh-CN.md)。
+
 ## JSON、纯文本和 Markdown
 
 上述所有安装方式均提供 1.1.2 正式版的 `--accept` 和 `--respond-with`。

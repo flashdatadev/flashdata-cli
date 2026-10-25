@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased — CLI agent setup
+
+- Add guided `setup`, offline `skills install/list/verify`, and a pinned skill bundle.
+- Preserve edited skills and existing access; verify setup without paid queries.
+
+
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
 ## 1.1.2 — 2026-10-24

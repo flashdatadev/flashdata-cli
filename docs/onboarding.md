@@ -2,6 +2,8 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
+For agent skill installation and the new guided workflow, see [agent setup](agent-setup.md). `init` continues to manage access only.
+
 ## Start a trial
 
 Initialize the CLI and make your first search:

@@ -34,6 +34,7 @@ def source_digest(root):
     schemas = root / "internal/contract/schemas.json"
     if schemas.is_file():
         files.append(schemas)
+    files.extend(p for p in (root / "internal/agentskills/bundle").rglob("*") if p.is_file())
     digest = hashlib.sha256()
     for path in sorted(files):
         digest.update(

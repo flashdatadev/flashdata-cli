@@ -25,6 +25,7 @@ jobs:
           cache-dependency-path: go.sum
       - run: go mod download
       - run: go mod verify
+      - run: python scripts/sync_skills.py --check
       - name: Require D-Bus for headless credential regression tests
         if: runner.os == 'Linux'
         run: command -v dbus-daemon

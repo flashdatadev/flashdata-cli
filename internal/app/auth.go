@@ -27,97 +27,11 @@ func (a *App) addAuth() {
 	init.Flags().StringVar(&client, "client", "flashdata-cli", "self-reported client label")
 	init.Flags().StringVar(&scopes, "scopes", "google_search,youtube_metadata", "comma-separated trial source names")
 	init.RunE = func(cmd *cobra.Command, args []string) error {
-		ctx, cancel := a.context(cmd)
-		defer cancel()
-		s, unlock, err := a.lock(ctx)
+		data, err := a.initializeAccess(cmd, name, audience, client, scopes)
 		if err != nil {
 			return err
 		}
-		defer unlock()
-		v, err := s.Load(ctx)
-		if err != nil {
-			return err
-		}
-		if os.Getenv("FLASHDATA_API_KEY") != "" || (v != nil && v.Credentials.APIKey != "") {
-			v, err = a.load(ctx, s)
-			if err != nil {
-				return err
-			}
-			auth, err := a.authorize(ctx, v, "", false)
-			if err != nil {
-				return err
-			}
-			return a.success(map[string]any{"status": "reused", "identity": publicIdentity(auth), "nextCommand": "flashdata sources list"}, "", false, nil)
-		}
-		if v != nil && (v.Phase != "registering" || v.RegistrationProof == "" || v.Registration == nil) {
-			return fail("existing_profile_requires_recovery", "This profile already has history or unusable credentials; no replacement trial was created.", "Run auth status, auth migrate, or auth login.")
-		}
-		if v == nil {
-			if _, e := os.Lstat(filepath.Join(s.Root, "connection.json")); e == nil {
-				return fail("migration_required", "Existing client state was found.", "Use auth migrate --from PATH; automatic replacement is disabled.")
-			}
-			if name == "" {
-				return fail("name_required", "Starting a trial requires an explicit --name.", "Use init --name NAME --scopes SOURCE,...")
-			}
-			v, err = a.initialVault()
-			if err != nil {
-				return err
-			}
-			c, err := a.client(v, "")
-			if err != nil {
-				return err
-			}
-			caps, err := c.Onboarding.Capabilities(ctx)
-			if err != nil {
-				return err
-			}
-			if !caps.Available || caps.ProtocolVersion != 2 {
-				return fail("onboarding_unavailable", "Protocol 2 registration is not available.", "Import an existing key with auth login.")
-			}
-			proof, err := fd.NewRegistrationProof()
-			if err != nil {
-				return err
-			}
-			requested := []fd.Source{}
-			for _, s := range strings.Split(scopes, ",") {
-				requested = append(requested, fd.Source(strings.TrimSpace(s)))
-			}
-			v.RegistrationProof = proof
-			v.Registration = &fd.RegistrationRequest{Name: name, Audience: audience, Client: client, Transport: "cli", Scopes: requested}
-			v.Phase = "registering"
-			if err = fd.ValidateRegistration(*v.Registration); err != nil {
-				return err
-			}
-			if err = s.Save(ctx, v); err != nil {
-				return err
-			}
-		} else if (cmd.Flags().Changed("name") && name != v.Registration.Name) || (cmd.Flags().Changed("scopes") && normalizeScopesFlag(scopes) != joinSources(v.Registration.Scopes)) || (cmd.Flags().Changed("audience") && audience != v.Registration.Audience) || (cmd.Flags().Changed("client") && client != v.Registration.Client) {
-			return fail("registration_conflict", "Recover using the exact saved registration input.", "Run init without changing registration flags.")
-		}
-		c, err := a.client(v, "")
-		if err != nil {
-			return err
-		}
-		registration, err := c.Onboarding.Register(ctx, v.RegistrationProof, *v.Registration)
-		if err != nil {
-			return &Error{Code: "registration_failed", Message: "Registration did not complete; its proof is retained.", Next: "Run init again to recover with the same proof and request.", Cause: err}
-		}
-		origin, err := fd.NormalizeOrigin(registration.DataOrigin)
-		if err != nil || origin != v.DataOrigin {
-			return fail("data_origin_mismatch", "The registration returned an unexpected data origin; its proof is retained.", "Inspect server configuration; do not create another trial.")
-		}
-		v.Credentials = registration.Credentials
-		v.Phase = "trial"
-		if err = s.Save(ctx, v); err != nil {
-			return err
-		}
-		protection, _ := s.Protection()
-		balanceClient, err := a.client(v, v.Credentials.APIKey)
-		if err != nil {
-			return err
-		}
-		balance, balanceErr := balanceClient.Account.Balance(ctx)
-		return a.success(map[string]any{"status": "trial", "connection": registration.Connection, "startingAllowanceCredits": registration.Connection.TrialCredits, "startingAllowanceRequestEquivalents": registration.Connection.TrialRequestCounts, "sharedAllowanceNote": "Each source count is an alternative use of the same starting grant, not an independent quota or current balance.", "currentBalance": balance, "currentBalanceAvailable": balanceErr == nil, "deniedScopes": registration.DeniedScopes, "credentialProtection": protection, "nextCommand": "flashdata auth claim"}, "", false, nil)
+		return a.success(data, "", false, nil)
 	}
 	a.Root.AddCommand(init)
 	auth := &cobra.Command{Use: "auth", Short: "Manage API-key profiles and browser claiming"}
@@ -532,4 +446,99 @@ func (a *App) freshProcess(ctx context.Context, s *state.Store, v *state.Vault) 
 		return errors.New("fresh_process_failed")
 	}
 	return nil
+}
+
+// initializeAccess is shared by init and guided setup; registration recovery stays identical.
+func (a *App) initializeAccess(cmd *cobra.Command, name, audience, client, scopes string) (map[string]any, error) {
+	ctx, cancel := a.context(cmd)
+	defer cancel()
+	s, unlock, err := a.lock(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer unlock()
+	v, err := s.Load(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if os.Getenv("FLASHDATA_API_KEY") != "" || (v != nil && v.Credentials.APIKey != "") {
+		v, err = a.load(ctx, s)
+		if err != nil {
+			return nil, err
+		}
+		auth, err := a.authorize(ctx, v, "", false)
+		if err != nil {
+			return nil, err
+		}
+		return map[string]any{"status": "reused", "identity": publicIdentity(auth), "nextCommand": "flashdata sources list"}, nil
+	}
+	if v != nil && (v.Phase != "registering" || v.RegistrationProof == "" || v.Registration == nil) {
+		return nil, fail("existing_profile_requires_recovery", "This profile already has history or unusable credentials; no replacement trial was created.", "Run auth status, auth migrate, or auth login.")
+	}
+	if v == nil {
+		if _, e := os.Lstat(filepath.Join(s.Root, "connection.json")); e == nil {
+			return nil, fail("migration_required", "Existing client state was found.", "Use auth migrate --from PATH; automatic replacement is disabled.")
+		}
+		if name == "" {
+			return nil, fail("name_required", "Starting a trial requires an explicit --name.", "Use init --name NAME --scopes SOURCE,...")
+		}
+		v, err = a.initialVault()
+		if err != nil {
+			return nil, err
+		}
+		c, err := a.client(v, "")
+		if err != nil {
+			return nil, err
+		}
+		caps, err := c.Onboarding.Capabilities(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if !caps.Available || caps.ProtocolVersion != 2 {
+			return nil, fail("onboarding_unavailable", "Protocol 2 registration is not available.", "Import an existing key with auth login.")
+		}
+		proof, err := fd.NewRegistrationProof()
+		if err != nil {
+			return nil, err
+		}
+		requested := []fd.Source{}
+		for _, s := range strings.Split(scopes, ",") {
+			requested = append(requested, fd.Source(strings.TrimSpace(s)))
+		}
+		v.RegistrationProof = proof
+		v.Registration = &fd.RegistrationRequest{Name: name, Audience: audience, Client: client, Transport: "cli", Scopes: requested}
+		v.Phase = "registering"
+		if err = fd.ValidateRegistration(*v.Registration); err != nil {
+			return nil, err
+		}
+		if err = s.Save(ctx, v); err != nil {
+			return nil, err
+		}
+	} else if (cmd.Flags().Changed("name") && name != v.Registration.Name) || (cmd.Flags().Changed("scopes") && normalizeScopesFlag(scopes) != joinSources(v.Registration.Scopes)) || (cmd.Flags().Changed("audience") && audience != v.Registration.Audience) || (cmd.Flags().Changed("client") && client != v.Registration.Client) {
+		return nil, fail("registration_conflict", "Recover using the exact saved registration input.", "Run init without changing registration flags.")
+	}
+	c, err := a.client(v, "")
+	if err != nil {
+		return nil, err
+	}
+	registration, err := c.Onboarding.Register(ctx, v.RegistrationProof, *v.Registration)
+	if err != nil {
+		return nil, &Error{Code: "registration_failed", Message: "Registration did not complete; its proof is retained.", Next: "Run init again to recover with the same proof and request.", Cause: err}
+	}
+	origin, err := fd.NormalizeOrigin(registration.DataOrigin)
+	if err != nil || origin != v.DataOrigin {
+		return nil, fail("data_origin_mismatch", "The registration returned an unexpected data origin; its proof is retained.", "Inspect server configuration; do not create another trial.")
+	}
+	v.Credentials = registration.Credentials
+	v.Phase = "trial"
+	if err = s.Save(ctx, v); err != nil {
+		return nil, err
+	}
+	protection, _ := s.Protection()
+	balanceClient, err := a.client(v, v.Credentials.APIKey)
+	if err != nil {
+		return nil, err
+	}
+	balance, balanceErr := balanceClient.Account.Balance(ctx)
+	return map[string]any{"status": "trial", "connection": registration.Connection, "startingAllowanceCredits": registration.Connection.TrialCredits, "startingAllowanceRequestEquivalents": registration.Connection.TrialRequestCounts, "sharedAllowanceNote": "Each source count is an alternative use of the same starting grant, not an independent quota or current balance.", "currentBalance": balance, "currentBalanceAvailable": balanceErr == nil, "deniedScopes": registration.DeniedScopes, "credentialProtection": protection, "nextCommand": "flashdata auth claim"}, nil
 }

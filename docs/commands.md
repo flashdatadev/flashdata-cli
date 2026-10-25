@@ -4,7 +4,7 @@
 
 Generated from `flashdata commands --json`. Every operational command supports the global profile, state directory, credential protection, timeout and output-mode flags. Keys are accepted only through hidden input/stdin or an explicitly configured environment variable.
 
-This reference describes CLI v1.1.0, including JSON, plain-text and Markdown response flags. See [response formats](response-formats.md) for examples. `discover plans` and `discover status` read public endpoints without an API key.
+This reference describes the current source. Guided `setup` and `skills` commands are new and are not in published v1.1.2; see [agent setup](agent-setup.md). See [response formats](response-formats.md) for JSON, plain-text and Markdown options. `discover plans` and `discover status` read public endpoints without an API key.
 
 ## flashdata
 
@@ -432,6 +432,62 @@ Usage: `search QUERY`
 | `--respond-with` | string | `` | markdown for realtime or completed results; omit for original fields |
 | `--run-id` | string | `` | stable execution ID; required for recurring work |
 | `--wait` | bool | `false` | wait for an accepted async job |
+
+## flashdata setup
+
+Select agents, install skills and verify FlashData access
+
+Usage: `setup`
+
+| Flag | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `--agent` | stringSlice | `[]` | codex, claude-code or cursor; comma-separated |
+| `--audience` | string | `coding` | coding or personal |
+| `--client` | string | `flashdata-cli` | self-reported client label |
+| `--directory` | string | `` | project directory; defaults to the working directory |
+| `--global` | bool | `false` | install for the current user instead of this project |
+| `--name` | string | `FlashData agent` | name for new temporary access |
+| `--scopes` | string | `google_search,youtube_metadata` | comma-separated trial source names |
+| `--skill` | stringSlice | `[]` | selected skill names; default: all 16 CLI skills |
+| `--skip-auth` | bool | `false` | install and verify skills without contacting FlashData |
+
+## flashdata skills
+
+List, install and verify bundled agent skills offline
+
+Usage: `skills`
+
+## flashdata skills install
+
+install bundled skills for selected agents
+
+Usage: `install`
+
+| Flag | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `--agent` | stringSlice | `[]` | codex, claude-code or cursor; comma-separated |
+| `--directory` | string | `` | project directory; defaults to the working directory |
+| `--global` | bool | `false` | install for the current user instead of this project |
+| `--skill` | stringSlice | `[]` | selected skill names; default: all 16 CLI skills |
+
+## flashdata skills list
+
+List bundled skills and their source revision
+
+Usage: `list`
+
+## flashdata skills verify
+
+verify bundled skills for selected agents
+
+Usage: `verify`
+
+| Flag | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `--agent` | stringSlice | `[]` | codex, claude-code or cursor; comma-separated |
+| `--directory` | string | `` | project directory; defaults to the working directory |
+| `--global` | bool | `false` | install for the current user instead of this project |
+| `--skill` | stringSlice | `[]` | selected skill names; default: all 16 CLI skills |
 
 ## flashdata sources
 

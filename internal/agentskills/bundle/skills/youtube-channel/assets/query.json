@@ -1,0 +1,7 @@
+{
+  "source": "youtube_channel",
+  "handle": "@3blue1brown",
+  "params": {
+    "video_limit": 20
+  }
+}

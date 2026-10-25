@@ -63,6 +63,10 @@ On a fresh headless Linux setup, `flashdata auth login` automatically uses a pri
 
 The search returns page titles, links and snippets. Queries use your available credits; see [pricing](https://flashdata.dev/pricing).
 
+## Agent skills and guided setup
+
+Use the [FlashData skills](https://github.com/flashdatadev/flashdata-skills) for CLI-based agent workflows with plain-text results. MCP is optional. The current source adds `flashdata setup` to select agents, install bundled skills and verify access without a paid query. Published v1.1.2 does not include setup yet; see the [setup guide](docs/agent-setup.md) for both installation paths.
+
 ## JSON, plain text and Markdown
 
 Version 1.1.2 includes `--accept` and `--respond-with` with every installation

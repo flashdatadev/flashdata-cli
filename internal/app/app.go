@@ -104,6 +104,7 @@ func New(streams IO, version, commit string) *App {
 		return nil
 	}
 	a.addAuth()
+	a.addAgentSetup()
 	a.addQueries()
 	a.addAccount()
 	a.addBulk()

@@ -1,0 +1,11 @@
+{
+  "source": "youtube_search",
+  "query": "Python tutorial",
+  "params": {
+    "max_results": 10,
+    "filters": {
+      "type": "video",
+      "upload_date": "this_month"
+    }
+  }
+}

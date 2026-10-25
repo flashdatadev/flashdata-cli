@@ -62,7 +62,10 @@ func TestDocumentationLanguagesLinksAndExamples(t *testing.T) {
 			return err
 		}
 		text := string(raw)
-		if !strings.Contains(text, "https://flashdata.dev") {
+		// Bundled skill references have their own entrypoints and link validation;
+		// they need not repeat the CLI documentation's product link on every page.
+		bundledSkill := strings.Contains(filepath.ToSlash(path), "/agentskills/bundle/")
+		if !bundledSkill && !strings.Contains(text, "https://flashdata.dev") {
 			t.Error("missing official link", path)
 		}
 		text = inline.ReplaceAllString(blocks.ReplaceAllString(text, ""), "")
