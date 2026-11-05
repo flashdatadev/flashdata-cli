@@ -7,8 +7,8 @@ Process a video-ID list with one source and shared options. `bulk run` creates t
 | Task | `--source` | Example shared options |
 | --- | --- | --- |
 | Video metadata | `youtube_metadata` | `{"include_formats":false,"include_chapters":true}` |
-| Existing automatic transcripts | `youtube_transcript` | `{"language":"en","auto":true}` |
-| Existing uploader captions | `youtube_captions` | `{"language":"en","auto":false}` |
+| Existing automatic transcripts | `youtube_transcript` | `{"language":["en","es"],"auto":true}` |
+| Existing uploader captions | `youtube_captions` | `{"language":["en","es"],"auto":false}` |
 | License classifications | `youtube_trainability` | `{}` |
 | Audio/video delivery | `youtube_download` | `{"download_type":"audio","output_format":"mp3"}` |
 
@@ -159,3 +159,12 @@ For separate steps, use `bulk create --input FILE`, `bulk upload` and `bulk star
 ID files are UTF-8 text from 1 byte through 2 GiB. Validation needs temporary disk space up to the input size, including during a dry run. The CLI uploads a validated snapshot, so later edits to the original file do not change the submitted IDs. Normal completion removes the snapshot; a forcibly terminated process may leave a private `flashdata-ids-*.tmp` file in the OS temporary directory. Remove it only after the owning process has exited.
 
 Upload URLs expire after 15 minutes; internal results remain for 24 hours. Save results promptly. Customer storage follows its own retention. Exports stream across result parts; the SDK defaults limit each compressed/decompressed part to 64 MiB and each row to 16 MiB.
+
+## Subtitle languages
+
+Transcript/caption options accept one language code or a list of 1–10 distinct codes.
+Omit `language` to prefer `en-orig`, then `en`, returning one track. A language list,
+even with one element, returns `tracks` and per-language `errors` inside each video
+result. Inspect both on completed rows. Partial results retain available tracks;
+unavailable languages are not silently replaced. Bulk exports stay JSONL with one
+record per video. See [subtitle examples](../examples/README.md#subtitle-languages).

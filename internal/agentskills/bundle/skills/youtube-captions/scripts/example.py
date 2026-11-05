@@ -9,7 +9,7 @@ from mcp.client.streamable_http import streamable_http_client
 
 arguments = {
     "video_id": "aircAruvnKk",
-    "language": "en",
+    "language": ["en", "es"],
     "auto": False,
 }
 

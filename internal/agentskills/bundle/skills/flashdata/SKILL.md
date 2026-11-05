@@ -28,13 +28,17 @@ Setup requires CLI 1.2.0 or newer. Upgrade an existing uv installation with `uv 
 | Search Google | `flashdata search "query"` |
 | Find videos | `flashdata youtube search "query" --max-results 5` |
 | Video details | `flashdata youtube metadata VIDEO_ID` |
-| Existing automatic transcript | `flashdata youtube transcript VIDEO_ID --language en` |
-| Existing uploader captions | `flashdata youtube captions VIDEO_ID --language en` |
+| Existing automatic transcript | `flashdata youtube transcript VIDEO_ID` |
+| Existing uploader captions | `flashdata youtube captions VIDEO_ID` |
 | Other source or full options | `flashdata sources show SOURCE`, then `flashdata query --input /absolute/path/query.json` |
 | Process a list of video IDs | `flashdata bulk run --source SOURCE --input /absolute/path/ids.txt`; see [bulk workflows](references/bulk.md) |
 | Read an existing job | `flashdata jobs get JOB_ID`, then `flashdata jobs result JOB_ID` |
 
 Append `--accept text/plain --json=false` to individual query content commands. Add `--respond-with markdown` only for Markdown. Use `--accept application/json --json` for structured processing. Auth, discovery and run metadata retain their JSON output. For asynchronous content, use `--wait` or read the completed job result.
+
+For transcript/captions, omit `--language` to prefer `en-orig`, then `en`.
+Use `--language en` for one exact track or `--language en,es` for several.
+For a list, keep successful `tracks` and report per-language `errors`.
 
 ## Bulk datasets and media
 

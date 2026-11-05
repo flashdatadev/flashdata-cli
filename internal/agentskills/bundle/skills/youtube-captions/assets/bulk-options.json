@@ -1,1 +1,7 @@
-{"language":"en","auto":false}
+{
+  "language": [
+    "en",
+    "es"
+  ],
+  "auto": false
+}

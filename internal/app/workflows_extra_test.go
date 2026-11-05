@@ -3,16 +3,78 @@ package app
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/flashdatadev/flashdata-cli/internal/state"
 )
+
+func TestSubtitleLanguageFlags(t *testing.T) {
+	t.Setenv("FLASHDATA_API_KEY", "")
+	m, server := fixture(t)
+	root := filepath.Join(t.TempDir(), "state")
+	login(t, root, server.URL, "fd_owner_offline")
+	for _, action := range []string{"transcript", "captions"} {
+		for _, tc := range []struct {
+			flags []string
+			want  any
+		}{
+			{nil, nil}, {[]string{"--language", "en"}, "en"},
+			{[]string{"--language", "en,es"}, []any{"en", "es"}},
+			{[]string{"--language", "en", "--language", "es"}, []any{"en", "es"}},
+		} {
+			for _, mode := range []string{"realtime", "async"} {
+				args := append([]string{"youtube", action, "aircAruvnKk", "--dry-run", "--mode", mode}, tc.flags...)
+				code, out, stderr := invoke(t, root, server.URL, "", args...)
+				if code != 0 {
+					t.Fatal(code, out, stderr)
+				}
+				var response struct {
+					Data struct {
+						Request struct{ Params map[string]any }
+					}
+				}
+				if err := json.Unmarshal([]byte(out), &response); err != nil {
+					t.Fatal(err)
+				}
+				params := response.Data.Request.Params
+				if !reflect.DeepEqual(params["language"], tc.want) || params["auto"] != (action == "transcript") {
+					t.Fatalf("wrong subtitle selection: %#v", params)
+				}
+				if tc.want == nil {
+					if _, exists := params["language"]; exists {
+						t.Fatal("omitted language was filled")
+					}
+				}
+			}
+		}
+		for _, language := range []string{"", "en,en", "en,", "a,b,c,d,e,f,g,h,i,j,k"} {
+			code, out, stderr := invoke(t, root, server.URL, "", "youtube", action, "aircAruvnKk", "--language", language, "--dry-run")
+			if code == 0 {
+				t.Fatal("invalid language accepted", out, stderr)
+			}
+		}
+		input := `{"source":"youtube_` + action + `","video_id":"aircAruvnKk","params":{"language":["en"],"auto":false}}`
+		code, out, stderr := invoke(t, root, server.URL, input, "query", "--input", "-", "--dry-run")
+		if code != 0 || !strings.Contains(out, `"language":["en"]`) {
+			t.Fatal("single-element array lost", out, stderr)
+		}
+		code, out, stderr = invoke(t, root, server.URL, "["+input+"]", "batch", "submit", "--input", "-", "--dry-run")
+		if code != 0 || !strings.Contains(out, `"language":["en"]`) {
+			t.Fatal("batch language array rejected", out, stderr)
+		}
+	}
+	if m.stats().QueryCount != 0 || m.stats().CreateCount != 0 {
+		t.Fatal("dry run dispatched paid work")
+	}
+}
 
 func TestTimeoutIncludesWaitingForStdin(t *testing.T) {
 	for _, args := range [][]string{{"query", "--input", "-"}, {"auth", "login", "--api-key-stdin"}} {

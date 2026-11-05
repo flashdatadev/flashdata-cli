@@ -525,7 +525,7 @@ Usage: `captions INPUT`
 | --- | --- | --- | --- |
 | `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
-| `--language` | string | `en` | caption language; existing tracks only |
+| `--language` | stringSlice | `[]` | caption codes, comma-separated or repeated (1-10); omitted: en-orig, then en |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |
@@ -597,7 +597,7 @@ Usage: `transcript INPUT`
 | --- | --- | --- | --- |
 | `--accept` | string | `application/json` | API response type: application/json or text/plain |
 | `--dry-run` | bool | `false` | validate without a paid submission |
-| `--language` | string | `en` | caption language; existing tracks only |
+| `--language` | stringSlice | `[]` | caption codes, comma-separated or repeated (1-10); omitted: en-orig, then en |
 | `--mode` | string | `realtime` | realtime or async |
 | `--output` | string | `` | new result or submission-receipt output file |
 | `--recurring` | bool | `false` | require verified owned/installed access |

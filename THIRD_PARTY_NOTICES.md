@@ -7,7 +7,7 @@ License and notice texts copied from the dependencies pinned by current go.mod. 
 | Component | Version | License / notice text |
 | --- | --- | --- |
 | `github.com/ebitengine/purego` | v0.9.0 | [LICENSE](licenses/github.com_ebitengine_purego_v0.9.0_LICENSE.txt) |
-| `github.com/flashdatadev/flashdata-go` | v1.1.0 | [LICENSE](licenses/github.com_flashdatadev_flashdata-go_v1.1.0_LICENSE.txt) |
+| `github.com/flashdatadev/flashdata-go` | v1.1.1-0.20261105100823-2c36d37cc676 | [LICENSE](licenses/github.com_flashdatadev_flashdata-go_v1.1.1-0.20261105100823-2c36d37cc676_LICENSE.txt) |
 | `github.com/godbus/dbus/v5` | v5.1.0 | [LICENSE](licenses/github.com_godbus_dbus_v5_v5.1.0_LICENSE.txt) |
 | `github.com/spf13/cobra` | v1.10.2 | [LICENSE.txt](licenses/github.com_spf13_cobra_v1.10.2_LICENSE.txt) |
 | `github.com/spf13/pflag` | v1.0.9 | [LICENSE](licenses/github.com_spf13_pflag_v1.0.9_LICENSE.txt) |

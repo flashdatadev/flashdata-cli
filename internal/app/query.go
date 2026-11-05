@@ -73,12 +73,12 @@ func (a *App) addQueries() {
 	for _, action := range []string{"search", "metadata", "transcript", "captions"} {
 		action := action
 		flags := &queryFlags{}
-		var language string
+		var languages []string
 		var limit int64
 		cmd := &cobra.Command{Use: action + " INPUT", Short: "YouTube " + action + " through the shared query workflow", Args: cobra.ExactArgs(1)}
 		bindQuery(cmd, flags, false)
 		if action == "transcript" || action == "captions" {
-			cmd.Flags().StringVar(&language, "language", "en", "caption language; existing tracks only")
+			cmd.Flags().StringSliceVar(&languages, "language", nil, "caption codes, comma-separated or repeated (1-10); omitted: en-orig, then en")
 		}
 		if action == "search" {
 			cmd.Flags().Int64Var(&limit, "max-results", 0, "requested number of search results")
@@ -95,7 +95,13 @@ func (a *App) addQueries() {
 				body["video_id"] = args[0]
 			}
 			if action == "transcript" || action == "captions" {
-				params["language"] = language
+				if cmd.Flags().Changed("language") {
+					if len(languages) == 1 {
+						params["language"] = languages[0]
+					} else {
+						params["language"] = languages
+					}
+				}
 				params["auto"] = action == "transcript"
 			}
 			body["params"] = params

@@ -68,6 +68,11 @@ Replace the example video ID with your own. Transcript availability depends on t
 
 For Google news, images, shopping, videos, places and other YouTube sources, run `flashdata sources list`, then `flashdata sources show SOURCE`. Submit the documented input with `flashdata query --input query.json`. See the [command reference](docs/commands.md) and [request examples](examples/README.md).
 
+For transcripts and captions, omit `--language` to prefer `en-orig`, then `en`.
+Use `--language en` for one exact track, or `--language en,es` (also
+`--language en --language es`) for several. Multi-language results include available
+`tracks` and per-language `errors`. See [request examples](examples/README.md#subtitle-languages).
+
 ## Output formats
 
 CLI queries return JSON by default. Choose plain text or Markdown when needed:

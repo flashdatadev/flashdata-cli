@@ -49,3 +49,15 @@ Use the remote bulk ID reported by the CLI, which is different from your local r
 | Cancel the job | `flashdata bulk cancel BULK_ID` |
 
 For manual create/upload/start and supported option updates, see the [CLI bulk guide](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/bulk.md). Use `bulk` commands for bulk IDs; `jobs get` and `jobs result` are for individual async query jobs.
+
+## Languages in each video result
+
+Omit `language` to prefer `en-orig`, then `en`, returning one track. A string selects
+that exact language. A list of 1–10 distinct codes returns `tracks` and `errors`,
+even for a one-element list. Each code must match `[A-Za-z0-9-]{1,35}`. The `auto`
+choice applies to all languages: transcripts default to automatic captions (`true`),
+captions to uploaded captions (`false`). Neither switches caption source or translates missing tracks.
+
+Bulk exports stay JSONL with one record per video. Inspect the `tracks` and `errors`
+inside each result; an otherwise completed row may have unavailable languages.
+Keep available tracks and report the gaps.

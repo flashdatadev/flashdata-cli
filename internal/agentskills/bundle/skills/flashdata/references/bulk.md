@@ -27,7 +27,7 @@ Use absolute paths in commands. The paths below are examples to replace with you
 flashdata bulk run --source youtube_metadata --input /absolute/work/ids.txt --run-id metadata-001 --timeout 1h --output /absolute/work/metadata.jsonl
 ```
 
-Change `--source` for another data source and choose a matching run ID and output filename. To set shared options, add `--options /absolute/work/options.json`. The file contains only the options object, for example `{"language":"en","auto":true}` for transcripts; do not copy a whole single-query request with `source`, `video_id` or `params`. Use the current [bulk options reference](https://flashdata.dev/docs/guides/bulk) for supported fields. Missing caption tracks remain missing, and license labels do not establish reuse permission.
+Change `--source` for another data source and choose a matching run ID and output filename. To set shared options, add `--options /absolute/work/options.json`. The file contains only the options object, for example `{"language":["en","es"],"auto":true}` for transcripts; do not copy a whole single-query request with `source`, `video_id` or `params`. Use the current [bulk options reference](https://flashdata.dev/docs/guides/bulk) for supported fields. Missing caption tracks remain missing, and license labels do not establish reuse permission.
 
 ## Deliver audio or video to cloud storage
 
@@ -79,3 +79,7 @@ Use the remote bulk ID reported by the CLI, which is different from your local r
 For manual create/upload/start and supported option updates, see the [CLI bulk guide](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/bulk.md). Use `bulk` commands for bulk IDs; `jobs get` and `jobs result` are for individual async query jobs.
 
 For the audio example, substitute `audio-001` when inspecting or recovering its run.
+
+For transcript/captions, omit `language` to prefer `en-orig`, then `en`. Arrays of
+1–10 distinct codes keep available `tracks` and per-language `errors` inside each
+video result. Inspect both, including on completed rows. Bulk exports stay JSONL.

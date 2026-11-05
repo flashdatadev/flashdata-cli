@@ -68,6 +68,10 @@ flashdata youtube transcript dQw4w9WgXcQ --language en --output transcript.json
 
 需要 Google 新闻、图片、购物、视频、地点或其他 YouTube 来源时，运行 `flashdata sources list`，再通过 `flashdata sources show SOURCE` 查看输入格式。使用 `flashdata query --input query.json` 提交请求。详见[命令参考](docs/commands.md)和[请求示例](examples/README.md)。
 
+转录和字幕省略 `--language` 时优先使用 `en-orig`，其次使用 `en`，返回一条字幕。
+`--language en` 精确选择英语；`--language en,es` 或 `--language en --language es` 请求多种语言。
+多语言结果包含可用的 `tracks` 和逐语言 `errors`。参见[请求示例](examples/README.md#subtitle-languages)。
+
 ## 输出格式
 
 CLI 查询默认返回 JSON。需要时可选择纯文本或 Markdown：

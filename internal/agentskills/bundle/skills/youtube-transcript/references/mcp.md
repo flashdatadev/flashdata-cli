@@ -45,7 +45,7 @@ Replace the example ID with the 11-character ID from the user's YouTube URL.
 | Parameter | Use |
 | --- | --- |
 | `video_id` | Required video ID. |
-| `language` | Caption language code, such as `en`, `es` or `ja`; defaults to `en`. |
+| `language` | One language code or a list of 1–10 distinct codes; omit for `en-orig`, then `en`. |
 | `auto` | `true` selects existing automatic captions (default); `false` selects uploader-provided captions. |
 
 ### Request an existing Spanish automatic track
@@ -65,6 +65,25 @@ Read `results[0]`. `fullText` is the joined transcript; `segments` contains `{st
 - For a text export, save `fullText`; for SRT or WebVTT, convert the segment start/end times and preserve their order.
 
 Automatic captions may contain recognition errors. Flag unclear passages instead of silently correcting them into unsupported quotations.
+
+## Multiple languages
+
+Omit `language` to prefer `en-orig`, then `en`, returning one track. A string selects
+that exact language. A list of 1–10 distinct codes returns `tracks` and `errors`,
+even for a one-element list. Each code must match `[A-Za-z0-9-]{1,35}`. The `auto`
+choice applies to all languages: transcripts default to automatic captions (`true`),
+captions to uploaded captions (`false`). Neither switches caption source or translates missing tracks.
+
+```json
+{"video_id":"aircAruvnKk","language":["en","es"],"auto":true}
+```
+
+For a language list, read `results[0].tracks` and `results[0].errors`. Each track
+has the usual text, language and timestamp fields. Each error has `languageCode`,
+`code` (`language_unavailable` or `retrieval_failed`) and `message`. Preserve available
+tracks and report missing languages; both lists follow request order. If all languages
+fail, `tracks` is empty. Video-level extraction failures still fail the request.
+Do not resubmit the whole query just because one language failed.
 
 ## Connection and responses
 
