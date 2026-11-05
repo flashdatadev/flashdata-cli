@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 — 2026-11-05
 
 - Transcript/captions accept comma-separated or repeated language flags and preserve omitted-language fallback.
 - Update SDK validation, subtitle guidance and bundled skills for language lists and partial results. Bulk exports remain JSONL; other APIs are unchanged.

@@ -4,6 +4,8 @@
 
 在终端和 AI agent 中使用 Google 搜索与 YouTube 数据。搜索网页、获取视频元数据和转录文本，或通过批量任务处理视频列表。
 
+1.3.0 新增多语言字幕支持。如果 Python 安装器仍安装旧版本，请使用[独立发布文件](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.3.0)。
+
 ## 快速开始
 
 使用 [uv](https://docs.astral.sh/uv/) 安装，然后设置 agent：

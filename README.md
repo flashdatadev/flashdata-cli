@@ -4,6 +4,8 @@
 
 Google Search and YouTube data for your terminal and AI agent. Search the web, retrieve video metadata and transcripts, or process video lists with bulk jobs.
 
+Version 1.3.0 adds multi-language subtitles. If your Python installer resolves an older version, use the [native release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.3.0).
+
 ## Get started
 
 Install with [uv](https://docs.astral.sh/uv/) and set up your agent:

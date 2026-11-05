@@ -2,10 +2,10 @@
 
 [FlashData](https://flashdata.dev) · [API documentation](https://flashdata.dev/docs)
 
-The current release is [v1.2.1](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.2.1).
+The current release is [v1.3.0](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.3.0).
 Install with `uv tool install flashdata-cli`, then run `flashdata setup` to choose
 your agent, install bundled skills and verify access without a paid query. Agent
-skills use plain-text output by default; MCP remains optional. See the [release notes](release-notes-1.2.1.md) and
+skills use plain-text output by default; MCP remains optional. See the [release notes](release-notes-1.3.0.md) and
 [response formats](response-formats.md).
 
 ## Install
@@ -16,9 +16,9 @@ and [简体中文](installation.zh-CN.md) cover direct downloads, Homebrew, sign
 and signed RPM installation and upgrades. Preserve profiles and execution history
 when updating. Existing release files and signed package versions remain immutable.
 
-The CLI pins Go SDK **v1.1.0**, with its recorded Go checksums and no local module
+The CLI pins Go SDK **v1.2.0**, with its recorded Go checksums and no local module
 replacement. Go 1.25+ users can also install
-`github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.2.1` with `go install`.
+`github.com/flashdatadev/flashdata-cli/cmd/flashdata@v1.3.0` with `go install`.
 
 ## Build and verify
 
