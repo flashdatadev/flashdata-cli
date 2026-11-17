@@ -75,7 +75,7 @@ jobs:
           - os: macos-15-intel
             archive: flashdata_1.4.0_darwin_amd64.tar.gz
             binary: flashdata
-          - os: macos-26
+          - os: macos-15
             archive: flashdata_1.4.0_darwin_arm64.tar.gz
             binary: flashdata
           - os: windows-latest
