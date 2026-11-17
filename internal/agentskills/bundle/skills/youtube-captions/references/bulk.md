@@ -61,3 +61,13 @@ captions to uploaded captions (`false`). Neither switches caption source or tran
 Bulk exports stay JSONL with one record per video. Inspect the `tracks` and `errors`
 inside each result; an otherwise completed row may have unavailable languages.
 Keep available tracks and report the gaps.
+
+## Temporary storage credentials
+
+S3, S3-compatible providers that issue temporary credentials, OSS, COS, BOS and TOS
+accept `session_token` with its matching temporary `access_key` and `secret_key`.
+Use these in download `options.storage` or data `options.result_storage`, supplied
+through a private storage file. Credentials must stay valid through queueing and
+upload retries; FlashData does not refresh them. After a data bulk scan finishes,
+a paused job accepts a renewed result-storage key pair and token through an
+options update before resuming. Keep credentials out of recovery records.

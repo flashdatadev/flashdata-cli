@@ -26,7 +26,7 @@ func inputSecrets(value any) []string {
 		case map[string]any:
 			for key, x := range v {
 				switch strings.ToLower(strings.ReplaceAll(key, "_", "")) {
-				case "apikey", "accesskey", "secretkey", "sastoken", "privatekey", "setupcredential", "handoffproof", "registrationproof", "callbackurl":
+				case "apikey", "accesskey", "secretkey", "sessiontoken", "sastoken", "privatekey", "setupcredential", "handoffproof", "registrationproof", "callbackurl":
 					if s, ok := x.(string); ok && s != "" {
 						secrets = append(secrets, s)
 					}
@@ -79,7 +79,7 @@ func (a *App) redacted(value any) any {
 				query := u.Query()
 				for key := range query {
 					switch strings.ToLower(key) {
-					case "x-amz-signature", "x-goog-signature", "sig", "signature", "sas_token":
+					case "x-amz-signature", "x-amz-security-token", "x-goog-signature", "sig", "signature", "sas_token", "session_token":
 						return "[REDACTED signed URL]"
 					}
 				}

@@ -19,6 +19,27 @@ Save this structure in a private local JSON file. Replace the placeholder values
 
 For S3, `storage_url` is the bucket name, without `s3://` or a folder suffix. Put folders in `object_prefix`, using path segments such as `media/youtube`. The destination and credentials must allow writing the requested objects.
 
+## Temporary STS credentials
+
+For S3, S3-compatible providers that issue temporary credentials, OSS, COS, BOS and
+TOS, add `session_token` alongside the matching temporary `access_key` and
+`secret_key`. Copy the [STS storage example](../assets/storage-sts.json) into the
+user's private storage configuration and replace its placeholders through their
+secret-management process. AWS/BOS/TOS call the token SessionToken; OSS calls it
+SecurityToken; COS calls it Token and pairs it with TmpSecretId/TmpSecretKey.
+
+Keep the provider's usual bucket, region and endpoint fields. Azure uses `sas_token`
+and GCS uses `service_account`; do not add `session_token` to those configurations.
+Omit it when using long-term access keys. Use an updated CLI/SDK/MCP release whose
+storage schema accepts `session_token`.
+
+The same configuration applies to single and batch downloads, bulk download
+`options.storage`, and bulk data `options.result_storage`. Credentials must remain
+valid through queueing, processing, upload and retries. FlashData does not refresh
+temporary credentials automatically. For a paused data bulk job whose input scan
+has finished, update the result-storage key pair and token together, then resume
+that existing job. Keep tokens out of chat, logs and recovery records.
+
 ## Other providers
 
 | `storage_type` | Configuration |

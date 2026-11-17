@@ -215,7 +215,7 @@ func sanitize(value any) any {
 			for key, x := range v {
 				normalized := strings.ToLower(strings.ReplaceAll(key, "_", ""))
 				switch normalized {
-				case "apikey", "accesskey", "secretkey", "privatekey", "sastoken", "authorization", "setupcredential", "handoffproof", "registrationproof", "callbackurl":
+				case "apikey", "accesskey", "secretkey", "sessiontoken", "privatekey", "sastoken", "authorization", "setupcredential", "handoffproof", "registrationproof", "callbackurl":
 					v[key] = "[REDACTED]"
 				default:
 					v[key] = visit(x)

@@ -1,0 +1,9 @@
+{
+  "storage_type": "s3",
+  "storage_url": "your-media-bucket",
+  "region": "us-east-1",
+  "object_prefix": "youtube-clips",
+  "access_key": "YOUR_TEMPORARY_ACCESS_KEY",
+  "secret_key": "YOUR_TEMPORARY_SECRET_KEY",
+  "session_token": "YOUR_SESSION_TOKEN"
+}

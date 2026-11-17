@@ -63,3 +63,13 @@ Use the remote bulk ID reported by the CLI, which is different from your local r
 For manual create/upload/start and supported option updates, see the [CLI bulk guide](https://github.com/flashdatadev/flashdata-cli/blob/main/docs/bulk.md). Use `bulk` commands for bulk IDs; `jobs get` and `jobs result` are for individual async query jobs.
 
 For the MP4 example, substitute `video-001` when inspecting or recovering its run.
+
+## Temporary storage credentials
+
+S3, S3-compatible providers that issue temporary credentials, OSS, COS, BOS and TOS
+accept `session_token` with its matching temporary `access_key` and `secret_key`.
+Use these in download `options.storage` or data `options.result_storage`, supplied
+through a private storage file. Credentials must stay valid through queueing and
+upload retries; FlashData does not refresh them. After a data bulk scan finishes,
+a paused job accepts a renewed result-storage key pair and token through an
+options update before resuming. Keep credentials out of recovery records.

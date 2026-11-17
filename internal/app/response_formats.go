@@ -66,7 +66,7 @@ func recordResponse(r *state.Run, f responseFlags) {
 // Text is API content, not a JSON document. Apply the same credential and signed
 // URL redaction used by structured output without removing provenance queries.
 var responseURL = regexp.MustCompile(`https?://[^\s<>"']+`)
-var responseSecretField = regexp.MustCompile(`(?im)^(\s*(?:\*\*)?(?:api key|access key|secret key|private key|sas token|authorization|setup credential|handoff proof|registration proof|callback url):(?:\*\*)?)[^\n]*`)
+var responseSecretField = regexp.MustCompile(`(?im)^(\s*(?:\*\*)?(?:api key|access key|secret key|session token|private key|sas token|authorization|setup credential|handoff proof|registration proof|callback url):(?:\*\*)?)[^\n]*`)
 var markdownSecretPattern = regexp.MustCompile(`(?i)\b(?:fd\\_|fda\\_setup\\_|fda\\_handoff\\_)(?:[A-Za-z0-9]|\\[_-])+`)
 
 // Match the API's escaped values without unescaping or otherwise rewriting the
@@ -109,7 +109,7 @@ func (a *App) redactedResponseText(text string) string {
 		}
 		for key := range u.Query() {
 			switch strings.ToLower(key) {
-			case "x-amz-signature", "x-goog-signature", "sig", "signature", "sas_token":
+			case "x-amz-signature", "x-amz-security-token", "x-goog-signature", "sig", "signature", "sas_token", "session_token":
 				return "[REDACTED signed URL]"
 			}
 		}

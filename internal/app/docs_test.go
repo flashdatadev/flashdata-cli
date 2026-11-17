@@ -93,7 +93,7 @@ func TestDocumentationLanguagesLinksAndExamples(t *testing.T) {
 			t.Fatal(name, err)
 		}
 	}
-	for _, name := range []string{"batch.json", "bulk-options.json", "bulk-create.json", "bulk-update.json", "download-options.json", "storage.example.json"} {
+	for _, name := range []string{"batch.json", "bulk-options.json", "bulk-create.json", "bulk-update.json", "download-options.json", "storage.example.json", "storage-sts.example.json"} {
 		if !json.Valid([]byte(read("examples/" + name))) {
 			t.Fatal("invalid example JSON", name)
 		}

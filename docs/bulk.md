@@ -111,6 +111,23 @@ S3, S3-compatible storage, OSS, GCS, Azure, COS, BOS and TOS are supported. `sto
 
 For downloads, `--storage-config` sets the media destination (`options.storage`). For data sources, it optionally requests result copies in customer storage (`options.result_storage`). Supply a destination in only one place: the storage file or the options file.
 
+### Temporary storage credentials
+
+Add `session_token` alongside the temporary `access_key` and `secret_key` in your private storage file. See [storage-sts.example.json](../examples/storage-sts.example.json). The same file works with `youtube download --storage-config`, `bulk run --storage-config`, and a query's `params.storage`. Bulk downloads use `options.storage`; bulk data exports use `options.result_storage`.
+
+| `storage_type` | Provider token mapped to `session_token` |
+| --- | --- |
+| `s3` | AWS STS `SessionToken` |
+| `s3_compatible` | S3 session token, if the provider supports temporary credentials |
+| `oss` | Alibaba Cloud STS `SecurityToken` |
+| `cos` | Tencent Cloud `Token` |
+| `bos` | Baidu Cloud `sessionToken` |
+| `tos` | Volcengine `SessionToken` |
+
+Omit `session_token` for long-term keys, GCS and Azure. Tokens must be nonempty strings of at most 16,384 characters, without whitespace. Keep the temporary key pair and token together and give them write access only to the intended bucket/prefix. Their lifetime must cover queueing, downloads, upload retries and bulk processing; FlashData does not refresh them automatically. An eligible paused bulk data delivery can receive a credential-only `options.result_storage` patch before resume; see the recovery commands below.
+
+The CLI redacts the token in dry-run output and saved run records. It sends the original token to the API with the storage configuration.
+
 ## JSONL results and failed items
 
 Bulk exports remain **JSONL**: one JSON object per line, preserving each video's index, ID, status, data and errors. `--json` controls the command's status envelope, not the export. `bulk run` and `bulk results` do not accept `--accept` or `--respond-with`; omit those flags when recovering a bulk run too.

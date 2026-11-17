@@ -10,6 +10,8 @@ bulk-options.json and download-options.json show option shapes. Copy a chosen op
 
 Offline command and compiled-binary tests cover the onboarding, query, batch, bulk and recovery workflows, using generated private fixture storage instead of real cloud credentials. Tests also validate example JSON and check that both README translations use identical command blocks. Secret-manager names, private paths, remote IDs and storage values in the docs are placeholders to replace. Connecting these examples to production incurs ordinary API charges; a dry-run validates and reads metadata without a paid submission.
 
+For temporary storage credentials, use [storage-sts.example.json](storage-sts.example.json) and supply the key pair and `session_token` from the same session. See [supported STS providers and expiry](../docs/bulk.md#temporary-storage-credentials). Keep this file private and outside source control.
+
 ## Subtitle languages
 
 ```sh
