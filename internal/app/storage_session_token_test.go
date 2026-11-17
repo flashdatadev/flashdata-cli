@@ -40,7 +40,11 @@ func TestSTSCredentialsReachAPIAndStayOutOfLocalOutput(t *testing.T) {
 			login(t, root, server.URL, "fd_owner_offline")
 			storage := map[string]any{"storage_type": provider, "storage_url": "test-bucket", "region": "us-east-1", "endpoint_url": "https://storage.example.com", "access_key": "temporary-access", "secret_key": "temporary-secret", "session_token": "temporary-session-credential"}
 			encoded, _ := json.Marshal(storage)
-			path := filepath.Join(t.TempDir(), "private", "storage.json")
+			base, err := filepath.EvalSymlinks(t.TempDir())
+			if err != nil {
+				t.Fatal(err)
+			}
+			path := filepath.Join(base, "private", "storage.json")
 			if err := state.AtomicWrite(path, encoded); err != nil {
 				t.Fatal(err)
 			}
@@ -102,7 +106,11 @@ func TestSessionTokenRedactionAndPrivateInput(t *testing.T) {
 			t.Fatal("formatted output leaked session token")
 		}
 	}
-	path := filepath.Join(t.TempDir(), "private", "shared.json")
+	base, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(base, "private", "shared.json")
 	if err := state.AtomicWrite(path, []byte(`{"session_token":"raw-session-value"}`)); err != nil {
 		t.Fatal(err)
 	}
