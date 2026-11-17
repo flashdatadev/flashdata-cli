@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.0 — 2026-11-17
 
 - Accept temporary storage credentials through `session_token` for S3, S3-compatible storage, OSS, COS, BOS and TOS using Go SDK 1.3.0.
 - Redact session tokens in previews, saved runs, errors and formatted output; bundle updated STS storage guidance and examples.

@@ -1,6 +1,6 @@
-# Install FlashData CLI v1.3.0
+# Install FlashData CLI v1.4.0
 
-[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.3.0)
+[FlashData](https://flashdata.dev) · [API docs](https://flashdata.dev/docs) · [简体中文](installation.zh-CN.md) · [Release downloads](https://github.com/flashdatadev/flashdata-cli/releases/tag/v1.4.0)
 
 Choose an installation method below. Standalone archives and OS packages need no Go, Node.js, Python or Docker; pip and uv installation requires Python 3.10+. Downloading and offline version/help checks need no API key.
 
@@ -43,7 +43,7 @@ flashdata --help
 
 If uv reports that its executable directory is not on PATH, run `uv tool update-shell` and restart the shell. A previous Homebrew/APT/RPM/manual installation can shadow this command; check `command -v flashdata` on Bash or `Get-Command flashdata` on PowerShell. Avoid using multiple managers for the same PATH entry.
 
-Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.3.0`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
+Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata-cli`. To pin a version, use `flashdata-cli==1.4.0`. Uninstall with `python -m pip uninstall flashdata-cli`, `uv pip uninstall flashdata-cli`, or `uv tool uninstall flashdata-cli`, matching your installer. Removal preserves profiles and run history; use `flashdata auth logout` first to remove a saved credential. For offline installs or local builds, see the [wheel packaging guide](python-packaging.md).
 
 ## APT (Ubuntu and Debian)
 
@@ -235,7 +235,7 @@ The following Bash commands select Linux/macOS and amd64/arm64 automatically, do
 ```bash
 (
   set -eu
-  version=1.3.0
+  version=1.4.0
   case "$(uname -s)" in
     Linux) platform=linux ;;
     Darwin) platform=darwin ;;
@@ -276,7 +276,7 @@ These commands verify the ZIP before extraction, install into `%LOCALAPPDATA%\Fl
 ```powershell
 & {
     $ErrorActionPreference = 'Stop'
-    $version = '1.3.0'
+    $version = '1.4.0'
     $archive = "flashdata_${version}_windows_amd64.zip"
     $releaseUrl = "https://github.com/flashdatadev/flashdata-cli/releases/download/v$version"
     $workDir = Join-Path ([IO.Path]::GetTempPath()) ([Guid]::NewGuid().ToString())
@@ -321,4 +321,4 @@ Already have an API key? Use `flashdata auth login` and paste it at the hidden p
 
 On a fresh headless Linux setup, `flashdata auth login` automatically uses a private credential file if the desktop keyring is unavailable. Later commands reuse it without extra flags. The file has owner-only permissions and is not encrypted; see [credential storage](security.md).
 
-The executable's `--version` reports 1.3.0 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.3.0.md).
+The executable's `--version` reports 1.4.0 and the exact source commit recorded in `build-report.json`. Binaries and packaged documentation come from the same source tag. APT metadata and RPM packages/metadata are signed; standalone archives use SHA-256 checksums and macOS binaries are not notarized. Native archive acceptance runs on all five platforms; real Keychain/Secret Service behavior remains an environment-specific check. See the [release notes](release-notes-1.4.0.md).
