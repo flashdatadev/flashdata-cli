@@ -47,7 +47,7 @@ flashdata --help
 
 ## APT（Ubuntu 和 Debian）
 
-在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.3.0-1** 包含与发布归档一致的 CLI **1.3.0** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
+在 amd64 或 arm64 架构的 Ubuntu 22.04/24.04、Debian 12/13 上，可使用[官方签名 APT 软件源](https://github.com/flashdatadev/apt)。软件包 **1.4.0-1** 包含与发布归档一致的 CLI **1.4.0** 可执行文件；`-1` 是 Debian 打包修订号。无需 Go、Python 或 Node.js 运行时。
 
 使用 sudo 权限在 Bash 中执行一次以下配置。命令会核对公钥指纹，通过专用 `Signed-By` 密钥环限制信任范围，并只允许从该软件源选择 `flashdata` 软件包：
 
@@ -127,7 +127,7 @@ sudo apt-get update
 
 ## RPM（Fedora 和 RHEL）
 
-[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.3.0-1** 包含与官方发布文件逐字节一致的 CLI **1.3.0**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
+[官方签名 RPM 软件源](https://github.com/flashdatadev/rpm)支持 x86_64/aarch64 的 Fedora 43/44 及 RHEL 8/9/10 用户空间。软件包 **1.4.0-1** 包含与官方发布文件逐字节一致的 CLI **1.4.0**，以及文档、示例、手册页和许可证，无需 Go、Python 或 Node.js 运行时。原生测试覆盖两个架构的 Fedora 与 Red Hat UBI 容器；完整 RHEL 主机、订阅软件源和 FIPS 模式尚未单独认证。
 
 使用 sudo 权限在 Bash 中执行一次以下配置。命令核对证书完整指纹、导入已验证证书，并同时启用元数据和软件包签名检查：
 

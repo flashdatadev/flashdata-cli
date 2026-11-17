@@ -47,7 +47,7 @@ Upgrade with the same pip or uv pip command above, or `uv tool upgrade flashdata
 
 ## APT (Ubuntu and Debian)
 
-Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.3.0-1** contains the same CLI **1.3.0** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
+Use the [official signed APT repository](https://github.com/flashdatadev/apt) on Ubuntu 22.04/24.04 or Debian 12/13, with amd64 or arm64. Package **1.4.0-1** contains the same CLI **1.4.0** executable as the release archives; `-1` is the Debian packaging revision. No Go, Python or Node.js runtime is required.
 
 Run this one-time Bash setup with sudo access. It checks the public key fingerprint, uses a repository-scoped `Signed-By` keyring and permits only the `flashdata` package from this source:
 
@@ -127,7 +127,7 @@ When switching from Homebrew or a manual archive, check `command -v flashdata`; 
 
 ## RPM (Fedora and RHEL)
 
-Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.3.0-1** contains the exact official CLI **1.3.0** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
+Use the [official signed RPM repository](https://github.com/flashdatadev/rpm) for Fedora 43/44 and RHEL 8/9/10 userspace on x86_64/aarch64. Package **1.4.0-1** contains the exact official CLI **1.4.0** executable, docs, examples, man page and licenses, with no Go, Python or Node.js runtime dependency. Native tests cover Fedora and Red Hat UBI containers on both architectures; full RHEL hosts, subscription repositories and FIPS mode are not separately certified.
 
 Run this one-time setup in Bash with sudo access. It verifies the full certificate fingerprint, imports the verified certificate and enables both metadata and package signature checks:
 
